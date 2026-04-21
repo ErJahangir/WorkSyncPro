@@ -1,0 +1,1 @@
+export {TeamDetailScreen} from './TeamScreen';
