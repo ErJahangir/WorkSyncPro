@@ -1,79 +1,132 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# WorkSync Pro
 
-# Getting Started
+WorkSync Pro is a React Native mobile app for managing team work in one place. It combines task tracking, team collaboration, onboarding, authentication, and lightweight productivity analytics in a single cross-platform experience.
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+## Overview
 
-## Step 1: Start the Metro Server
+The app is designed around day-to-day team coordination:
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+- onboard new users with a polished intro flow
+- authenticate with Supabase
+- create, browse, filter, and update tasks
+- view task details, comments, and attachments
+- manage team members and invitations
+- monitor productivity from dashboard and analytics views
+- persist app state locally for a smoother mobile experience
 
-To start Metro, run the following command from the _root_ of your React Native project:
+## Core Features
+
+### Authentication and onboarding
+- splash screen and first-run onboarding flow
+- sign up, sign in, forgot password, and session restore
+- persisted auth state with Redux Persist and AsyncStorage
+
+### Task management
+- task list with search, filters, status tabs, and pagination
+- create, edit, and inspect task details
+- task comments and file attachment support
+- task priority and status tracking
+- pull-to-refresh and loading skeletons
+
+### Team collaboration
+- team member directory
+- member profile screens
+- invite flow for adding teammates
+- notification badge support in navigation
+
+### Dashboard and analytics
+- dashboard summary cards for tasks and team size
+- recent task activity
+- completion rate and productivity widgets
+- analytics charts for progress, weekly activity, and task priority breakdown
+
+## Tech Stack
+
+- React Native `0.74`
+- TypeScript
+- React Navigation
+- Redux Toolkit
+- Redux Persist
+- Supabase Auth, Database, Storage, and Realtime
+- AsyncStorage
+- React Hook Form + Yup
+- React Native SVG and custom chart UI
+
+## Project Structure
+
+```text
+src/
+  components/     reusable UI and task-specific components
+  constants/      app constants, storage keys, onboarding data
+  hooks/          app hooks for state and shared behavior
+  navigation/     auth flow, tabs, stacks, root navigation
+  screens/        auth, dashboard, tasks, team, analytics, profile
+  services/       Supabase client and notification wiring
+  store/          Redux store and feature slices
+  theme/          app theming and provider
+  types/          shared TypeScript models
+  utils/          helpers for dates, validation, storage, and toast
+```
+
+## Getting Started
+
+### 1. Install dependencies
 
 ```bash
-# using npm
-npm start
+yarn install
+```
 
-# OR using Yarn
+### 2. Start Metro
+
+```bash
 yarn start
 ```
 
-## Step 2: Start your Application
+### 3. Run the app
 
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
-
-### For Android
+For Android:
 
 ```bash
-# using npm
-npm run android
-
-# OR using Yarn
 yarn android
 ```
 
-### For iOS
+For iOS:
 
 ```bash
-# using npm
-npm run ios
-
-# OR using Yarn
 yarn ios
 ```
 
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
+## Available Scripts
 
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
+- `yarn start` starts Metro with cache reset
+- `yarn android` runs the Android app
+- `yarn ios` runs the iOS app
+- `yarn lint` runs ESLint
+- `yarn test` runs Jest
+- `yarn type-check` runs TypeScript checks
+- `yarn aD` builds Android debug
+- `yarn aR` builds Android release
+- `yarn bR` builds Android app bundle release
 
-## Step 3: Modifying your App
+## Backend Setup
 
-Now that you have successfully run the app, let's modify it.
+The app is currently wired to Supabase through values defined in `src/constants/config.ts`.
 
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
+For production readiness, move sensitive config such as the Supabase URL and publishable key into environment-based configuration instead of hardcoding them in source.
 
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
+## Current Screens
 
-## Congratulations! :tada:
+- Auth: Splash, Onboarding, Login, Signup, Forgot Password
+- Main: Dashboard, Tasks, Team, Analytics, Profile
+- Task flow: Task List, Task Detail, Create Task, Edit Task, Comments
+- Team flow: Team List, Invite Member, Member Profile
 
-You've successfully run and modified your React Native App. :partying_face:
+## Notes
 
-### Now what?
+- Android and iOS folders are included for native builds.
+- The app uses persisted local state, so auth and app data can survive reloads.
+- Some analytics and invite behaviors are present as app flows and UI scaffolding, with room for deeper backend-driven logic.
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
+## Vision
 
-# Troubleshooting
-
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+WorkSync Pro aims to be a focused workspace companion for small teams: fast task execution, clearer ownership, and better visibility into what the team is working on right now.
