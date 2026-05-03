@@ -11,6 +11,12 @@ export const SUPABASE_KEY = 'sb_publishable_xk0Js68jAuWj0mI0yEBlfA_DY-6SHc-';
 export const APP_NAME = 'WorkSync Pro';
 export const APP_VERSION = '1.0.0';
 export const APP_BUNDLE_ID = 'com.worksyncpro.app';
+export const GOOGLE_WEB_CLIENT_ID =
+  '802352731530-d6v2qo4jhk5nne9dv32r1lg2ak33feta.apps.googleusercontent.com';
+export const GOOGLE_IOS_CLIENT_ID =
+  '802352731530-33kch9qgcjee8r08a6ifo9fhu5g1c707.apps.googleusercontent.com';
+export const GOOGLE_ANDROID_CLIENT_ID =
+  '802352731530-tcaudpakn0747u8lun61vsiilncjuudh.apps.googleusercontent.com';
 
 // ─── Storage Keys ─────────────────────────────────────────
 export const STORAGE_KEYS = {

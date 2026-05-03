@@ -21,7 +21,8 @@ import {useNavigation} from '@react-navigation/native';
 import {useTheme} from '@theme/ThemeProvider';
 import {useAppDispatch} from '@hooks/useAppSelector';
 import {useAppSelector} from '@hooks/useAppSelector';
-import {loginUser, clearError} from '@store/slices/authSlice';
+import {loginUser, loginWithGoogle, clearError} from '@store/slices/authSlice';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {Button} from '@components/common/Button';
 import {Input} from '@components/common/Input';
 import {LoginFormData} from '@/types/index';
@@ -48,10 +49,20 @@ export const LoginScreen: React.FC = () => {
 
   useEffect(() => {
     Animated.parallel([
-      Animated.timing(fadeAnim, {toValue: 1, duration: 500, useNativeDriver: true}),
-      Animated.timing(slideAnim, {toValue: 0, duration: 500, useNativeDriver: true}),
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 500,
+        useNativeDriver: true,
+      }),
     ]).start();
-    return () => { dispatch(clearError()); };
+    return () => {
+      dispatch(clearError());
+    };
   }, []);
 
   const {
@@ -67,6 +78,22 @@ export const LoginScreen: React.FC = () => {
     await dispatch(loginUser(data));
   };
 
+  const onGoogleLogin = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      console.log(userInfo, '==');
+
+      if (userInfo.data?.idToken) {
+        await dispatch(loginWithGoogle(userInfo.data.idToken));
+      }
+    } catch (err) {
+      console.log('Google login error:', err);
+    }
+  };
+
+  console.log(error, 'error');
+
   return (
     <KeyboardAvoidingView
       style={{flex: 1}}
@@ -76,7 +103,6 @@ export const LoginScreen: React.FC = () => {
         contentContainerStyle={styles.content}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}>
-
         {/* Header area */}
         <Animated.View
           style={[
@@ -84,16 +110,16 @@ export const LoginScreen: React.FC = () => {
             {opacity: fadeAnim, transform: [{translateY: slideAnim}]},
           ]}>
           <View
-            style={[
-              styles.logoIcon,
-              {backgroundColor: theme.colors.primary},
-            ]}>
+            style={[styles.logoIcon, {backgroundColor: theme.colors.primary}]}>
             <Text style={{fontSize: 32}}>⚡</Text>
           </View>
           <Text
             style={[
               styles.title,
-              {color: theme.colors.text, fontSize: theme.typography.fontSize['4xl']},
+              {
+                color: theme.colors.text,
+                fontSize: theme.typography.fontSize['4xl'],
+              },
             ]}>
             Welcome back
           </Text>
@@ -115,7 +141,6 @@ export const LoginScreen: React.FC = () => {
             styles.form,
             {opacity: fadeAnim, transform: [{translateY: slideAnim}]},
           ]}>
-
           {/* Error banner */}
           {error && (
             <View
@@ -123,7 +148,12 @@ export const LoginScreen: React.FC = () => {
                 styles.errorBanner,
                 {backgroundColor: theme.colors.errorLight},
               ]}>
-              <Text style={{color: theme.colors.error, fontSize: 13, fontWeight: '500'}}>
+              <Text
+                style={{
+                  color: theme.colors.error,
+                  fontSize: 13,
+                  fontWeight: '500',
+                }}>
                 ⚠️ {error}
               </Text>
             </View>
@@ -197,16 +227,23 @@ export const LoginScreen: React.FC = () => {
               style={[styles.divider, {backgroundColor: theme.colors.border}]}
             />
             <Text
-              style={[
-                styles.dividerText,
-                {color: theme.colors.textTertiary},
-              ]}>
+              style={[styles.dividerText, {color: theme.colors.textTertiary}]}>
               or
             </Text>
             <View
               style={[styles.divider, {backgroundColor: theme.colors.border}]}
             />
           </View>
+
+          <Button
+            title="Continue with Google"
+            onPress={onGoogleLogin}
+            variant="outline"
+            fullWidth
+            size="lg"
+            leftIcon={<Text style={{fontSize: 18}}>🌐</Text>}
+            style={{marginBottom: 16}}
+          />
 
           {/* Sign up link */}
           <TouchableOpacity

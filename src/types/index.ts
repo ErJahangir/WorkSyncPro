@@ -26,6 +26,7 @@ export interface AuthState {
   session: Session | null;
   isAuthenticated: boolean;
   isInitialized: boolean;
+  hasSeenOnboarding: boolean;
   isLoading: boolean;
   error: string | null;
 }

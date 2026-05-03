@@ -3,7 +3,7 @@
  * Complete task management state with filtering, pagination, realtime
  */
 
-import {createSlice, createAsyncThunk, PayloadAction} from '@reduxjs/toolkit';
+import {createSlice, createAsyncThunk, PayloadAction, createSelector} from '@reduxjs/toolkit';
 import {
   Task,
   TasksState,
@@ -335,12 +335,12 @@ export const selectTaskFilter = (state: {tasks: TasksState}) =>
 export const selectTasksPagination = (state: {tasks: TasksState}) =>
   state.tasks.pagination;
 
-export const selectTaskStats = (state: {tasks: TasksState}) => {
-  const {tasks} = state.tasks;
-  return {
+export const selectTaskStats = createSelector(
+  [selectAllTasks],
+  tasks => ({
     total: tasks.length,
     completed: tasks.filter(t => t.status === 'completed').length,
     inProgress: tasks.filter(t => t.status === 'in_progress').length,
     todo: tasks.filter(t => t.status === 'todo').length,
-  };
-};
+  }),
+);

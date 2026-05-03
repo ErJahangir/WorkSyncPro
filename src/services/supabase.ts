@@ -76,6 +76,14 @@ export const supabaseAuth = {
   ) => {
     return supabase.auth.onAuthStateChange(callback);
   },
+
+  signInWithGoogle: async (idToken: string) => {
+    const {data, error} = await supabase.auth.signInWithIdToken({
+      provider: 'google',
+      token: idToken,
+    });
+    return {data, error};
+  },
 };
 
 // ─── Database Helpers ─────────────────────────────────────
@@ -173,6 +181,28 @@ export const db = {
 
   markNotificationRead: (id: string) =>
     supabase.from('notifications').update({is_read: true}).eq('id', id),
+
+  // FCM Tokens
+  saveFCMToken: (
+    userId: string,
+    token: string,
+    platform: 'android' | 'ios',
+    reminderEnabled?: boolean,
+    reminderTime?: string,
+  ) =>
+    supabase.from('fcm_tokens').upsert(
+      {
+        user_id: userId,
+        token: token,
+        platform: platform,
+        reminder_enabled: reminderEnabled,
+        reminder_time: reminderTime,
+      },
+      {onConflict: 'user_id, token'},
+    ),
+
+  removeFCMToken: (token: string) =>
+    supabase.from('fcm_tokens').delete().eq('token', token),
 };
 
 // ─── Storage Helpers ─────────────────────────────────────

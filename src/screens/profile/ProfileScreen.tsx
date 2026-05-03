@@ -22,6 +22,9 @@ import {logoutUser, updateUserProfile} from '@/store/slices/authSlice';
 import {Avatar, Card, Divider} from '@/components/common';
 import {Input} from '@/components/common/Input';
 import {Button} from '@/components/common/Button';
+import {getFCMToken} from '@services/notificationService';
+import DatePicker from 'react-native-date-picker';
+import {selectTaskStats} from '@/store/slices/tasksSlice';
 
 export const ProfileScreen: React.FC = () => {
   const {theme, toggleTheme, isDark} = useTheme();
@@ -33,6 +36,11 @@ export const ProfileScreen: React.FC = () => {
   const [name, setName] = useState(user?.name || '');
   const [bio, setBio] = useState(user?.bio || '');
   const [saving, setSaving] = useState(false);
+  const taskStats = useAppSelector(selectTaskStats);
+
+  const [reminderEnabled, setReminderEnabled] = useState(false);
+  const [reminderTime, setReminderTime] = useState(new Date());
+  const [datePickerOpen, setDatePickerOpen] = useState(false);
 
   const handleSave = async () => {
     console.log('handleSave', user);
@@ -41,6 +49,18 @@ export const ProfileScreen: React.FC = () => {
     await dispatch(updateUserProfile({userId: user.id, updates: {name, bio}}));
     setSaving(false);
     setEditMode(false);
+  };
+
+  const handleReminderToggle = (value: boolean) => {
+    setReminderEnabled(value);
+    if (value) {
+      setDatePickerOpen(true);
+    } else {
+      // Sync disabled status to Supabase
+      if (user) {
+        getFCMToken(user.id, false, reminderTime);
+      }
+    }
   };
 
   const handleLogout = () => {
@@ -235,7 +255,7 @@ export const ProfileScreen: React.FC = () => {
 
             <Divider />
 
-            {/* Notifications */}
+            {/* Daily Reminder */}
             <View style={styles.settingRow}>
               <View
                 style={{
@@ -244,23 +264,29 @@ export const ProfileScreen: React.FC = () => {
                   gap: 10,
                   flex: 1,
                 }}>
-                <Text style={{fontSize: 20}}>🔔</Text>
+                <Text style={{fontSize: 20}}>⏰</Text>
                 <View>
                   <Text
                     style={[styles.settingLabel, {color: theme.colors.text}]}>
-                    Push Notifications
+                    Daily Task Reminder
                   </Text>
                   <Text
                     style={[
                       styles.settingDesc,
                       {color: theme.colors.textSecondary},
                     ]}>
-                    Get notified about updates
+                    {reminderEnabled
+                      ? `Scheduled for ${reminderTime.toLocaleTimeString([], {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}`
+                      : 'Get notified about pending tasks'}
                   </Text>
                 </View>
               </View>
               <Switch
-                value={true}
+                value={reminderEnabled}
+                onValueChange={handleReminderToggle}
                 trackColor={{
                   false: theme.colors.border,
                   true: theme.colors.primary,
@@ -270,6 +296,26 @@ export const ProfileScreen: React.FC = () => {
             </View>
           </Card>
         </View>
+
+        <DatePicker
+          modal
+          open={datePickerOpen}
+          date={reminderTime}
+          mode="time"
+          onConfirm={date => {
+            setDatePickerOpen(false);
+            setReminderTime(date);
+            
+            // Sync to Supabase
+            if (user) {
+              getFCMToken(user.id, true, date);
+            }
+          }}
+          onCancel={() => {
+            setDatePickerOpen(false);
+            if (reminderEnabled) setReminderEnabled(false);
+          }}
+        />
 
         {/* Account Section */}
         <View

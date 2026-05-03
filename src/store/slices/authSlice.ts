@@ -7,12 +7,15 @@ import {createSlice, createAsyncThunk, PayloadAction} from '@reduxjs/toolkit';
 import {AuthState, User} from '@/types/index';
 import {supabaseAuth, db} from '@services/supabase';
 import {showToast} from '@utils/toast';
+import {STORAGE_KEYS} from '@constants/config';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const initialState: AuthState = {
   user: null,
   session: null,
   isAuthenticated: false,
   isInitialized: false,
+  hasSeenOnboarding: false,
   isLoading: false,
   error: null,
 };
@@ -50,7 +53,15 @@ export const initializeAuth = createAsyncThunk(
         return {session, user: newUser};
       }
 
-      return {session, user};
+      const seenOnboarding = await AsyncStorage.getItem(
+        STORAGE_KEYS.ONBOARDING_DONE,
+      );
+
+      return {
+        session,
+        user,
+        hasSeenOnboarding: seenOnboarding === 'true',
+      };
     } catch (err) {
       return rejectWithValue('Failed to initialize auth');
     }
@@ -72,6 +83,24 @@ export const loginUser = createAsyncThunk(
       return {session: data.session, user};
     } catch {
       return rejectWithValue('Login failed. Please try again.');
+    }
+  },
+);
+
+export const loginWithGoogle = createAsyncThunk(
+  'auth/loginWithGoogle',
+  async (idToken: string, {rejectWithValue}) => {
+    try {
+      console.log('loginWithGoogle');
+      const {data, error} = await supabaseAuth.signInWithGoogle(idToken);
+      console.log(data, error, '====');
+
+      if (error) return rejectWithValue(error.message);
+
+      const {data: user} = await db.getUser(data.user!.id);
+      return {session: data.session, user};
+    } catch {
+      return rejectWithValue('Google login failed. Please try again.');
     }
   },
 );
@@ -156,6 +185,9 @@ const authSlice = createSlice({
     setInitialized: state => {
       state.isInitialized = true;
     },
+    setOnboardingDone: state => {
+      state.hasSeenOnboarding = true;
+    },
   },
   extraReducers: builder => {
     // Initialize
@@ -166,6 +198,7 @@ const authSlice = createSlice({
       .addCase(initializeAuth.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isInitialized = true;
+        state.hasSeenOnboarding = Boolean(action.payload.hasSeenOnboarding);
         if (action.payload.session && action.payload.user) {
           state.isAuthenticated = true;
           state.session = action.payload.session as AuthState['session'];
@@ -175,6 +208,7 @@ const authSlice = createSlice({
       .addCase(initializeAuth.rejected, state => {
         state.isLoading = false;
         state.isInitialized = true;
+        state.hasSeenOnboarding = false;
       });
 
     // Login
@@ -191,6 +225,24 @@ const authSlice = createSlice({
         showToast('success', 'Welcome back! 👋');
       })
       .addCase(loginUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      });
+
+    // Google Login
+    builder
+      .addCase(loginWithGoogle.pending, state => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(loginWithGoogle.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isAuthenticated = true;
+        state.session = action.payload.session as AuthState['session'];
+        state.user = action.payload.user as User;
+        showToast('success', 'Welcome back! 👋');
+      })
+      .addCase(loginWithGoogle.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
       });
@@ -230,5 +282,6 @@ const authSlice = createSlice({
   },
 });
 
-export const {setUser, clearError, setInitialized} = authSlice.actions;
+export const {setUser, clearError, setInitialized, setOnboardingDone} =
+  authSlice.actions;
 export default authSlice.reducer;

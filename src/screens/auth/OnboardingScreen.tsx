@@ -16,6 +16,8 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
+import {useAppDispatch} from '@hooks/useAppSelector';
+import {setOnboardingDone} from '@store/slices/authSlice';
 import {useTheme} from '@theme/ThemeProvider';
 import {ONBOARDING_SLIDES, STORAGE_KEYS} from '@constants/config';
 import {Button} from '@components/common/Button';
@@ -24,6 +26,7 @@ const {width, height} = Dimensions.get('window');
 
 export const OnboardingScreen: React.FC = () => {
   const {theme} = useTheme();
+  const dispatch = useAppDispatch();
   const navigation = useNavigation<any>();
   const [activeIndex, setActiveIndex] = useState(0);
   const flatListRef = useRef<FlatList>(null);
@@ -31,7 +34,7 @@ export const OnboardingScreen: React.FC = () => {
 
   const handleDone = async () => {
     await AsyncStorage.setItem(STORAGE_KEYS.ONBOARDING_DONE, 'true');
-    navigation.replace('Auth');
+    dispatch(setOnboardingDone());
   };
 
   const handleNext = () => {
@@ -53,7 +56,8 @@ export const OnboardingScreen: React.FC = () => {
   ).current;
 
   return (
-    <View style={[styles.container, {backgroundColor: theme.colors.background}]}>
+    <View
+      style={[styles.container, {backgroundColor: theme.colors.background}]}>
       {/* Skip button */}
       {activeIndex < ONBOARDING_SLIDES.length - 1 && (
         <TouchableOpacity onPress={handleSkip} style={styles.skipButton}>
@@ -113,7 +117,10 @@ export const OnboardingScreen: React.FC = () => {
               <Text
                 style={[
                   styles.slideTitle,
-                  {color: theme.colors.text, fontSize: theme.typography.fontSize['4xl']},
+                  {
+                    color: theme.colors.text,
+                    fontSize: theme.typography.fontSize['4xl'],
+                  },
                 ]}>
                 {item.title}
               </Text>
@@ -136,20 +143,12 @@ export const OnboardingScreen: React.FC = () => {
       <View style={styles.pagination}>
         {ONBOARDING_SLIDES.map((_, i) => {
           const dotWidth = scrollX.interpolate({
-            inputRange: [
-              (i - 1) * width,
-              i * width,
-              (i + 1) * width,
-            ],
+            inputRange: [(i - 1) * width, i * width, (i + 1) * width],
             outputRange: [8, 24, 8],
             extrapolate: 'clamp',
           });
           const dotOpacity = scrollX.interpolate({
-            inputRange: [
-              (i - 1) * width,
-              i * width,
-              (i + 1) * width,
-            ],
+            inputRange: [(i - 1) * width, i * width, (i + 1) * width],
             outputRange: [0.4, 1, 0.4],
             extrapolate: 'clamp',
           });
@@ -182,9 +181,7 @@ export const OnboardingScreen: React.FC = () => {
           size="lg"
         />
         {activeIndex === ONBOARDING_SLIDES.length - 1 && (
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Auth', {screen: 'Login'})}
-            style={{marginTop: 12}}>
+          <TouchableOpacity onPress={handleDone} style={{marginTop: 12}}>
             <Text
               style={{
                 color: theme.colors.textSecondary,

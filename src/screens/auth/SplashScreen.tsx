@@ -4,13 +4,7 @@
  */
 
 import React, {useEffect, useRef} from 'react';
-import {
-  View,
-  Text,
-  Animated,
-  StyleSheet,
-  Dimensions,
-} from 'react-native';
+import {View, Text, Animated, StyleSheet, Dimensions} from 'react-native';
 import {useTheme} from '@theme/ThemeProvider';
 
 const {width} = Dimensions.get('window');
@@ -26,7 +20,7 @@ export const SplashScreen: React.FC = () => {
       Animated.parallel([
         Animated.timing(fadeAnim, {
           toValue: 1,
-          duration: 600,
+          duration: 2000,
           useNativeDriver: true,
         }),
         Animated.spring(scaleAnim, {
@@ -38,7 +32,7 @@ export const SplashScreen: React.FC = () => {
       ]),
       Animated.timing(taglineAnim, {
         toValue: 1,
-        duration: 400,
+        duration: 1000,
         delay: 200,
         useNativeDriver: true,
       }),
@@ -50,16 +44,10 @@ export const SplashScreen: React.FC = () => {
       style={[styles.container, {backgroundColor: theme.colors.background}]}>
       {/* Background gradient circles */}
       <View
-        style={[
-          styles.bgCircle1,
-          {backgroundColor: theme.colors.primaryLight},
-        ]}
+        style={[styles.bgCircle1, {backgroundColor: theme.colors.primaryLight}]}
       />
       <View
-        style={[
-          styles.bgCircle2,
-          {backgroundColor: theme.colors.primaryLight},
-        ]}
+        style={[styles.bgCircle2, {backgroundColor: theme.colors.primaryLight}]}
       />
 
       <Animated.View
@@ -69,17 +57,13 @@ export const SplashScreen: React.FC = () => {
         ]}>
         {/* Logo Icon */}
         <View
-          style={[
-            styles.logoIcon,
-            {backgroundColor: theme.colors.primary},
-          ]}>
+          style={[styles.logoIcon, {backgroundColor: theme.colors.primary}]}>
           <Text style={styles.logoEmoji}>⚡</Text>
         </View>
 
         {/* App Name */}
         <Text style={[styles.appName, {color: theme.colors.text}]}>
-          WorkSync{' '}
-          <Text style={{color: theme.colors.primary}}>Pro</Text>
+          WorkSync <Text style={{color: theme.colors.primary}}>Pro</Text>
         </Text>
       </Animated.View>
 

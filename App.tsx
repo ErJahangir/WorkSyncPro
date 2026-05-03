@@ -11,8 +11,14 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {NavigationContainer} from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
 import {toastConfig} from '@utils/toast';
+import {
+  GOOGLE_ANDROID_CLIENT_ID,
+  GOOGLE_IOS_CLIENT_ID,
+  GOOGLE_WEB_CLIENT_ID,
+} from '@constants/config';
 import {ThemeProvider, useTheme} from '@theme/ThemeProvider';
 import {useAppSelector, useAppDispatch} from '@hooks/useAppSelector';
 import {setupNotifications} from '@services/notificationService';
@@ -22,18 +28,36 @@ import {RootNavigator} from '@navigation/RootNavigator';
 import {persistor, store} from '@store/index';
 import {initializeAuth} from '@store/slices/authSlice';
 
-LogBox.ignoreLogs(['Require cycle:', 'EventEmitter.removeListener']);
+LogBox.ignoreAllLogs();
 
 // Inner component that has access to theme context
 const AppContent: React.FC = () => {
   const dispatch = useAppDispatch();
   const {theme, isDark} = useTheme();
-  const {isInitialized} = useAppSelector(state => state.auth);
+  const {isInitialized, user} = useAppSelector(state => state.auth);
 
   useEffect(() => {
     dispatch(initializeAuth());
-    setupNotifications();
-  }, [dispatch]);
+
+    // Configure Google Sign-In
+    GoogleSignin.configure({
+      webClientId: GOOGLE_WEB_CLIENT_ID,
+      iosClientId: GOOGLE_IOS_CLIENT_ID,
+      offlineAccess: true,
+      forceCodeForRefreshToken: true,
+    });
+
+    let unsubscribe: any;
+    const initNotifications = async () => {
+      unsubscribe = await setupNotifications(user?.id);
+    };
+
+    initNotifications();
+
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, [dispatch, user?.id]);
 
   if (!isInitialized) {
     return <SplashScreen />;
