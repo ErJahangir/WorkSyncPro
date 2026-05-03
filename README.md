@@ -110,22 +110,51 @@ yarn ios
 
 ## Backend Setup
 
-The app is currently wired to Supabase through values defined in `src/constants/config.ts`.
+The app is powered by **Supabase** (Auth, Database, Realtime) and **Firebase** (Cloud Messaging for notifications).
 
-For production readiness, move sensitive config such as the Supabase URL and publishable key into environment-based configuration instead of hardcoding them in source.
+### Environment Variables
+
+To run the app, you need to create a `.env` file in the root directory with the following variables:
+
+```env
+SUPABASE_URL=your_supabase_url
+SUPABASE_ANON_KEY=your_supabase_anon_key
+FIREBASE_WEB_CLIENT_ID=your_google_auth_client_id
+```
+
+### Native Config Files
+
+The following files are required for native builds but are ignored by Git for security:
+- `android/app/google-services.json`
+- `ios/WorkSyncPro/GoogleService-Info.plist`
+- `worksyncpro-68dca-firebase-adminsdk-fbsvc-74a5c45ce7.json` (Service Account for backend functions)
+
+## Security & Push Protection
+
+This repository has **GitHub Push Protection** enabled. 
+- **NEVER** commit `.env` or Service Account JSON files.
+- These files are already listed in `.gitignore`.
+- If you accidentally try to push secrets, the push will be blocked.
+
+## Architecture
+
+- **State Management**: Redux Toolkit with slices for `auth`, `tasks`, `team`, `notifications`, and `ui`.
+- **Persistence**: Redux Persist with `AsyncStorage`.
+- **Styling**: Theme-aware styling system with support for custom typography (Inter, Roboto, Poppins).
+- **Navigation**: React Navigation with protected routes for authenticated users.
 
 ## Current Screens
 
-- Auth: Splash, Onboarding, Login, Signup, Forgot Password
-- Main: Dashboard, Tasks, Team, Analytics, Profile
-- Task flow: Task List, Task Detail, Create Task, Edit Task, Comments
-- Team flow: Team List, Invite Member, Member Profile
+- **Auth**: Splash, Onboarding, Login, Signup, Forgot Password
+- **Main**: Dashboard, Tasks, Team, Analytics, Profile
+- **Task flow**: Task List, Task Detail, Create Task, Edit Task, Comments
+- **Team flow**: Team List, Invite Member, Member Profile
 
-## Notes
+## Development
 
-- Android and iOS folders are included for native builds.
-- The app uses persisted local state, so auth and app data can survive reloads.
-- Some analytics and invite behaviors are present as app flows and UI scaffolding, with room for deeper backend-driven logic.
+- **Linting**: `yarn lint`
+- **Testing**: `yarn test`
+- **Type Checking**: `yarn type-check`
 
 ## Vision
 
