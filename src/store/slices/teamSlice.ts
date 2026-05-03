@@ -49,23 +49,57 @@ export const inviteMember = createAsyncThunk(
     {rejectWithValue},
   ) => {
     try {
-      const {data, error} = await (db as any).supabase
-        ?.from('team_invites')
-        .insert({
-          team_id: teamId,
-          email,
-          role,
-          invited_by: invitedBy,
-          status: 'pending',
-        })
-        .select()
-        .single();
+      const {data, error} = await db.sendInvite(teamId, email, role, invitedBy);
 
       if (error) return rejectWithValue(error.message);
       showToast('success', `Invitation sent to ${email}`);
       return data;
     } catch {
       return rejectWithValue('Failed to send invitation');
+    }
+  },
+);
+
+export const createTeam = createAsyncThunk(
+  'team/createTeam',
+  async (
+    {
+      name,
+      description,
+      userId,
+    }: {name: string; description: string; userId: string},
+    {dispatch, rejectWithValue},
+  ) => {
+    try {
+      const {data, error} = await db.createTeam(name, description, userId);
+      if (error) return rejectWithValue(error.message);
+
+      // Automatically fetch updated teams
+      dispatch(fetchTeams(userId));
+      showToast('success', `Team "${name}" created successfully!`);
+      return data;
+    } catch {
+      return rejectWithValue('Failed to create team');
+    }
+  },
+);
+
+export const acceptInvite = createAsyncThunk(
+  'team/acceptInvite',
+  async (
+    {inviteId, userId}: {inviteId: string; userId: string},
+    {dispatch, rejectWithValue},
+  ) => {
+    try {
+      const {error} = await db.respondToInvite(inviteId, 'accepted');
+      if (error) return rejectWithValue(error.message);
+
+      // Refresh teams list
+      dispatch(fetchTeams(userId));
+      showToast('success', 'You have joined the team!');
+      return inviteId;
+    } catch {
+      return rejectWithValue('Failed to accept invitation');
     }
   },
 );

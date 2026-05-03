@@ -1,8 +1,3 @@
-/**
- * WorkSync Pro - Invite Member Screen
- * Allows inviting new members via email
- */
-
 import React, {useState} from 'react';
 import {View, StyleSheet, TouchableOpacity, ScrollView, TextInput} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
@@ -10,31 +5,25 @@ import {useDispatch, useSelector} from 'react-redux';
 import {useTheme} from '@/theme';
 import type {Theme} from '@/theme';
 import {Button} from '@/components';
-import {RolePicker} from './components';
 import {RNText} from '@/components/common';
 import {RootState, AppDispatch} from '@/store';
-import {inviteMember} from '@/store/slices/teamSlice';
+import {createTeam} from '@/store/slices/teamSlice';
 import {showToast} from '@/utils';
 
-export const InviteMemberScreen: React.FC = () => {
+export const CreateTeamScreen: React.FC = () => {
   const {theme} = useTheme();
   const styles = createStyles(theme);
   const navigation = useNavigation<any>();
   const dispatch = useDispatch<AppDispatch>();
   const user = useSelector((state: RootState) => state.auth.user);
-  const selectedTeam = useSelector((state: RootState) => state.team.selectedTeam);
 
-  const [email, setEmail] = useState('');
-  const [role, setRole] = useState<'admin' | 'manager' | 'user'>('user');
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleInvite = async () => {
-    if (!email.trim()) {
-      showToast('error', 'Please enter an email address');
-      return;
-    }
-    if (!selectedTeam) {
-      showToast('error', 'No team selected');
+  const handleCreate = async () => {
+    if (!name.trim()) {
+      showToast('error', 'Please enter a team name');
       return;
     }
     if (!user) return;
@@ -42,15 +31,14 @@ export const InviteMemberScreen: React.FC = () => {
     setLoading(true);
     try {
       const resultAction = await dispatch(
-        inviteMember({
-          teamId: selectedTeam.id,
-          email: email.toLowerCase().trim(),
-          role,
-          invitedBy: user.id,
+        createTeam({
+          name: name.trim(),
+          description: description.trim(),
+          userId: user.id,
         }),
       );
 
-      if (inviteMember.fulfilled.match(resultAction)) {
+      if (createTeam.fulfilled.match(resultAction)) {
         navigation.goBack();
       }
     } finally {
@@ -65,41 +53,48 @@ export const InviteMemberScreen: React.FC = () => {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <RNText style={styles.cancelText}>Cancel</RNText>
         </TouchableOpacity>
-        <RNText style={styles.headerTitle}>Invite Member</RNText>
+        <RNText style={styles.headerTitle}>Create New Team</RNText>
         <View style={styles.headerSpacer} />
       </View>
 
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled">
-        <RNText style={styles.heroIcon}>📧</RNText>
+        <RNText style={styles.heroIcon}>🏗️</RNText>
         <RNText style={styles.description}>
-          Enter the email address of the person you'd like to invite to your
-          team.
+          Teams help you organize tasks and collaborate with your colleagues in
+          one shared workspace.
         </RNText>
 
-        <RNText style={styles.fieldLabel}>Email Address</RNText>
+        <RNText style={styles.fieldLabel}>Team Name</RNText>
         <View style={styles.inputWrapper}>
           <TextInput
-            value={email}
-            onChangeText={setEmail}
-            placeholder="colleague@company.com"
+            value={name}
+            onChangeText={setName}
+            placeholder="e.g. Design Team, Project Phoenix"
             placeholderTextColor={theme.colors.textTertiary}
-            keyboardType="email-address"
-            autoCapitalize="none"
-            style={styles.textInput}
+            style={styles.input}
           />
         </View>
 
-        <RNText style={[styles.fieldLabel, styles.marginTop16]}>Role</RNText>
-        <RolePicker selectedRole={role} onSelect={setRole} />
+        <RNText style={styles.fieldLabel}>Description (Optional)</RNText>
+        <View style={styles.inputWrapper}>
+          <TextInput
+            value={description}
+            onChangeText={setDescription}
+            placeholder="What is this team about?"
+            placeholderTextColor={theme.colors.textTertiary}
+            multiline
+            numberOfLines={4}
+            style={[styles.input, styles.textArea]}
+          />
+        </View>
 
         <Button
-          title="Send Invitation"
-          onPress={handleInvite}
+          title="Create Team"
+          onPress={handleCreate}
           loading={loading}
-          fullWidth
-          size="lg"
+          style={styles.submitButton}
         />
       </ScrollView>
     </View>
@@ -116,62 +111,66 @@ const createStyles = (theme: Theme) =>
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-      paddingHorizontal: 16,
-      paddingVertical: 14,
+      paddingHorizontal: 20,
+      paddingTop: 60,
+      paddingBottom: 20,
       borderBottomWidth: 1,
       borderBottomColor: theme.colors.border,
     },
-    cancelText: {
-      color: theme.colors.textSecondary,
-      fontSize: 15,
-    },
     headerTitle: {
-      fontSize: 17,
+      fontSize: 18,
       fontWeight: '700',
       color: theme.colors.text,
     },
+    cancelText: {
+      fontSize: 16,
+      color: theme.colors.textSecondary,
+    },
     headerSpacer: {
-      width: 60,
+      width: 50,
     },
     scrollContent: {
-      paddingHorizontal: 24,
-      paddingTop: 24,
-      paddingBottom: 40,
+      padding: 24,
+      alignItems: 'center',
     },
     heroIcon: {
-      fontSize: 32,
-      textAlign: 'center',
+      fontSize: 60,
       marginBottom: 16,
     },
     description: {
-      fontSize: 14,
-      lineHeight: 22,
+      fontSize: 16,
       textAlign: 'center',
-      marginBottom: 24,
       color: theme.colors.textSecondary,
+      marginBottom: 32,
+      lineHeight: 22,
     },
     fieldLabel: {
-      fontSize: 12,
+      alignSelf: 'flex-start',
+      fontSize: 15,
       fontWeight: '600',
       marginBottom: 8,
-      textTransform: 'uppercase',
-      letterSpacing: 0.4,
-      color: theme.colors.textSecondary,
+      color: theme.colors.text,
     },
     inputWrapper: {
-      borderRadius: 12,
-      borderWidth: 1.5,
-      overflow: 'hidden',
+      width: '100%',
       backgroundColor: theme.colors.surface,
+      borderRadius: 14,
+      marginBottom: 24,
+      paddingHorizontal: 16,
+      borderWidth: 1,
       borderColor: theme.colors.border,
     },
-    textInput: {
-      flex: 1,
+    input: {
+      paddingVertical: 14,
+      fontSize: 16,
       color: theme.colors.text,
-      fontSize: 14,
-      padding: 14,
     },
-    marginTop16: {
-      marginTop: 16,
+    textArea: {
+      height: 100,
+      textAlignVertical: 'top',
+    },
+    submitButton: {
+      marginTop: 8,
+      width: '100%',
     },
   });

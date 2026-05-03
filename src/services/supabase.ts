@@ -120,6 +120,13 @@ export const db = {
     if (filters?.priority) {
       query = query.eq('priority', filters.priority as string);
     }
+    if (filters?.team_id) {
+      query = query.eq('team_id', filters.team_id as string);
+    } else if (filters?.user_id) {
+      // If no team_id, fetch personal tasks or all tasks accessible by user
+      // This is a simplified version; real app might need a more complex OR filter
+      query = query.or(`created_by.eq.${filters.user_id},team_id.is.null`);
+    }
     return query;
   },
 
@@ -161,15 +168,44 @@ export const db = {
       .select('*, user:users(id, name, avatar)')
       .single(),
 
+  deleteComment: (id: string) =>
+    supabase.from('comments').delete().eq('id', id),
+
   // Teams
   getTeams: (userId: string) =>
     supabase.from('team_members').select('team:teams(*)').eq('user_id', userId),
 
-  getTeamMembers: (teamId: string) =>
+  getTeamMembers: (team_id: string) =>
     supabase
       .from('team_members')
       .select('*, user:users(id, name, email, avatar, role)')
-      .eq('team_id', teamId),
+      .eq('team_id', team_id),
+
+  createTeam: (name: string, description: string, createdBy: string) =>
+    supabase
+      .from('teams')
+      .insert({name, description, created_by: createdBy})
+      .select()
+      .single(),
+
+  sendInvite: (team_id: string, email: string, role: string, invited_by: string) =>
+    supabase.from('team_invites').insert({
+      team_id,
+      email,
+      role,
+      invited_by,
+      status: 'pending',
+    }),
+
+  getInvites: (email: string) =>
+    supabase
+      .from('team_invites')
+      .select('*, team:teams(*)')
+      .eq('email', email)
+      .eq('status', 'pending'),
+
+  respondToInvite: (inviteId: string, status: 'accepted' | 'rejected') =>
+    supabase.from('team_invites').update({status}).eq('id', inviteId),
 
   // Notifications
   getNotifications: (userId: string) =>

@@ -221,8 +221,10 @@ export type TaskStackParamList = {
 export type TeamStackParamList = {
   TeamList: undefined;
   TeamDetail: {teamId: string};
+  CreateTeam: undefined;
   InviteMember: {teamId: string};
   MemberProfile: {userId: string};
+  Invites: undefined;
 };
 
 // ─── API Response ─────────────────────────────────────────

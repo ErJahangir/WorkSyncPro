@@ -16,9 +16,11 @@ import {useTheme} from '@/theme';
 import {
   AnalyticsScreen,
   CreateTaskScreen,
+  CreateTeamScreen,
   DashboardScreen,
   EditTaskScreen,
   InviteMemberScreen,
+  InvitesScreen,
   MemberProfileScreen,
   ProfileScreen,
   TaskCommentsScreen,
@@ -122,9 +124,19 @@ const TeamStackNavigator: React.FC = () => {
         options={{title: 'Team'}}
       />
       <TeamStack.Screen
+        name="CreateTeam"
+        component={CreateTeamScreen}
+        options={{title: 'New Team', presentation: 'modal'}}
+      />
+      <TeamStack.Screen
         name="InviteMember"
         component={InviteMemberScreen}
         options={{title: 'Invite Member', presentation: 'modal'}}
+      />
+      <TeamStack.Screen
+        name="Invites"
+        component={InvitesScreen}
+        options={{title: 'Invitations'}}
       />
       <TeamStack.Screen
         name="MemberProfile"

@@ -33,6 +33,7 @@ export const CreateTaskScreen: React.FC = () => {
           priority: data.priority as TaskPriority,
           status: data.status as TaskStatus,
           tags: data.tagsList,
+          team_id: (data as any).team_id,
         },
         userId: user.id,
       }),

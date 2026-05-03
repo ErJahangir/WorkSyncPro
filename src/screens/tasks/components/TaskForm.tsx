@@ -3,11 +3,13 @@ import {StyleSheet, TextInput, TouchableOpacity, View} from 'react-native';
 import {Controller, useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import {useSelector} from 'react-redux';
 import {useTheme} from '@/theme';
 import type {Theme} from '@/theme';
 import {Button, Input} from '@/components';
 import type {TaskFormData, TaskPriority, TaskStatus} from '@/types';
 import {RNText} from '@/components/common';
+import {RootState} from '@/store';
 
 const schema = yup.object().shape({
   title: yup
@@ -20,6 +22,7 @@ const schema = yup.object().shape({
   status: yup.string().oneOf(['todo', 'in_progress', 'completed']).required(),
   tags: yup.mixed<string | string[]>().optional(),
   deadline: yup.date().optional(),
+  team_id: yup.string().optional().nullable(),
 });
 
 interface TaskFormProps {
@@ -53,8 +56,8 @@ export const TaskForm: React.FC<TaskFormProps> = ({
     setValue,
     watch,
     formState: {errors},
-  } = useForm<TaskFormData>({
-    resolver: yupResolver(schema),
+  } = useForm<TaskFormData & {team_id?: string | null}>({
+    resolver: yupResolver(schema as any),
     defaultValues: {
       title: initialValues?.title || '',
       description: initialValues?.description || '',
@@ -62,8 +65,12 @@ export const TaskForm: React.FC<TaskFormProps> = ({
       status: initialValues?.status || 'todo',
       tags: '',
       deadline: initialValues?.deadline,
+      team_id: initialValues?.team_id || null,
     },
   });
+
+  const teams = useSelector((state: RootState) => state.team.teams);
+  const selectedTeamId = watch('team_id');
 
   const priority = watch('priority');
   const status = watch('status');
@@ -129,6 +136,31 @@ export const TaskForm: React.FC<TaskFormProps> = ({
           </View>
         )}
       />
+
+      {/* Team Selection */}
+      {teams.length > 0 && (
+        <View style={styles.section}>
+          <SectionLabel title="Assign to Team" />
+          <OptionPicker
+            selected={selectedTeamId || 'personal'}
+            onSelect={val => setValue('team_id', val === 'personal' ? null : val)}
+            options={[
+              {
+                value: 'personal',
+                label: 'Personal Task',
+                icon: '👤',
+                color: theme.colors.textSecondary,
+              },
+              ...teams.map(team => ({
+                value: team.id,
+                label: team.name,
+                icon: '👥',
+                color: theme.colors.primary,
+              })),
+            ]}
+          />
+        </View>
+      )}
 
       {/* Priority */}
       <View style={styles.section}>
