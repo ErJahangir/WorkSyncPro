@@ -4,6 +4,7 @@
  */
 
 import messaging from '@react-native-firebase/messaging';
+import notifee, {AndroidImportance} from '@notifee/react-native';
 import {Platform, PermissionsAndroid} from 'react-native';
 import {db} from './supabase';
 import {formatTimeForDB} from '@/utils';
@@ -48,7 +49,9 @@ export const getFCMToken = async (
 
     if (userId && token) {
       const platform = Platform.OS === 'ios' ? 'ios' : 'android';
-      const timeString = reminderTime ? formatTimeForDB(reminderTime) : undefined;
+      const timeString = reminderTime
+        ? formatTimeForDB(reminderTime)
+        : undefined;
 
       const {error} = await db.saveFCMToken(
         userId,
@@ -82,10 +85,28 @@ export const setupNotifications = async (
   // 2. Get Token & Save to DB
   await getFCMToken(userId, reminderEnabled, reminderTime);
 
-  // 3. Handle Foreground Messages
+  // 3. Create Android Channel (Required for Android)
+  const channelId = await notifee.createChannel({
+    id: 'default',
+    name: 'Default Channel',
+    importance: AndroidImportance.HIGH,
+  });
+
+  // 4. Handle Foreground Messages
   const unsubscribe = messaging().onMessage(async remoteMessage => {
-    // Note: FCM does not show banners in foreground by default.
-    // To show a banner, you would typically use an in-app alert or @notifee/react-native.
+    // Display a foreground notification using Notifee
+    await notifee.displayNotification({
+      title: remoteMessage.notification?.title || 'New Notification',
+      body: remoteMessage.notification?.body || '',
+      android: {
+        channelId,
+        importance: AndroidImportance.HIGH,
+        pressAction: {
+          id: 'default',
+        },
+      },
+      data: remoteMessage.data,
+    });
   });
 
   // 4. Handle Notification Open from Background/Quit state

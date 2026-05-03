@@ -18,3 +18,12 @@ export {LoginScreen} from './auth/LoginScreen';
 export {OnboardingScreen} from './auth/OnboardingScreen';
 export {SignupScreen} from './auth/SignupScreen';
 export {SplashScreen} from './auth/SplashScreen';
+
+// Profile & Settings
+export {NotificationsScreen} from './profile/NotificationsScreen';
+export {ChangePasswordScreen} from './profile/ChangePasswordScreen';
+export {EmailPreferencesScreen} from './profile/EmailPreferencesScreen';
+export {LanguageScreen} from './profile/LanguageScreen';
+export {AboutScreen} from './profile/AboutScreen';
+export {PrivacyPolicyScreen} from './profile/PrivacyPolicyScreen';
+export {TermsOfServiceScreen} from './profile/TermsOfServiceScreen';

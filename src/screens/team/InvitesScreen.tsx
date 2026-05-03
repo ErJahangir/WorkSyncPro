@@ -1,5 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {View, StyleSheet, TouchableOpacity, ScrollView, RefreshControl} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  RefreshControl,
+} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {useTheme} from '@/theme';
@@ -37,7 +43,10 @@ export const InvitesScreen: React.FC = () => {
 
   const handleAccept = async (inviteId: string) => {
     if (!user) return;
-    const resultAction = await dispatch(acceptInvite({inviteId, userId: user.id}));
+    const resultAction = await dispatch(
+      acceptInvite({inviteId, userId: user.id}),
+    );
+
     if (acceptInvite.fulfilled.match(resultAction)) {
       fetchInvites();
     }
@@ -79,7 +88,8 @@ export const InvitesScreen: React.FC = () => {
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.actionButton, styles.rejectButton]}>
-                  <RNText style={[styles.buttonText, {color: theme.colors.error}]}>
+                  <RNText
+                    style={[styles.buttonText, {color: theme.colors.error}]}>
                     Decline
                   </RNText>
                 </TouchableOpacity>

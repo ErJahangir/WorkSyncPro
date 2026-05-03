@@ -7,9 +7,8 @@ import React from 'react';
 import {View, TouchableOpacity, StyleSheet} from 'react-native';
 import {useTheme} from '@/theme';
 import {Task, TaskPriority, TaskStatus} from '@/types';
-import {Avatar, Badge} from '@/components';
 import {formatDeadline, isOverdue} from '@/utils';
-import {RNText} from '@/components/common';
+import {Avatar, Badge, RNText} from '../common';
 
 interface TaskCardProps {
   task: Task;

@@ -18,7 +18,7 @@ export const fetchTeams = createAsyncThunk(
       const {data, error} = await db.getTeams(userId);
       if (error) return rejectWithValue(error.message);
       return (data || []).map((d: {team: Team}) => d.team).filter(Boolean);
-    } catch {
+    } catch (error) {
       return rejectWithValue('Failed to load teams');
     }
   },

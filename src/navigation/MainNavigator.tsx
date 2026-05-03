@@ -11,6 +11,7 @@ import {
   type MainTabParamList,
   type TaskStackParamList,
   type TeamStackParamList,
+  type ProfileStackParamList,
 } from '@/types';
 import {useTheme} from '@/theme';
 import {
@@ -28,13 +29,21 @@ import {
   TaskListScreen,
   TeamDetailScreen,
   TeamScreen,
+  NotificationsScreen,
+  ChangePasswordScreen,
+  EmailPreferencesScreen,
+  LanguageScreen,
+  AboutScreen,
+  PrivacyPolicyScreen,
+  TermsOfServiceScreen,
 } from '@/screens';
-import {useAppSelector} from '@/hooks';
+import {useAppSelector, useRealtimeNotifications} from '@/hooks';
 import {RNText} from '@/components/common';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 const TaskStack = createNativeStackNavigator<TaskStackParamList>();
 const TeamStack = createNativeStackNavigator<TeamStackParamList>();
+const ProfileStack = createNativeStackNavigator<ProfileStackParamList>();
 
 // Tab icon component
 const TabIcon: React.FC<{
@@ -46,14 +55,17 @@ const TabIcon: React.FC<{
 }> = ({icon, label, focused, color, badge}) => (
   <View style={styles.tabItem}>
     <View style={styles.iconWrapper}>
-      <RNText style={[styles.icon, {opacity: focused ? 1 : 0.6}]}>{icon}</RNText>
+      <RNText style={[styles.icon, {opacity: focused ? 1 : 0.6}]}>
+        {icon}
+      </RNText>
       {badge && badge > 0 ? (
         <View style={styles.badge}>
           <RNText style={styles.badgeText}>{badge > 99 ? '99+' : badge}</RNText>
         </View>
       ) : null}
     </View>
-    <RNText style={[styles.label, {color, fontWeight: focused ? '600' : '400'}]}>
+    <RNText
+      style={[styles.label, {color, fontWeight: focused ? '600' : '400'}]}>
       {label}
     </RNText>
   </View>
@@ -147,10 +159,69 @@ const TeamStackNavigator: React.FC = () => {
   );
 };
 
+// Profile Stack Navigator
+const ProfileStackNavigator: React.FC = () => {
+  const {theme} = useTheme();
+  return (
+    <ProfileStack.Navigator
+      screenOptions={{
+        headerStyle: {backgroundColor: theme.colors.surface},
+        headerTintColor: theme.colors.text,
+        headerTitleStyle: {fontWeight: '600', fontSize: 17},
+        headerShadowVisible: false,
+      }}>
+      <ProfileStack.Screen
+        name="ProfileHome"
+        component={ProfileScreen}
+        options={{headerShown: false}}
+      />
+      <ProfileStack.Screen
+        name="Notifications"
+        component={NotificationsScreen}
+        options={{title: 'Notifications'}}
+      />
+      <ProfileStack.Screen
+        name="ChangePassword"
+        component={ChangePasswordScreen}
+        options={{title: 'Change Password'}}
+      />
+      <ProfileStack.Screen
+        name="EmailPreferences"
+        component={EmailPreferencesScreen}
+        options={{title: 'Email Preferences'}}
+      />
+      <ProfileStack.Screen
+        name="Language"
+        component={LanguageScreen}
+        options={{title: 'Language'}}
+      />
+      <ProfileStack.Screen
+        name="About"
+        component={AboutScreen}
+        options={{title: 'About'}}
+      />
+      <ProfileStack.Screen
+        name="PrivacyPolicy"
+        component={PrivacyPolicyScreen}
+        options={{title: 'Privacy Policy'}}
+      />
+      <ProfileStack.Screen
+        name="TermsOfService"
+        component={TermsOfServiceScreen}
+        options={{title: 'Terms of Service'}}
+      />
+    </ProfileStack.Navigator>
+  );
+};
+
 // Main Tab Navigator
 export const MainNavigator: React.FC = () => {
   const {theme} = useTheme();
+  const {user} = useAppSelector(state => state.auth);
   const {unreadCount} = useAppSelector(state => state.notifications);
+
+  // Listen for global notifications
+  useRealtimeNotifications(user?.id);
 
   return (
     <Tab.Navigator
@@ -218,7 +289,7 @@ export const MainNavigator: React.FC = () => {
       />
       <Tab.Screen
         name="Profile"
-        component={ProfileScreen}
+        component={ProfileStackNavigator}
         options={{
           tabBarIcon: ({focused, color}) => (
             <TabIcon

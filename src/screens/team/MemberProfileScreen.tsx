@@ -18,12 +18,20 @@ export const MemberProfileScreen: React.FC = () => {
   const styles = createStyles(theme);
   const route = useRoute<any>();
   const {members} = useAppSelector(s => s.team);
+  const {tasks} = useAppSelector(s => s.tasks);
   const member = members.find(m => m.user_id === route.params?.userId);
 
+  const memberTasks = tasks.filter(t => t.assigned_to === member?.user_id);
+  const completedTasks = memberTasks.filter(t => t.status === 'completed');
+  const completionRate =
+    memberTasks.length > 0
+      ? Math.round((completedTasks.length / memberTasks.length) * 100)
+      : 0;
+
   const stats = [
-    {label: 'Tasks Assigned', value: '12'},
-    {label: 'Tasks Completed', value: '8'},
-    {label: 'Completion Rate', value: '67%'},
+    {label: 'Tasks Assigned', value: memberTasks.length.toString()},
+    {label: 'Tasks Completed', value: completedTasks.length.toString()},
+    {label: 'Completion Rate', value: `${completionRate}%`},
     {
       label: 'Member Since',
       value: member ? new Date(member.joined_at).toLocaleDateString() : '—',

@@ -4,13 +4,19 @@
  */
 
 import React, {useEffect} from 'react';
-import {View, StyleSheet, TouchableOpacity, ScrollView, RefreshControl} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  RefreshControl,
+} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useNavigation} from '@react-navigation/native';
 import {useTheme} from '@/theme';
 import type {Theme} from '@/theme';
 import {useAppDispatch, useAppSelector} from '@/hooks';
-import {fetchTeams, fetchTeamMembers} from '@/store/slices';
+import {fetchTeams, fetchTeamMembers, setSelectedTeam} from '@/store/slices';
 import {EmptyState} from '@/components';
 import {TeamMemberRow} from './components';
 import {RNText} from '@/components/common';
@@ -21,7 +27,7 @@ export const TeamScreen: React.FC = () => {
   const navigation = useNavigation<any>();
   const dispatch = useAppDispatch();
   const {user} = useAppSelector(s => s.auth);
-  const {members, isLoading} = useAppSelector(s => s.team);
+  const {teams, members, selectedTeam, isLoading} = useAppSelector(s => s.team);
 
   useEffect(() => {
     if (user) {
@@ -30,15 +36,24 @@ export const TeamScreen: React.FC = () => {
   }, [user, dispatch]);
 
   useEffect(() => {
-    // If a team is selected, fetch its members
-    const teamId = 'default'; // For now, or get from state
-    dispatch(fetchTeamMembers(teamId));
-  }, [dispatch]);
+    // If we have teams but none selected, select the first one
+    if (teams.length > 0 && !selectedTeam) {
+      dispatch(setSelectedTeam(teams[0]));
+    }
+  }, [teams, selectedTeam, dispatch]);
+
+  useEffect(() => {
+    if (selectedTeam) {
+      dispatch(fetchTeamMembers(selectedTeam.id));
+    }
+  }, [selectedTeam, dispatch]);
 
   const onRefresh = () => {
     if (user) {
       dispatch(fetchTeams(user.id));
-      dispatch(fetchTeamMembers(user.id));
+      if (selectedTeam) {
+        dispatch(fetchTeamMembers(selectedTeam.id));
+      }
     }
   };
 
@@ -72,12 +87,49 @@ export const TeamScreen: React.FC = () => {
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() =>
-                navigation.navigate('InviteMember', {teamId: 'default'})
+                navigation.navigate('InviteMember', {
+                  teamId: selectedTeam?.id || 'default',
+                })
               }
               style={styles.addButton}>
               <RNText style={styles.addButtonText}>+ Invite</RNText>
             </TouchableOpacity>
           </View>
+        </View>
+
+        {/* Teams List */}
+        <View style={styles.section}>
+          <RNText style={styles.sectionTitle}>Your Teams</RNText>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.teamsList}>
+            {teams.map(team => {
+              const isSelected = selectedTeam?.id === team.id;
+              return (
+                <TouchableOpacity
+                  key={team.id}
+                  onPress={() => dispatch(setSelectedTeam(team))}
+                  style={[
+                    styles.teamCard,
+                    isSelected && styles.selectedTeamCard,
+                  ]}>
+                  <View style={styles.teamAvatar}>
+                    <RNText style={styles.teamAvatarText}>
+                      {team.name.substring(0, 2).toUpperCase()}
+                    </RNText>
+                  </View>
+                  <RNText
+                    style={[
+                      styles.teamName,
+                      isSelected && styles.selectedTeamName,
+                    ]}>
+                    {team.name}
+                  </RNText>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
         </View>
 
         {/* Members */}
@@ -151,6 +203,60 @@ const createStyles = (theme: Theme) =>
     headerIconText: {
       fontSize: 20,
     },
+    section: {
+      paddingVertical: 16,
+    },
+    sectionTitle: {
+      fontSize: 16,
+      fontWeight: '700',
+      color: theme.colors.text,
+      paddingHorizontal: 20,
+      marginBottom: 12,
+    },
+    teamsList: {
+      paddingHorizontal: 20,
+      gap: 12,
+    },
+    teamCard: {
+      width: 100,
+      alignItems: 'center',
+      padding: 12,
+      borderRadius: 16,
+      backgroundColor: theme.colors.surface,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    selectedTeamCard: {
+      borderColor: theme.colors.primary,
+      backgroundColor: theme.colors.primaryLight,
+    },
+    teamAvatar: {
+      width: 48,
+      height: 48,
+      borderRadius: 24,
+      backgroundColor: theme.colors.primary,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: 8,
+    },
+    teamAvatarText: {
+      color: '#fff',
+      fontSize: 18,
+      fontWeight: '700',
+    },
+    teamName: {
+      fontSize: 12,
+      fontWeight: '600',
+      color: theme.colors.textSecondary,
+      textAlign: 'center',
+    },
+    selectedTeamName: {
+      color: theme.colors.primary,
+    },
+    membersContainer: {
+      flex: 1,
+      paddingTop: 10,
+    },
     addButton: {
       paddingHorizontal: 16,
       paddingVertical: 10,
@@ -162,15 +268,15 @@ const createStyles = (theme: Theme) =>
       fontSize: 16,
       fontWeight: '600',
     },
-    membersContainer: {
-      paddingHorizontal: theme.spacing.base,
-    },
-    sectionTitle: {
-      fontSize: 17,
-      fontWeight: '700',
-      marginBottom: 12,
-      color: theme.colors.text,
-    },
+    // membersContainer: {
+    //   paddingHorizontal: theme.spacing.base,
+    // },
+    // sectionTitle: {
+    //   fontSize: 17,
+    //   fontWeight: '700',
+    //   marginBottom: 12,
+    //   color: theme.colors.text,
+    // },
     footerSpacer: {
       height: 32,
     },

@@ -4,16 +4,22 @@
  */
 
 import React from 'react';
-import {View, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import {useTheme} from '@/theme';
-import type {Theme} from '@/theme';
-import {useAppDispatch, useAppSelector} from '@/hooks';
-import {createTask} from '@/store/slices';
-import {Button} from '@/components';
+
 import {TaskFormData, TaskPriority, TaskStatus} from '@/types';
+import {useAppDispatch, useAppSelector} from '@/hooks';
+import {useTheme, type Theme} from '@/theme';
+import {createTask} from '@/store/slices';
 import {TaskForm} from './components';
-import {RNText} from '@/components/common';
+import {RNText} from '@/components';
 
 export const CreateTaskScreen: React.FC = () => {
   const {theme} = useTheme();
@@ -34,6 +40,7 @@ export const CreateTaskScreen: React.FC = () => {
           status: data.status as TaskStatus,
           tags: data.tagsList,
           team_id: (data as any).team_id,
+          assigned_to: (data as any).assigned_to,
         },
         userId: user.id,
       }),

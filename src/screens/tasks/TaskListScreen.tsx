@@ -37,6 +37,7 @@ export const TaskListScreen: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigation = useNavigation<any>();
 
+  const {user} = useAppSelector(s => s.auth);
   const tasks = useAppSelector(selectAllTasks);
   const isLoading = useAppSelector(selectTasksLoading);
   const isRefreshing = useAppSelector(selectTasksRefreshing);
@@ -58,18 +59,29 @@ export const TaskListScreen: React.FC = () => {
   }, [debouncedSearch, dispatch]);
 
   useEffect(() => {
-    dispatch(fetchTasks({refresh: true}));
-  }, [filter.status, filter.priority, filter.search, filter.sortBy, dispatch]);
+    if (user) {
+      dispatch(fetchTasks({refresh: true}));
+    }
+  }, [
+    filter.status,
+    filter.priority,
+    filter.search,
+    filter.sortBy,
+    user?.id,
+    dispatch,
+  ]);
 
   const onRefresh = useCallback(() => {
-    dispatch(fetchTasks({refresh: true}));
-  }, [dispatch]);
+    if (user) {
+      dispatch(fetchTasks({refresh: true}));
+    }
+  }, [user, dispatch]);
 
   const onEndReached = useCallback(() => {
-    if (!isLoading && pagination.hasMore && tasks.length > 0) {
+    if (user && !isLoading && pagination.hasMore && tasks.length > 0) {
       dispatch(fetchTasks({refresh: false}));
     }
-  }, [isLoading, pagination.hasMore, tasks.length, dispatch]);
+  }, [user, isLoading, pagination.hasMore, tasks.length, dispatch]);
 
   const renderTask = useCallback(
     ({item}: {item: Task}) => (

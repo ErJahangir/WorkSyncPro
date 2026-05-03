@@ -14,8 +14,7 @@ import {
 } from 'react-native';
 import {useTheme} from '@/theme';
 import {TaskFilter, TaskPriority, TaskStatus} from '@/types';
-import {Button} from '@/components';
-import {RNText} from '@/components/common';
+import {Button, RNText} from '../common';
 
 interface TaskFilterModalProps {
   visible: boolean;

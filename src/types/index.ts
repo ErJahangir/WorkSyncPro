@@ -210,6 +210,17 @@ export type MainTabParamList = {
   Profile: undefined;
 };
 
+export type ProfileStackParamList = {
+  ProfileHome: undefined;
+  Notifications: undefined;
+  ChangePassword: undefined;
+  EmailPreferences: undefined;
+  Language: undefined;
+  About: undefined;
+  PrivacyPolicy: undefined;
+  TermsOfService: undefined;
+};
+
 export type TaskStackParamList = {
   TaskList: undefined;
   TaskDetail: {taskId: string};

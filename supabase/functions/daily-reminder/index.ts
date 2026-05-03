@@ -30,8 +30,6 @@ Deno.serve(async (req: Request) => {
       .toString()
       .padStart(2, '0')}:${currentMinute.toString().padStart(2, '0')}:00`;
 
-    console.log(`Checking reminders for ${timeString}`);
-
     const {data: tokens, error: tokenError} = await supabase
       .from('fcm_tokens')
       .select('user_id, token, platform')
@@ -79,14 +77,77 @@ Deno.serve(async (req: Request) => {
   }
 });
 
-async function getGoogleAccessToken(serviceAccount: ServiceAccount) {
-  // Logic for fetching Google Access Token using the Service Account
-  // This usually involves a JWT signed with RS256.
-  // For this environment, ensure the token is fetched or the library is available.
+function base64url(str: string): string {
+  return btoa(str).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
 
-  // Note: This is a structural placeholder for the token exchange.
-  // Real implementation requires 'jose' or 'google-auth-library' equivalent.
-  return 'TOKEN_PLACEHOLDER';
+async function getGoogleAccessToken(serviceAccount: ServiceAccount) {
+  try {
+    const iat = Math.floor(Date.now() / 1000);
+    const exp = iat + 3600;
+    const header = {alg: 'RS256', typ: 'JWT'};
+    const payload = {
+      iss: serviceAccount.client_email,
+      scope: 'https://www.googleapis.com/auth/firebase.messaging',
+      aud: 'https://oauth2.googleapis.com/token',
+      exp,
+      iat,
+    };
+
+    const encodedHeader = base64url(JSON.stringify(header));
+    const encodedPayload = base64url(JSON.stringify(payload));
+    const signatureInput = `${encodedHeader}.${encodedPayload}`;
+
+    const pemHeader = '-----BEGIN PRIVATE KEY-----';
+    const pemFooter = '-----END PRIVATE KEY-----';
+    const privateKeyPem = serviceAccount.private_key
+      .replace(pemHeader, '')
+      .replace(pemFooter, '')
+      .replace(/\s/g, '');
+
+    const binaryKey = Uint8Array.from(atob(privateKeyPem), c =>
+      c.charCodeAt(0),
+    );
+    const key = await crypto.subtle.importKey(
+      'pkcs8',
+      binaryKey,
+      {name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256'},
+      false,
+      ['sign'],
+    );
+
+    const signature = await crypto.subtle.sign(
+      'RSASSA-PKCS1-v1_5',
+      key,
+      new TextEncoder().encode(signatureInput),
+    );
+
+    const encodedSignature = btoa(
+      String.fromCharCode(...new Uint8Array(signature)),
+    )
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '');
+
+    const jwt = `${signatureInput}.${encodedSignature}`;
+
+    const res = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      body: `grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=${jwt}`,
+    });
+
+    const data = await res.json();
+    if (data.error) {
+      throw new Error(
+        `Google Auth Error: ${data.error_description || data.error}`,
+      );
+    }
+    return data.access_token;
+  } catch (e) {
+    console.error('JWT Generation Failed:', e);
+    throw e;
+  }
 }
 
 async function sendFCMv1(

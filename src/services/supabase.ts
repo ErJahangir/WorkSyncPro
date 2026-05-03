@@ -85,6 +85,13 @@ export const supabaseAuth = {
     });
     return {data, error};
   },
+
+  updatePassword: async (password: string) => {
+    const {data, error} = await supabase.auth.updateUser({
+      password,
+    });
+    return {data, error};
+  },
 };
 
 // ─── Database Helpers ─────────────────────────────────────
@@ -188,7 +195,12 @@ export const db = {
       .select()
       .single(),
 
-  sendInvite: (team_id: string, email: string, role: string, invited_by: string) =>
+  sendInvite: (
+    team_id: string,
+    email: string,
+    role: string,
+    invited_by: string,
+  ) =>
     supabase.from('team_invites').insert({
       team_id,
       email,
@@ -202,7 +214,8 @@ export const db = {
       .from('team_invites')
       .select('*, team:teams(*)')
       .eq('email', email)
-      .eq('status', 'pending'),
+      .eq('status', 'pending')
+      .order('created_at', {ascending: false}),
 
   respondToInvite: (inviteId: string, status: 'accepted' | 'rejected') =>
     supabase.from('team_invites').update({status}).eq('id', inviteId),
@@ -272,8 +285,6 @@ export const storage = {
         contentType: fileType,
         upsert: true,
       });
-
-    console.log('Upload Debug:', {path, error, data});
 
     if (error) return {url: null, error};
 

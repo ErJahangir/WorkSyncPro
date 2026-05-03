@@ -4,15 +4,26 @@
  */
 
 import React, {useEffect, useCallback} from 'react';
-import {View, ScrollView, StyleSheet, TouchableOpacity, RefreshControl, Dimensions} from 'react-native';
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  RefreshControl,
+} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useNavigation} from '@react-navigation/native';
-import {useAppDispatch, useAppSelector, useRealtimeTasks} from '@/hooks';
+import {
+  useAppDispatch,
+  useAppSelector,
+  useRealtimeNotifications,
+  useRealtimeTasks,
+} from '@/hooks';
 import {useTheme} from '@/theme';
 import type {Theme} from '@/theme';
 import {
   fetchTasks,
-  fetchTeamMembers,
+  fetchTeams,
   selectAllTasks,
   selectTaskStats,
 } from '@/store/slices';
@@ -33,8 +44,9 @@ export const DashboardScreen: React.FC = () => {
   const stats = useAppSelector(selectTaskStats);
   const tasks = useAppSelector(selectAllTasks);
 
-  // Realtime task subscription
+  // Realtime subscriptions
   useRealtimeTasks(user?.id);
+  useRealtimeNotifications(user?.id);
 
   useEffect(() => {
     // Only perform the initial fetch if we have a user and don't have tasks yet
@@ -42,7 +54,7 @@ export const DashboardScreen: React.FC = () => {
       dispatch(fetchTasks({refresh: false}));
     }
     if (user) {
-      dispatch(fetchTeamMembers(user.id));
+      dispatch(fetchTeams(user.id));
     }
   }, [dispatch, user?.id]);
 

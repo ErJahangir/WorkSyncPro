@@ -4,7 +4,13 @@
  */
 
 import React, {useState} from 'react';
-import {View, StyleSheet, TouchableOpacity, ScrollView, TextInput} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  TextInput,
+} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {useTheme} from '@/theme';
@@ -22,7 +28,9 @@ export const InviteMemberScreen: React.FC = () => {
   const navigation = useNavigation<any>();
   const dispatch = useDispatch<AppDispatch>();
   const user = useSelector((state: RootState) => state.auth.user);
-  const selectedTeam = useSelector((state: RootState) => state.team.selectedTeam);
+  const selectedTeam = useSelector(
+    (state: RootState) => state.team.selectedTeam,
+  );
 
   const [email, setEmail] = useState('');
   const [role, setRole] = useState<'admin' | 'manager' | 'user'>('user');

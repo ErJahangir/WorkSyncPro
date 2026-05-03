@@ -23,8 +23,13 @@ import {Avatar, Card, Divider, Button, ActionSheet} from '@/components';
 import {ProfileInfoCard, SettingRow, AccountMenuItem} from './components';
 import {RNText} from '@/components/common';
 import {pickImageFromLibrary, takePhotoWithCamera, formatTime} from '@/utils';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {ProfileStackParamList} from '@/types';
 
 export const ProfileScreen: React.FC = () => {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<ProfileStackParamList>>();
   const {theme, toggleTheme, isDark} = useTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const dispatch = useAppDispatch();
@@ -48,8 +53,6 @@ export const ProfileScreen: React.FC = () => {
           asset.type || 'image/jpeg',
           asset.base64,
         );
-        console.log('ProfileScreen Upload Result:', {url, error});
-        console.log(error, url, '====');
 
         if (error) throw error;
 
@@ -59,8 +62,6 @@ export const ProfileScreen: React.FC = () => {
           );
         }
       } catch (err: any) {
-        console.log(err);
-
         Alert.alert(
           'Upload Failed',
           err.message || 'Could not update profile image',
@@ -194,12 +195,41 @@ export const ProfileScreen: React.FC = () => {
 
           <Card padding={0}>
             {[
-              {icon: '🔒', label: 'Change Password', onPress: () => {}},
-              {icon: '📧', label: 'Email Preferences', onPress: () => {}},
-              {icon: '🌐', label: 'Language', onPress: () => {}},
-              {icon: 'ℹ️', label: 'About WorkSync Pro', onPress: () => {}},
-              {icon: '📄', label: 'Privacy Policy', onPress: () => {}},
-              {icon: '📜', label: 'Terms of Service', onPress: () => {}},
+              {
+                icon: '🔔',
+                label: 'Notifications',
+                onPress: () => navigation.navigate('Notifications'),
+              },
+              {
+                icon: '🔒',
+                label: 'Change Password',
+                onPress: () => navigation.navigate('ChangePassword'),
+              },
+              {
+                icon: '📧',
+                label: 'Email Preferences',
+                onPress: () => navigation.navigate('EmailPreferences'),
+              },
+              {
+                icon: '🌐',
+                label: 'Language',
+                onPress: () => navigation.navigate('Language'),
+              },
+              {
+                icon: 'ℹ️',
+                label: 'About WorkSync Pro',
+                onPress: () => navigation.navigate('About'),
+              },
+              {
+                icon: '📄',
+                label: 'Privacy Policy',
+                onPress: () => navigation.navigate('PrivacyPolicy'),
+              },
+              {
+                icon: '📜',
+                label: 'Terms of Service',
+                onPress: () => navigation.navigate('TermsOfService'),
+              },
             ].map((item, i, arr) => (
               <AccountMenuItem
                 key={item.label}

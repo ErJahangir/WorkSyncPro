@@ -23,6 +23,7 @@ const schema = yup.object().shape({
   tags: yup.mixed<string | string[]>().optional(),
   deadline: yup.date().optional(),
   team_id: yup.string().optional().nullable(),
+  assigned_to: yup.string().optional().nullable(),
 });
 
 interface TaskFormProps {
@@ -66,11 +67,14 @@ export const TaskForm: React.FC<TaskFormProps> = ({
       tags: '',
       deadline: initialValues?.deadline,
       team_id: initialValues?.team_id || null,
+      assigned_to: initialValues?.assigned_to || null,
     },
   });
 
   const teams = useSelector((state: RootState) => state.team.teams);
+  const members = useSelector((state: RootState) => state.team.members);
   const selectedTeamId = watch('team_id');
+  const assignedToId = watch('assigned_to');
 
   const priority = watch('priority');
   const status = watch('status');
@@ -143,7 +147,11 @@ export const TaskForm: React.FC<TaskFormProps> = ({
           <SectionLabel title="Assign to Team" />
           <OptionPicker
             selected={selectedTeamId || 'personal'}
-            onSelect={val => setValue('team_id', val === 'personal' ? null : val)}
+            onSelect={val => {
+              const teamId = val === 'personal' ? null : val;
+              setValue('team_id', teamId);
+              setValue('assigned_to', null); // Reset assignee when team changes
+            }}
             options={[
               {
                 value: 'personal',
@@ -157,6 +165,33 @@ export const TaskForm: React.FC<TaskFormProps> = ({
                 icon: '👥',
                 color: theme.colors.primary,
               })),
+            ]}
+          />
+        </View>
+      )}
+
+      {/* Member Assignment (Only if a team is selected) */}
+      {selectedTeamId && members.length > 0 && (
+        <View style={styles.section}>
+          <SectionLabel title="Assignee" />
+          <OptionPicker
+            selected={assignedToId || 'unassigned'}
+            onSelect={val => setValue('assigned_to', val === 'unassigned' ? null : val)}
+            options={[
+              {
+                value: 'unassigned',
+                label: 'Unassigned',
+                icon: '👤',
+                color: theme.colors.textTertiary,
+              },
+              ...members
+                .filter(m => m.team_id === selectedTeamId)
+                .map(m => ({
+                  value: m.user_id,
+                  label: m.user?.name || 'Unknown',
+                  icon: '👤',
+                  color: theme.colors.primary,
+                })),
             ]}
           />
         </View>

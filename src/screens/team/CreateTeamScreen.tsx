@@ -1,5 +1,11 @@
 import React, {useState} from 'react';
-import {View, StyleSheet, TouchableOpacity, ScrollView, TextInput} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  TextInput,
+} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {useTheme} from '@/theme';
