@@ -1,16 +1,12 @@
-/**
- * WorkSync Pro - Auth Navigator
- */
-
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {AuthStackParamList} from '@/types/index';
-import {LoginScreen} from '@screens/auth/LoginScreen';
-import {SignupScreen} from '@screens/auth/SignupScreen';
+import {AuthStackParamList} from '@/types';
 import {
   EmailVerificationScreen,
   ForgotPasswordScreen,
-} from '@screens/auth/ForgotPasswordScreen';
+  LoginScreen,
+  SignupScreen,
+} from '@/screens';
 
 const Stack = createNativeStackNavigator<AuthStackParamList>();
 

@@ -6,7 +6,6 @@
 import React, {useEffect} from 'react';
 import {
   View,
-  Text,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
@@ -14,32 +13,28 @@ import {
   Platform,
   Animated,
 } from 'react-native';
+import * as yup from 'yup';
 import {useForm, Controller} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
-import * as yup from 'yup';
+import {emailSchema, passwordSchema} from '@/utils';
 import {useNavigation} from '@react-navigation/native';
-import {useTheme} from '@theme/ThemeProvider';
-import {useAppDispatch} from '@hooks/useAppSelector';
-import {useAppSelector} from '@hooks/useAppSelector';
-import {loginUser, loginWithGoogle, clearError} from '@store/slices/authSlice';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import {Button} from '@components/common/Button';
-import {Input} from '@components/common/Input';
-import {LoginFormData} from '@/types/index';
+
+import {useTheme} from '@/theme';
+import type {Theme} from '@/theme';
+import {useAppDispatch, useAppSelector, useGoogleLogin} from '@/hooks';
+import {clearAuthError, loginUser, loginWithGoogle} from '@/store/slices';
+import {LoginFormData} from '@/types';
+import {Button, Input} from '@/components';
+import {RNText} from '@/components/common';
 
 const schema = yup.object({
-  email: yup
-    .string()
-    .required('Email is required')
-    .email('Enter a valid email address'),
-  password: yup
-    .string()
-    .required('Password is required')
-    .min(6, 'Password must be at least 6 characters'),
+  email: emailSchema,
+  password: passwordSchema,
 });
 
 export const LoginScreen: React.FC = () => {
   const {theme} = useTheme();
+  const styles = createStyles(theme);
   const navigation = useNavigation<any>();
   const dispatch = useAppDispatch();
   const {isLoading, error} = useAppSelector(state => state.auth);
@@ -61,7 +56,7 @@ export const LoginScreen: React.FC = () => {
       }),
     ]).start();
     return () => {
-      dispatch(clearError());
+      dispatch(clearAuthError());
     };
   }, []);
 
@@ -74,32 +69,18 @@ export const LoginScreen: React.FC = () => {
     defaultValues: {email: '', password: ''},
   });
 
+  const {signInWithGoogle, isGoogleLoading} = useGoogleLogin();
+
   const onSubmit = async (data: LoginFormData) => {
     await dispatch(loginUser(data));
   };
 
-  const onGoogleLogin = async () => {
-    try {
-      await GoogleSignin.hasPlayServices();
-      const userInfo = await GoogleSignin.signIn();
-      console.log(userInfo, '==');
-
-      if (userInfo.data?.idToken) {
-        await dispatch(loginWithGoogle(userInfo.data.idToken));
-      }
-    } catch (err) {
-      console.log('Google login error:', err);
-    }
-  };
-
-  console.log(error, 'error');
-
   return (
     <KeyboardAvoidingView
-      style={{flex: 1}}
+      style={styles.keyboardView}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <ScrollView
-        style={[styles.container, {backgroundColor: theme.colors.background}]}
+        style={styles.scrollView}
         contentContainerStyle={styles.content}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}>
@@ -109,30 +90,13 @@ export const LoginScreen: React.FC = () => {
             styles.header,
             {opacity: fadeAnim, transform: [{translateY: slideAnim}]},
           ]}>
-          <View
-            style={[styles.logoIcon, {backgroundColor: theme.colors.primary}]}>
-            <Text style={{fontSize: 32}}>⚡</Text>
+          <View style={styles.logoIcon}>
+            <RNText style={styles.logoEmoji}>⚡</RNText>
           </View>
-          <Text
-            style={[
-              styles.title,
-              {
-                color: theme.colors.text,
-                fontSize: theme.typography.fontSize['4xl'],
-              },
-            ]}>
-            Welcome back
-          </Text>
-          <Text
-            style={[
-              styles.subtitle,
-              {
-                color: theme.colors.textSecondary,
-                fontSize: theme.typography.fontSize.base,
-              },
-            ]}>
+          <RNText style={styles.title}>Welcome back</RNText>
+          <RNText style={styles.subtitle}>
             Sign in to your WorkSync Pro account
-          </Text>
+          </RNText>
         </Animated.View>
 
         {/* Form */}
@@ -143,19 +107,8 @@ export const LoginScreen: React.FC = () => {
           ]}>
           {/* Error banner */}
           {error && (
-            <View
-              style={[
-                styles.errorBanner,
-                {backgroundColor: theme.colors.errorLight},
-              ]}>
-              <Text
-                style={{
-                  color: theme.colors.error,
-                  fontSize: 13,
-                  fontWeight: '500',
-                }}>
-                ⚠️ {error}
-              </Text>
+            <View style={styles.errorBanner}>
+              <RNText style={styles.errorText}>⚠️ {error}</RNText>
             </View>
           )}
 
@@ -174,7 +127,7 @@ export const LoginScreen: React.FC = () => {
                 onChangeText={onChange}
                 onBlur={onBlur}
                 error={errors.email?.message}
-                leftIcon={<Text style={{fontSize: 16}}>✉️</Text>}
+                leftIcon={<RNText style={styles.inputIcon}>✉️</RNText>}
               />
             )}
           />
@@ -191,7 +144,7 @@ export const LoginScreen: React.FC = () => {
                 onChangeText={onChange}
                 onBlur={onBlur}
                 error={errors.password?.message}
-                leftIcon={<Text style={{fontSize: 16}}>🔒</Text>}
+                leftIcon={<RNText style={styles.inputIcon}>🔒</RNText>}
                 showPasswordToggle
                 secureTextEntry
               />
@@ -202,14 +155,7 @@ export const LoginScreen: React.FC = () => {
           <TouchableOpacity
             onPress={() => navigation.navigate('ForgotPassword')}
             style={styles.forgotButton}>
-            <Text
-              style={{
-                color: theme.colors.primary,
-                fontWeight: '600',
-                fontSize: theme.typography.fontSize.sm,
-              }}>
-              Forgot Password?
-            </Text>
+            <RNText style={styles.forgotButtonText}>Forgot Password?</RNText>
           </TouchableOpacity>
 
           <Button
@@ -218,52 +164,35 @@ export const LoginScreen: React.FC = () => {
             loading={isLoading}
             fullWidth
             size="lg"
-            style={{marginTop: 8}}
+            style={styles.submitButton}
           />
 
           {/* Divider */}
           <View style={styles.dividerContainer}>
-            <View
-              style={[styles.divider, {backgroundColor: theme.colors.border}]}
-            />
-            <Text
-              style={[styles.dividerText, {color: theme.colors.textTertiary}]}>
-              or
-            </Text>
-            <View
-              style={[styles.divider, {backgroundColor: theme.colors.border}]}
-            />
+            <View style={styles.divider} />
+            <RNText style={styles.dividerText}>or</RNText>
+            <View style={styles.divider} />
           </View>
 
           <Button
             title="Continue with Google"
-            onPress={onGoogleLogin}
+            onPress={signInWithGoogle}
             variant="outline"
             fullWidth
             size="lg"
-            leftIcon={<Text style={{fontSize: 18}}>🌐</Text>}
-            style={{marginBottom: 16}}
+            loading={isGoogleLoading}
+            icon={<RNText style={styles.googleIcon}>🌐</RNText>}
+            style={styles.googleButton}
           />
 
           {/* Sign up link */}
           <TouchableOpacity
             onPress={() => navigation.navigate('Signup')}
             style={styles.signupLink}>
-            <Text
-              style={{
-                color: theme.colors.textSecondary,
-                fontSize: theme.typography.fontSize.base,
-                textAlign: 'center',
-              }}>
+            <RNText style={styles.signupText}>
               Don't have an account?{' '}
-              <Text
-                style={{
-                  color: theme.colors.primary,
-                  fontWeight: '700',
-                }}>
-                Create Account
-              </Text>
-            </Text>
+              <RNText style={styles.signupHighlight}>Create Account</RNText>
+            </RNText>
           </TouchableOpacity>
         </Animated.View>
       </ScrollView>
@@ -271,56 +200,97 @@ export const LoginScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {flex: 1},
-  content: {
-    paddingHorizontal: 24,
-    paddingTop: 80,
-    paddingBottom: 40,
-  },
-  header: {
-    alignItems: 'center',
-    marginBottom: 40,
-    gap: 12,
-  },
-  logoIcon: {
-    width: 68,
-    height: 68,
-    borderRadius: 18,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 8,
-    shadowColor: '#6366F1',
-    shadowOffset: {width: 0, height: 6},
-    shadowOpacity: 0.35,
-    shadowRadius: 12,
-    elevation: 8,
-  },
-  title: {
-    fontWeight: '800',
-    letterSpacing: -0.5,
-  },
-  subtitle: {
-    fontWeight: '400',
-  },
-  form: {gap: 2},
-  errorBanner: {
-    padding: 12,
-    borderRadius: 10,
-    marginBottom: 16,
-  },
-  forgotButton: {
-    alignSelf: 'flex-end',
-    marginBottom: 8,
-    paddingVertical: 4,
-  },
-  dividerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 20,
-    gap: 12,
-  },
-  divider: {flex: 1, height: 1},
-  dividerText: {fontSize: 13},
-  signupLink: {paddingVertical: 4},
-});
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    keyboardView: {flex: 1},
+    scrollView: {
+      backgroundColor: theme.colors.background,
+    },
+    content: {
+      paddingHorizontal: 24,
+      paddingTop: 80,
+      paddingBottom: 40,
+    },
+    header: {
+      alignItems: 'center',
+      marginBottom: 40,
+      gap: 12,
+    },
+    logoIcon: {
+      width: 68,
+      height: 68,
+      borderRadius: 18,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: 8,
+      shadowColor: '#6366F1',
+      shadowOffset: {width: 0, height: 6},
+      shadowOpacity: 0.35,
+      shadowRadius: 12,
+      elevation: 8,
+      backgroundColor: theme.colors.primary,
+    },
+    logoEmoji: {fontSize: 32},
+    title: {
+      fontWeight: '800',
+      letterSpacing: -0.5,
+      color: theme.colors.text,
+      fontSize: theme.typography.fontSize['4xl'],
+    },
+    subtitle: {
+      fontWeight: '400',
+      color: theme.colors.textSecondary,
+      fontSize: theme.typography.fontSize.base,
+    },
+    form: {gap: 2},
+    errorBanner: {
+      padding: 12,
+      borderRadius: 10,
+      marginBottom: 16,
+      backgroundColor: theme.colors.errorLight,
+    },
+    errorText: {
+      color: theme.colors.error,
+      fontSize: 13,
+      fontWeight: '500',
+    },
+    inputIcon: {fontSize: 16},
+    forgotButton: {
+      alignSelf: 'flex-end',
+      marginBottom: 8,
+      paddingVertical: 4,
+    },
+    forgotButtonText: {
+      color: theme.colors.primary,
+      fontWeight: '600',
+      fontSize: theme.typography.fontSize.sm,
+    },
+    submitButton: {marginTop: 8},
+    dividerContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginVertical: 20,
+      gap: 12,
+    },
+    divider: {
+      flex: 1,
+      height: 1,
+      backgroundColor: theme.colors.border,
+    },
+    dividerText: {
+      fontSize: 13,
+      color: theme.colors.textTertiary,
+    },
+    googleIcon: {fontSize: 18},
+    googleButton: {marginBottom: 16},
+    signupLink: {paddingVertical: 4},
+    signupText: {
+      color: theme.colors.textSecondary,
+      fontSize: theme.typography.fontSize.base,
+      textAlign: 'center',
+    },
+    signupHighlight: {
+      color: theme.colors.primary,
+      fontWeight: '700',
+    },
+  });

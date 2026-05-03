@@ -1,10 +1,5 @@
-/**
- * WorkSync Pro - UI Slice
- * Global UI state (network, modals, etc.)
- */
-
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {UIState} from '@/types/index';
+import {UIState} from '@/types';
 
 const initialState: UIState = {
   isNetworkAvailable: true,

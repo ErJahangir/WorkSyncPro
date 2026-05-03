@@ -3,67 +3,110 @@
  * User profile, settings, preferences, logout
  */
 
-import React, {useState} from 'react';
+import React, {useState, useCallback, useMemo} from 'react';
 import {
   View,
-  Text,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
-  TextInput,
-  Switch,
   Alert,
 } from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {useNavigation} from '@react-navigation/native';
-import {useTheme} from '@/theme/ThemeProvider';
-import {useAppDispatch, useAppSelector} from '@/hooks/useAppSelector';
-import {logoutUser, updateUserProfile} from '@/store/slices/authSlice';
-import {Avatar, Card, Divider} from '@/components/common';
-import {Input} from '@/components/common/Input';
-import {Button} from '@/components/common/Button';
-import {getFCMToken} from '@services/notificationService';
 import DatePicker from 'react-native-date-picker';
-import {selectTaskStats} from '@/store/slices/tasksSlice';
+import {SafeAreaView} from 'react-native-safe-area-context';
+
+import {useTheme} from '@/theme';
+import type {Theme} from '@/theme';
+import {getFCMToken, storage} from '@/services';
+import {useAppDispatch, useAppSelector} from '@/hooks';
+import {logoutUser, updateUserProfile} from '@/store/slices';
+import {Avatar, Card, Divider, Button, ActionSheet} from '@/components';
+import {ProfileInfoCard, SettingRow, AccountMenuItem} from './components';
+import {RNText} from '@/components/common';
+import {pickImageFromLibrary, takePhotoWithCamera, formatTime} from '@/utils';
 
 export const ProfileScreen: React.FC = () => {
   const {theme, toggleTheme, isDark} = useTheme();
-  const navigation = useNavigation<any>();
+  const styles = useMemo(() => createStyles(theme), [theme]);
   const dispatch = useAppDispatch();
   const {user} = useAppSelector(s => s.auth);
-  console.log('user', user);
-  const [editMode, setEditMode] = useState(false);
-  const [name, setName] = useState(user?.name || '');
-  const [bio, setBio] = useState(user?.bio || '');
-  const [saving, setSaving] = useState(false);
-  const taskStats = useAppSelector(selectTaskStats);
 
   const [reminderEnabled, setReminderEnabled] = useState(false);
   const [reminderTime, setReminderTime] = useState(new Date());
   const [datePickerOpen, setDatePickerOpen] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [imageSheetVisible, setImageSheetVisible] = useState(false);
 
-  const handleSave = async () => {
-    console.log('handleSave', user);
-    if (!user) return;
-    setSaving(true);
-    await dispatch(updateUserProfile({userId: user.id, updates: {name, bio}}));
-    setSaving(false);
-    setEditMode(false);
-  };
+  const handleImageSelected = useCallback(
+    async (asset: any) => {
+      if (!user || !asset.uri) return;
+      setUploadingImage(true);
 
-  const handleReminderToggle = (value: boolean) => {
-    setReminderEnabled(value);
-    if (value) {
-      setDatePickerOpen(true);
-    } else {
-      // Sync disabled status to Supabase
-      if (user) {
-        getFCMToken(user.id, false, reminderTime);
+      try {
+        const {url, error} = await storage.uploadAvatar(
+          user.id,
+          asset.uri,
+          asset.type || 'image/jpeg',
+          asset.base64,
+        );
+        console.log('ProfileScreen Upload Result:', {url, error});
+        console.log(error, url, '====');
+
+        if (error) throw error;
+
+        if (url) {
+          await dispatch(
+            updateUserProfile({userId: user.id, updates: {avatar: url}}),
+          );
+        }
+      } catch (err: any) {
+        console.log(err);
+
+        Alert.alert(
+          'Upload Failed',
+          err.message || 'Could not update profile image',
+        );
+      } finally {
+        setUploadingImage(false);
       }
-    }
-  };
+    },
+    [user, dispatch],
+  );
 
-  const handleLogout = () => {
+  const handleCameraCapture = useCallback(async () => {
+    const asset = await takePhotoWithCamera();
+    if (asset) handleImageSelected(asset);
+  }, [handleImageSelected]);
+
+  const handleGalleryPick = useCallback(async () => {
+    const asset = await pickImageFromLibrary();
+    if (asset) handleImageSelected(asset);
+  }, [handleImageSelected]);
+
+  const handleUpdateProfile = useCallback(
+    async (name: string, bio: string) => {
+      if (!user) return;
+      await dispatch(
+        updateUserProfile({userId: user.id, updates: {name, bio}}),
+      );
+    },
+    [user, dispatch],
+  );
+
+  const handleReminderToggle = useCallback(
+    (value: boolean) => {
+      setReminderEnabled(value);
+      if (value) {
+        setDatePickerOpen(true);
+      } else {
+        if (user) {
+          getFCMToken(user.id, false, reminderTime);
+        }
+      }
+    },
+    [user, reminderTime],
+  );
+
+  const handleLogout = useCallback(() => {
     Alert.alert('Sign Out', 'Are you sure you want to sign out?', [
       {text: 'Cancel', style: 'cancel'},
       {
@@ -72,228 +115,58 @@ export const ProfileScreen: React.FC = () => {
         onPress: () => dispatch(logoutUser()),
       },
     ]);
-  };
+  }, [dispatch]);
 
   return (
-    <SafeAreaView
-      style={[{flex: 1, backgroundColor: theme.colors.background}]}
-      edges={['top']}>
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Profile Header */}
-        <View
-          style={[
-            styles.profileHeader,
-            {backgroundColor: theme.colors.primaryLight},
-          ]}>
-          <View style={{alignItems: 'center', gap: 12}}>
+        <View style={styles.profileHeader}>
+          <View style={styles.avatarContainer}>
             <Avatar name={user?.name || 'User'} uri={user?.avatar} size={90} />
             <TouchableOpacity
+              onPress={() => setImageSheetVisible(true)}
+              disabled={uploadingImage}
               style={[
                 styles.editAvatarBtn,
-                {backgroundColor: theme.colors.primary},
+                uploadingImage && styles.disabledBtn,
               ]}>
-              <Text style={{color: '#fff', fontSize: 11, fontWeight: '600'}}>
-                Change Photo
-              </Text>
+              <RNText style={styles.editAvatarText}>
+                {uploadingImage ? 'Uploading...' : 'Change Photo'}
+              </RNText>
             </TouchableOpacity>
           </View>
         </View>
 
-        {/* Profile Info */}
-        <View style={{paddingHorizontal: theme.spacing.base, marginTop: -30}}>
-          <Card>
-            {editMode ? (
-              <View style={{gap: 8}}>
-                <Input
-                  label="Full Name"
-                  value={name}
-                  onChangeText={setName}
-                  placeholder="Your name"
-                />
-                <View>
-                  <Text
-                    style={{
-                      color: theme.colors.textSecondary,
-                      fontSize: 12,
-                      fontWeight: '500',
-                      marginBottom: 8,
-                    }}>
-                    Bio
-                  </Text>
-                  <View
-                    style={{
-                      backgroundColor: theme.colors.surfaceVariant,
-                      borderRadius: 12,
-                      padding: 12,
-                      minHeight: 80,
-                    }}>
-                    <TextInput
-                      value={bio}
-                      onChangeText={setBio}
-                      placeholder="Tell us about yourself..."
-                      placeholderTextColor={theme.colors.textTertiary}
-                      multiline
-                      numberOfLines={3}
-                      style={{
-                        color: theme.colors.text,
-                        fontSize: 14,
-                        textAlignVertical: 'top',
-                      }}
-                    />
-                  </View>
-                </View>
-                <View style={{flexDirection: 'row', gap: 8, marginTop: 8}}>
-                  <Button
-                    title="Cancel"
-                    onPress={() => setEditMode(false)}
-                    variant="outline"
-                    style={{flex: 1}}
-                  />
-                  <Button
-                    title="Save"
-                    onPress={handleSave}
-                    loading={saving}
-                    style={{flex: 1}}
-                  />
-                </View>
-              </View>
-            ) : (
-              <>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    alignItems: 'flex-start',
-                  }}>
-                  <View style={{flex: 1}}>
-                    <Text style={[styles.userName, {color: theme.colors.text}]}>
-                      {user?.name || 'User'}
-                    </Text>
-                    <Text
-                      style={[
-                        styles.userEmail,
-                        {color: theme.colors.textSecondary},
-                      ]}>
-                      {user?.email || ''}
-                    </Text>
-                    {user?.bio && (
-                      <Text
-                        style={[
-                          styles.userBio,
-                          {color: theme.colors.textSecondary},
-                        ]}>
-                        {user.bio}
-                      </Text>
-                    )}
-                  </View>
-                  <TouchableOpacity
-                    onPress={() => setEditMode(true)}
-                    style={[
-                      styles.editBtn,
-                      {backgroundColor: theme.colors.primaryLight},
-                    ]}>
-                    <Text
-                      style={{
-                        color: theme.colors.primary,
-                        fontSize: 12,
-                        fontWeight: '600',
-                      }}>
-                      Edit
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </>
-            )}
-          </Card>
+        {/* Profile Info Card */}
+        <View style={styles.sectionOverlap}>
+          <ProfileInfoCard user={user} onSave={handleUpdateProfile} />
         </View>
 
         {/* Settings */}
-        <View
-          style={{
-            paddingHorizontal: theme.spacing.base,
-            marginTop: theme.spacing.base,
-          }}>
-          <Text style={[styles.sectionTitle, {color: theme.colors.text}]}>
-            Settings
-          </Text>
+        <View style={styles.section}>
+          <RNText style={styles.sectionTitle}>Settings</RNText>
 
           <Card>
-            {/* Dark Mode */}
-            <View style={styles.settingRow}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  gap: 10,
-                  flex: 1,
-                }}>
-                <Text style={{fontSize: 20}}>🌙</Text>
-                <View>
-                  <Text
-                    style={[styles.settingLabel, {color: theme.colors.text}]}>
-                    Dark Mode
-                  </Text>
-                  <Text
-                    style={[
-                      styles.settingDesc,
-                      {color: theme.colors.textSecondary},
-                    ]}>
-                    Toggle dark theme
-                  </Text>
-                </View>
-              </View>
-              <Switch
-                value={isDark}
-                onValueChange={toggleTheme}
-                trackColor={{
-                  false: theme.colors.border,
-                  true: theme.colors.primary,
-                }}
-                thumbColor="#fff"
-              />
-            </View>
-
+            <SettingRow
+              icon="🌙"
+              label="Dark Mode"
+              description="Toggle dark theme"
+              value={isDark}
+              onValueChange={toggleTheme}
+            />
             <Divider />
-
-            {/* Daily Reminder */}
-            <View style={styles.settingRow}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  gap: 10,
-                  flex: 1,
-                }}>
-                <Text style={{fontSize: 20}}>⏰</Text>
-                <View>
-                  <Text
-                    style={[styles.settingLabel, {color: theme.colors.text}]}>
-                    Daily Task Reminder
-                  </Text>
-                  <Text
-                    style={[
-                      styles.settingDesc,
-                      {color: theme.colors.textSecondary},
-                    ]}>
-                    {reminderEnabled
-                      ? `Scheduled for ${reminderTime.toLocaleTimeString([], {
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}`
-                      : 'Get notified about pending tasks'}
-                  </Text>
-                </View>
-              </View>
-              <Switch
-                value={reminderEnabled}
-                onValueChange={handleReminderToggle}
-                trackColor={{
-                  false: theme.colors.border,
-                  true: theme.colors.primary,
-                }}
-                thumbColor="#fff"
-              />
-            </View>
+            <SettingRow
+              icon="⏰"
+              label="Daily Task Reminder"
+              description={
+                reminderEnabled
+                  ? `Scheduled for ${formatTime(reminderTime)}`
+                  : 'Get notified about pending tasks'
+              }
+              value={reminderEnabled}
+              onValueChange={handleReminderToggle}
+            />
           </Card>
         </View>
 
@@ -305,8 +178,6 @@ export const ProfileScreen: React.FC = () => {
           onConfirm={date => {
             setDatePickerOpen(false);
             setReminderTime(date);
-            
-            // Sync to Supabase
             if (user) {
               getFCMToken(user.id, true, date);
             }
@@ -318,14 +189,8 @@ export const ProfileScreen: React.FC = () => {
         />
 
         {/* Account Section */}
-        <View
-          style={{
-            paddingHorizontal: theme.spacing.base,
-            marginTop: theme.spacing.base,
-          }}>
-          <Text style={[styles.sectionTitle, {color: theme.colors.text}]}>
-            Account
-          </Text>
+        <View style={styles.section}>
+          <RNText style={styles.sectionTitle}>Account</RNText>
 
           <Card padding={0}>
             {[
@@ -336,37 +201,19 @@ export const ProfileScreen: React.FC = () => {
               {icon: '📄', label: 'Privacy Policy', onPress: () => {}},
               {icon: '📜', label: 'Terms of Service', onPress: () => {}},
             ].map((item, i, arr) => (
-              <React.Fragment key={i}>
-                <TouchableOpacity
-                  onPress={item.onPress}
-                  style={[
-                    styles.menuItem,
-                    {
-                      borderBottomWidth: i < arr.length - 1 ? 1 : 0,
-                      borderBottomColor: theme.colors.divider,
-                    },
-                  ]}>
-                  <Text style={{fontSize: 18}}>{item.icon}</Text>
-                  <Text style={[styles.menuLabel, {color: theme.colors.text}]}>
-                    {item.label}
-                  </Text>
-                  <Text
-                    style={{color: theme.colors.textTertiary, fontSize: 16}}>
-                    ›
-                  </Text>
-                </TouchableOpacity>
-              </React.Fragment>
+              <AccountMenuItem
+                key={item.label}
+                icon={item.icon}
+                label={item.label}
+                onPress={item.onPress}
+                isLast={i === arr.length - 1}
+              />
             ))}
           </Card>
         </View>
 
         {/* Logout */}
-        <View
-          style={{
-            paddingHorizontal: theme.spacing.base,
-            marginTop: theme.spacing.base,
-            marginBottom: 40,
-          }}>
+        <View style={styles.logoutSection}>
           <Button
             title="Sign Out"
             onPress={handleLogout}
@@ -374,43 +221,85 @@ export const ProfileScreen: React.FC = () => {
             fullWidth
             size="lg"
           />
-          <Text
-            style={{
-              color: theme.colors.textTertiary,
-              fontSize: 11,
-              textAlign: 'center',
-              marginTop: 12,
-            }}>
-            WorkSync Pro v1.0.0
-          </Text>
+          <RNText style={styles.versionText}>WorkSync Pro v1.0.0</RNText>
         </View>
       </ScrollView>
+
+      <ActionSheet
+        isVisible={imageSheetVisible}
+        onClose={() => setImageSheetVisible(false)}
+        title="Profile Photo"
+        options={[
+          {
+            label: 'Take Photo',
+            icon: '📸',
+            onPress: handleCameraCapture,
+          },
+          {
+            label: 'Choose from Gallery',
+            icon: '🖼️',
+            onPress: handleGalleryPick,
+          },
+        ]}
+      />
     </SafeAreaView>
   );
 };
 
-const styles = StyleSheet.create({
-  profileHeader: {paddingTop: 40, paddingBottom: 60, alignItems: 'center'},
-  editAvatarBtn: {paddingHorizontal: 14, paddingVertical: 6, borderRadius: 999},
-  userName: {fontSize: 20, fontWeight: '800', letterSpacing: -0.3},
-  userEmail: {fontSize: 13, marginTop: 2},
-  userBio: {fontSize: 14, marginTop: 8, lineHeight: 20},
-  editBtn: {paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8},
-  sectionTitle: {fontSize: 15, fontWeight: '700', marginBottom: 10},
-  settingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 12,
-  },
-  settingLabel: {fontSize: 15, fontWeight: '600'},
-  settingDesc: {fontSize: 12, marginTop: 1},
-  menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-  },
-  menuLabel: {flex: 1, fontSize: 15, fontWeight: '500'},
-});
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    safeArea: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+    },
+    profileHeader: {
+      paddingTop: 40,
+      paddingBottom: 60,
+      alignItems: 'center',
+      backgroundColor: theme.colors.primaryLight,
+    },
+    avatarContainer: {
+      alignItems: 'center',
+      gap: 12,
+    },
+    editAvatarBtn: {
+      paddingHorizontal: 14,
+      paddingVertical: 6,
+      borderRadius: 999,
+      backgroundColor: theme.colors.primary,
+    },
+    disabledBtn: {
+      opacity: 0.7,
+      backgroundColor: theme.colors.textTertiary,
+    },
+    editAvatarText: {
+      color: '#fff',
+      fontSize: 11,
+      fontWeight: '600',
+    },
+    sectionOverlap: {
+      paddingHorizontal: theme.spacing.base,
+      marginTop: -30,
+    },
+    section: {
+      paddingHorizontal: theme.spacing.base,
+      marginTop: theme.spacing.base,
+    },
+    sectionTitle: {
+      fontSize: 15,
+      fontWeight: '700',
+      marginBottom: 10,
+      color: theme.colors.text,
+    },
+    logoutSection: {
+      paddingHorizontal: theme.spacing.base,
+      marginTop: theme.spacing.base,
+      marginBottom: 40,
+    },
+    versionText: {
+      color: theme.colors.textTertiary,
+      fontSize: 11,
+      textAlign: 'center',
+      marginTop: 12,
+    },
+  });

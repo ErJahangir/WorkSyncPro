@@ -6,15 +6,14 @@
 import React, {useState, forwardRef} from 'react';
 import {
   View,
-  Text,
   TextInput,
   TextInputProps,
   TouchableOpacity,
   StyleSheet,
   ViewStyle,
-  Animated,
 } from 'react-native';
-import {useTheme} from '@theme/ThemeProvider';
+import {useTheme} from '@/theme';
+import RNText from './RNText';
 
 interface InputProps extends TextInputProps {
   label?: string;
@@ -60,16 +59,14 @@ export const Input = forwardRef<TextInput, InputProps>(
       <View style={[styles.container, containerStyle]}>
         {label && (
           <View style={styles.labelRow}>
-            <Text
+            <RNText
               style={[
                 styles.label,
                 {color: colors.textSecondary, fontSize: typography.fontSize.sm},
               ]}>
               {label}
-              {required && (
-                <Text style={{color: colors.error}}> *</Text>
-              )}
-            </Text>
+              {required && <RNText style={{color: colors.error}}> *</RNText>}
+            </RNText>
           </View>
         )}
 
@@ -97,7 +94,8 @@ export const Input = forwardRef<TextInput, InputProps>(
                 color: colors.text,
                 fontSize: typography.fontSize.base,
                 paddingHorizontal: leftIcon ? spacing.sm : spacing.base,
-                paddingRight: rightIcon || showPasswordToggle ? spacing.sm : spacing.base,
+                paddingRight:
+                  rightIcon || showPasswordToggle ? spacing.sm : spacing.base,
               },
             ]}
             placeholderTextColor={colors.textTertiary}
@@ -111,7 +109,7 @@ export const Input = forwardRef<TextInput, InputProps>(
             <TouchableOpacity
               onPress={() => setIsSecure(v => !v)}
               style={[styles.iconContainer, {paddingRight: spacing.md}]}>
-              <Text style={{fontSize: 18}}>{isSecure ? '👁️' : '🙈'}</Text>
+              <RNText style={{fontSize: 18}}>{isSecure ? '👁️' : '🙈'}</RNText>
             </TouchableOpacity>
           )}
 
@@ -125,21 +123,21 @@ export const Input = forwardRef<TextInput, InputProps>(
         </View>
 
         {error ? (
-          <Text
+          <RNText
             style={[
               styles.helperText,
               {color: colors.error, fontSize: typography.fontSize.xs},
             ]}>
             ⚠️ {error}
-          </Text>
+          </RNText>
         ) : hint ? (
-          <Text
+          <RNText
             style={[
               styles.helperText,
               {color: colors.textTertiary, fontSize: typography.fontSize.xs},
             ]}>
             {hint}
-          </Text>
+          </RNText>
         ) : null}
       </View>
     );

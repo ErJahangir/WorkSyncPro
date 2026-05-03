@@ -3,17 +3,10 @@
  * Production-grade button with variants, loading states, icons
  */
 
+import {useTheme} from '@/theme';
 import React from 'react';
-import {
-  TouchableOpacity,
-  Text,
-  ActivityIndicator,
-  StyleSheet,
-  ViewStyle,
-  TextStyle,
-  View,
-} from 'react-native';
-import {useTheme} from '@theme/ThemeProvider';
+import {TouchableOpacity, ActivityIndicator, ViewStyle, TextStyle} from 'react-native';
+import RNText from './RNText';
 
 type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
 type ButtonSize = 'sm' | 'md' | 'lg';
@@ -111,12 +104,16 @@ export const Button: React.FC<ButtonProps> = ({
       {loading ? (
         <ActivityIndicator
           size="small"
-          color={variant === 'primary' || variant === 'danger' ? '#fff' : colors.primary}
+          color={
+            variant === 'primary' || variant === 'danger'
+              ? '#fff'
+              : colors.primary
+          }
         />
       ) : (
         <>
           {icon && iconPosition === 'left' && icon}
-          <Text style={[getTextStyle(), textStyle]}>{title}</Text>
+          <RNText style={[getTextStyle(), textStyle]}>{title}</RNText>
           {icon && iconPosition === 'right' && icon}
         </>
       )}

@@ -5,12 +5,11 @@
 
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {useAppSelector} from '@hooks/useAppSelector';
-import {AuthNavigator} from './AuthNavigator';
+import {RootStackParamList} from '@/types';
+import {OnboardingScreen} from '@/screens';
 import {MainNavigator} from './MainNavigator';
-import {OnboardingScreen} from '@screens/auth/OnboardingScreen';
-import {useNetworkStatus} from '@hooks/index';
-import {RootStackParamList} from '@/types/index';
+import {AuthNavigator} from './AuthNavigator';
+import {useAppSelector, useNetworkStatus} from '@/hooks';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 

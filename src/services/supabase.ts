@@ -5,7 +5,8 @@
 
 import {createClient} from '@supabase/supabase-js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {SUPABASE_URL, SUPABASE_KEY} from '@constants/config';
+import {SUPABASE_URL, SUPABASE_KEY} from '@/constants';
+import {decodeBase64} from '@/utils';
 
 // Custom storage adapter using AsyncStorage
 const ExpoSecureStoreAdapter = {
@@ -208,23 +209,39 @@ export const db = {
 // ─── Storage Helpers ─────────────────────────────────────
 
 export const storage = {
-  uploadAvatar: async (userId: string, fileUri: string, fileType: string) => {
-    const fileName = `avatars/${userId}/avatar.${fileType.split('/')[1]}`;
-    const response = await fetch(fileUri);
-    const blob = await response.blob();
+  uploadAvatar: async (
+    userId: string,
+    fileUri: string,
+    fileType: string,
+    base64?: string,
+  ) => {
+    const ext = fileType.split('/')[1] || 'jpg';
+    const path = `${userId}/avatar_${Date.now()}.${ext}`;
+
+    let body;
+    if (base64) {
+      body = decodeBase64(base64);
+    } else {
+      // Fallback to File-like object if base64 is missing
+      body = {
+        uri: fileUri,
+        name: `avatar.${ext}`,
+        type: fileType,
+      } as any;
+    }
 
     const {data, error} = await supabase.storage
       .from('avatars')
-      .upload(fileName, blob, {
+      .upload(path, body, {
         contentType: fileType,
         upsert: true,
       });
 
+    console.log('Upload Debug:', {path, error, data});
+
     if (error) return {url: null, error};
 
-    const {data: urlData} = supabase.storage
-      .from('avatars')
-      .getPublicUrl(fileName);
+    const {data: urlData} = supabase.storage.from('avatars').getPublicUrl(path);
 
     return {url: urlData.publicUrl, error: null};
   },
@@ -236,12 +253,16 @@ export const storage = {
     fileType: string,
   ) => {
     const path = `tasks/${taskId}/${Date.now()}_${fileName}`;
-    const response = await fetch(fileUri);
-    const blob = await response.blob();
+
+    const fileBody = {
+      uri: fileUri,
+      name: fileName,
+      type: fileType,
+    } as any;
 
     const {data, error} = await supabase.storage
       .from('task-files')
-      .upload(path, blob, {contentType: fileType});
+      .upload(path, fileBody, {contentType: fileType});
 
     if (error) return {url: null, error};
 

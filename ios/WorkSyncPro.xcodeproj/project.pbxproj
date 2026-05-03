@@ -8,13 +8,22 @@
 
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* WorkSyncProTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* WorkSyncProTests.m */; };
+		094E1DF5C62F4C8498EAC269 /* Roboto-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0F1E4F24DE814FF98C62B62D /* Roboto-Medium.ttf */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		20699E899F7140529595A657 /* Inter-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = ACCD61C8C4474D36A878611A /* Inter-Regular.ttf */; };
+		24DF9B77A4814C0AB7DC3EDF /* Poppins-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 637E8E1E2303448CB7BD277B /* Poppins-Bold.ttf */; };
 		5BD528EEB18617F7B2372DF7 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 530FDD7892DF2BA2E03DB60D /* PrivacyInfo.xcprivacy */; };
+		7BAB5A46A25B470FABB33906 /* Roboto-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D16871642C0C44C69F9482AA /* Roboto-Bold.ttf */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		86C843DA6DFA46F6A085E55D /* Inter-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2FAD91FFE1B540239CA96BC1 /* Inter-Medium.ttf */; };
+		8921584D20024718A73453F5 /* Roboto-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A34108BFABFD4D109BD21F96 /* Roboto-Regular.ttf */; };
+		9F1E1E7E9C9E4B35B811EACB /* Poppins-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 186A6CDEC3FC483985B172E6 /* Poppins-Medium.ttf */; };
 		AFFC60358CCF142ADEF483A0 /* Pods_WorkSyncPro_WorkSyncProTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 178D9FEB4EEC0A96AD2FB3FD /* Pods_WorkSyncPro_WorkSyncProTests.framework */; };
 		B6E3BBF56B0FEED1E1A5079F /* Pods_WorkSyncPro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7E223DD22ACC0EDD6C56E586 /* Pods_WorkSyncPro.framework */; };
+		E8A1459AE80D47B3BCE25DFD /* Poppins-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3FE03042FADE46CB8DC70748 /* Poppins-Regular.ttf */; };
+		EEE437BED79341F599AA20E1 /* Inter-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 483589839381454886EF0FE6 /* Inter-Bold.ttf */; };
 		FA0985412FA5F0170019DFF3 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FA0985402FA5F0170019DFF3 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
@@ -32,6 +41,7 @@
 		00E356EE1AD99517003FC87E /* WorkSyncProTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WorkSyncProTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* WorkSyncProTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WorkSyncProTests.m; sourceTree = "<group>"; };
+		0F1E4F24DE814FF98C62B62D /* Roboto-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Medium.ttf"; path = "../assets/fonts/Roboto-Medium.ttf"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* WorkSyncPro.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WorkSyncPro.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = WorkSyncPro/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = WorkSyncPro/AppDelegate.mm; sourceTree = "<group>"; };
@@ -40,13 +50,21 @@
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = WorkSyncPro/main.m; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = WorkSyncPro/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		178D9FEB4EEC0A96AD2FB3FD /* Pods_WorkSyncPro_WorkSyncProTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WorkSyncPro_WorkSyncProTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		186A6CDEC3FC483985B172E6 /* Poppins-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-Medium.ttf"; path = "../assets/fonts/Poppins-Medium.ttf"; sourceTree = "<group>"; };
+		2FAD91FFE1B540239CA96BC1 /* Inter-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Medium.ttf"; path = "../assets/fonts/Inter-Medium.ttf"; sourceTree = "<group>"; };
 		3B4392A12AC88292D35C810B /* Pods-WorkSyncPro.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WorkSyncPro.debug.xcconfig"; path = "Target Support Files/Pods-WorkSyncPro/Pods-WorkSyncPro.debug.xcconfig"; sourceTree = "<group>"; };
+		3FE03042FADE46CB8DC70748 /* Poppins-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-Regular.ttf"; path = "../assets/fonts/Poppins-Regular.ttf"; sourceTree = "<group>"; };
+		483589839381454886EF0FE6 /* Inter-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Bold.ttf"; path = "../assets/fonts/Inter-Bold.ttf"; sourceTree = "<group>"; };
 		530FDD7892DF2BA2E03DB60D /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = WorkSyncPro/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-WorkSyncPro.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WorkSyncPro.release.xcconfig"; path = "Target Support Files/Pods-WorkSyncPro/Pods-WorkSyncPro.release.xcconfig"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-WorkSyncPro-WorkSyncProTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WorkSyncPro-WorkSyncProTests.debug.xcconfig"; path = "Target Support Files/Pods-WorkSyncPro-WorkSyncProTests/Pods-WorkSyncPro-WorkSyncProTests.debug.xcconfig"; sourceTree = "<group>"; };
+		637E8E1E2303448CB7BD277B /* Poppins-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-Bold.ttf"; path = "../assets/fonts/Poppins-Bold.ttf"; sourceTree = "<group>"; };
 		7E223DD22ACC0EDD6C56E586 /* Pods_WorkSyncPro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WorkSyncPro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = WorkSyncPro/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-WorkSyncPro-WorkSyncProTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WorkSyncPro-WorkSyncProTests.release.xcconfig"; path = "Target Support Files/Pods-WorkSyncPro-WorkSyncProTests/Pods-WorkSyncPro-WorkSyncProTests.release.xcconfig"; sourceTree = "<group>"; };
+		A34108BFABFD4D109BD21F96 /* Roboto-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Regular.ttf"; path = "../assets/fonts/Roboto-Regular.ttf"; sourceTree = "<group>"; };
+		ACCD61C8C4474D36A878611A /* Inter-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Regular.ttf"; path = "../assets/fonts/Inter-Regular.ttf"; sourceTree = "<group>"; };
+		D16871642C0C44C69F9482AA /* Roboto-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Bold.ttf"; path = "../assets/fonts/Roboto-Bold.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		FA0985402FA5F0170019DFF3 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -103,6 +121,23 @@
 			name = WorkSyncPro;
 			sourceTree = "<group>";
 		};
+		15314B23EEF64265980F02E8 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				2FAD91FFE1B540239CA96BC1 /* Inter-Medium.ttf */,
+				0F1E4F24DE814FF98C62B62D /* Roboto-Medium.ttf */,
+				186A6CDEC3FC483985B172E6 /* Poppins-Medium.ttf */,
+				A34108BFABFD4D109BD21F96 /* Roboto-Regular.ttf */,
+				483589839381454886EF0FE6 /* Inter-Bold.ttf */,
+				ACCD61C8C4474D36A878611A /* Inter-Regular.ttf */,
+				3FE03042FADE46CB8DC70748 /* Poppins-Regular.ttf */,
+				637E8E1E2303448CB7BD277B /* Poppins-Bold.ttf */,
+				D16871642C0C44C69F9482AA /* Roboto-Bold.ttf */,
+			);
+			name = Resources;
+			path = "";
+			sourceTree = "<group>";
+		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -130,6 +165,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
+				15314B23EEF64265980F02E8 /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -254,6 +290,15 @@
 				FA0985412FA5F0170019DFF3 /* GoogleService-Info.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				5BD528EEB18617F7B2372DF7 /* PrivacyInfo.xcprivacy in Resources */,
+				86C843DA6DFA46F6A085E55D /* Inter-Medium.ttf in Resources */,
+				094E1DF5C62F4C8498EAC269 /* Roboto-Medium.ttf in Resources */,
+				9F1E1E7E9C9E4B35B811EACB /* Poppins-Medium.ttf in Resources */,
+				8921584D20024718A73453F5 /* Roboto-Regular.ttf in Resources */,
+				EEE437BED79341F599AA20E1 /* Inter-Bold.ttf in Resources */,
+				20699E899F7140529595A657 /* Inter-Regular.ttf in Resources */,
+				E8A1459AE80D47B3BCE25DFD /* Poppins-Regular.ttf in Resources */,
+				24DF9B77A4814C0AB7DC3EDF /* Poppins-Bold.ttf in Resources */,
+				7BAB5A46A25B470FABB33906 /* Roboto-Bold.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -4,155 +4,27 @@
  */
 
 import React, {useEffect, useCallback} from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  RefreshControl,
-  Dimensions,
-} from 'react-native';
+import {View, ScrollView, StyleSheet, TouchableOpacity, RefreshControl, Dimensions} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useNavigation} from '@react-navigation/native';
-import {useTheme} from '@theme/ThemeProvider';
-import {useAppDispatch} from '@hooks/useAppSelector';
-import {useAppSelector} from '@hooks/useAppSelector';
+import {useAppDispatch, useAppSelector, useRealtimeTasks} from '@/hooks';
+import {useTheme} from '@/theme';
+import type {Theme} from '@/theme';
 import {
   fetchTasks,
-  selectTaskStats,
+  fetchTeamMembers,
   selectAllTasks,
-} from '@store/slices/tasksSlice';
-import {fetchTeamMembers} from '@store/slices/teamSlice';
-import {Card, Avatar, Badge, TaskCardSkeleton} from '@components/common/index';
-import {useRealtimeTasks} from '@hooks/index';
-
-const {width} = Dimensions.get('window');
-
-// ─── Stat Card ────────────────────────────────────────────
-
-const StatCard: React.FC<{
-  label: string;
-  value: number | string;
-  icon: string;
-  color: string;
-  bgColor: string;
-  trend?: string;
-}> = ({label, value, icon, color, bgColor, trend}) => {
-  const {theme} = useTheme();
-  return (
-    <View
-      style={[
-        styles.statCard,
-        {
-          backgroundColor: theme.colors.surface,
-          borderColor: theme.colors.borderLight,
-        },
-      ]}>
-      <View style={[styles.statIconBg, {backgroundColor: bgColor}]}>
-        <Text style={{fontSize: 20}}>{icon}</Text>
-      </View>
-      <Text style={[styles.statValue, {color: theme.colors.text}]}>
-        {value}
-      </Text>
-      <Text style={[styles.statLabel, {color: theme.colors.textSecondary}]}>
-        {label}
-      </Text>
-      {trend && (
-        <Text style={{color, fontSize: 11, fontWeight: '600', marginTop: 2}}>
-          {trend}
-        </Text>
-      )}
-    </View>
-  );
-};
-
-// ─── Mini Progress Bar ─────────────────────────────────────
-
-const ProgressBar: React.FC<{progress: number; color: string}> = ({
-  progress,
-  color,
-}) => {
-  const {theme} = useTheme();
-  return (
-    <View
-      style={[
-        styles.progressTrack,
-        {backgroundColor: theme.colors.surfaceVariant},
-      ]}>
-      <View
-        style={[
-          styles.progressFill,
-          {width: `${Math.min(progress, 100)}%`, backgroundColor: color},
-        ]}
-      />
-    </View>
-  );
-};
-
-// ─── Task Row ─────────────────────────────────────────────
-
-const RecentTaskRow: React.FC<{task: any; onPress: () => void}> = ({
-  task,
-  onPress,
-}) => {
-  const {theme} = useTheme();
-  const priorityColors: Record<string, string> = {
-    low: theme.colors.priorityLow,
-    medium: theme.colors.priorityMedium,
-    high: theme.colors.priorityHigh,
-  };
-  const statusBadgeVariant: Record<string, any> = {
-    todo: 'info',
-    in_progress: 'warning',
-    completed: 'success',
-  };
-  const statusLabel: Record<string, string> = {
-    todo: 'To Do',
-    in_progress: 'In Progress',
-    completed: 'Done',
-  };
-
-  return (
-    <TouchableOpacity
-      onPress={onPress}
-      activeOpacity={0.75}
-      style={[styles.taskRow, {borderBottomColor: theme.colors.borderLight}]}>
-      <View
-        style={[
-          styles.priorityDot,
-          {backgroundColor: priorityColors[task.priority]},
-        ]}
-      />
-      <View style={styles.taskRowContent}>
-        <Text
-          style={[styles.taskRowTitle, {color: theme.colors.text}]}
-          numberOfLines={1}>
-          {task.title}
-        </Text>
-        {task.deadline && (
-          <Text
-            style={[
-              styles.taskRowDeadline,
-              {color: theme.colors.textTertiary},
-            ]}>
-            📅 {new Date(task.deadline).toLocaleDateString()}
-          </Text>
-        )}
-      </View>
-      <Badge
-        label={statusLabel[task.status]}
-        variant={statusBadgeVariant[task.status]}
-        size="sm"
-      />
-    </TouchableOpacity>
-  );
-};
+  selectTaskStats,
+} from '@/store/slices';
+import {Card, Avatar, TaskCardSkeleton} from '@/components';
+import {StatCard, ProgressBar, RecentTaskRow} from './components';
+import {RNText} from '@/components/common';
 
 // ─── Main Dashboard Screen ────────────────────────────────
 
 export const DashboardScreen: React.FC = () => {
   const {theme} = useTheme();
+  const styles = createStyles(theme);
   const dispatch = useAppDispatch();
   const navigation = useNavigation<any>();
   const {user} = useAppSelector(s => s.auth);
@@ -172,7 +44,7 @@ export const DashboardScreen: React.FC = () => {
     if (user) {
       dispatch(fetchTeamMembers(user.id));
     }
-  }, [dispatch, user?.id]); // Use user.id for reference stability
+  }, [dispatch, user?.id]);
 
   const onRefresh = useCallback(() => {
     dispatch(fetchTasks({refresh: true}));
@@ -186,9 +58,7 @@ export const DashboardScreen: React.FC = () => {
   const firstName = user?.name?.split(' ')[0] || 'there';
 
   return (
-    <SafeAreaView
-      style={[styles.safeArea, {backgroundColor: theme.colors.background}]}
-      edges={['top']}>
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         refreshControl={
@@ -199,27 +69,14 @@ export const DashboardScreen: React.FC = () => {
           />
         }>
         {/* ─── Header ─── */}
-        <View style={[styles.header, {paddingHorizontal: theme.spacing.base}]}>
+        <View style={styles.header}>
           <View style={styles.headerLeft}>
-            <Text
-              style={[styles.greeting, {color: theme.colors.textSecondary}]}>
-              Good {getGreeting()} 👋
-            </Text>
-            <Text style={[styles.userName, {color: theme.colors.text}]}>
-              {firstName}
-            </Text>
+            <RNText style={styles.greeting}>Good {getGreeting()} 👋</RNText>
+            <RNText style={styles.userName}>{firstName}</RNText>
           </View>
           <View style={styles.headerRight}>
-            <TouchableOpacity
-              style={[
-                styles.notifButton,
-                {
-                  backgroundColor: theme.colors.surface,
-                  borderColor: theme.colors.border,
-                },
-              ]}
-              onPress={() => {}}>
-              <Text style={{fontSize: 18}}>🔔</Text>
+            <TouchableOpacity style={styles.notifButton} onPress={() => {}}>
+              <RNText style={styles.notifIcon}>🔔</RNText>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
               <Avatar name={user?.name || 'U'} uri={user?.avatar} size={40} />
@@ -228,8 +85,7 @@ export const DashboardScreen: React.FC = () => {
         </View>
 
         {/* ─── Stats Grid ─── */}
-        <View
-          style={[styles.statsGrid, {paddingHorizontal: theme.spacing.base}]}>
+        <View style={styles.statsGrid}>
           <StatCard
             label="Total Tasks"
             value={stats.total}
@@ -262,19 +118,11 @@ export const DashboardScreen: React.FC = () => {
         </View>
 
         {/* ─── Productivity Card ─── */}
-        <View
-          style={{
-            paddingHorizontal: theme.spacing.base,
-            marginTop: theme.spacing.base,
-          }}>
+        <View style={styles.section}>
           <Card>
             <View style={styles.cardHeader}>
-              <Text style={[styles.cardTitle, {color: theme.colors.text}]}>
-                Team Productivity
-              </Text>
-              <Text style={[styles.cardValue, {color: theme.colors.primary}]}>
-                {completionRate}%
-              </Text>
+              <RNText style={styles.cardTitle}>Team Productivity</RNText>
+              <RNText style={styles.cardValue}>{completionRate}%</RNText>
             </View>
             <ProgressBar
               progress={completionRate}
@@ -282,35 +130,21 @@ export const DashboardScreen: React.FC = () => {
             />
             <View style={styles.progressLegend}>
               <View style={styles.legendItem}>
-                <View
-                  style={[
-                    styles.legendDot,
-                    {backgroundColor: theme.colors.primary},
-                  ]}
-                />
-                <Text style={{color: theme.colors.textSecondary, fontSize: 12}}>
+                <View style={[styles.legendDot, styles.bgPrimary]} />
+                <RNText style={styles.legendText}>
                   Completed ({stats.completed})
-                </Text>
+                </RNText>
               </View>
               <View style={styles.legendItem}>
-                <View
-                  style={[
-                    styles.legendDot,
-                    {backgroundColor: theme.colors.surfaceVariant},
-                  ]}
-                />
-                <Text style={{color: theme.colors.textSecondary, fontSize: 12}}>
+                <View style={[styles.legendDot, styles.bgSurfaceVariant]} />
+                <RNText style={styles.legendText}>
                   Remaining ({stats.todo + stats.inProgress})
-                </Text>
+                </RNText>
               </View>
             </View>
 
             {/* Priority breakdown */}
-            <View
-              style={[
-                styles.priorityBreakdown,
-                {borderTopColor: theme.colors.divider},
-              ]}>
+            <View style={styles.priorityBreakdown}>
               {[
                 {
                   label: 'High Priority',
@@ -335,22 +169,8 @@ export const DashboardScreen: React.FC = () => {
                       {backgroundColor: item.color},
                     ]}
                   />
-                  <Text
-                    style={{
-                      color: theme.colors.textSecondary,
-                      fontSize: 12,
-                      flex: 1,
-                    }}>
-                    {item.label}
-                  </Text>
-                  <Text
-                    style={{
-                      color: theme.colors.text,
-                      fontSize: 13,
-                      fontWeight: '600',
-                    }}>
-                    {item.count}
-                  </Text>
+                  <RNText style={styles.priorityLabel}>{item.label}</RNText>
+                  <RNText style={styles.priorityCount}>{item.count}</RNText>
                 </View>
               ))}
             </View>
@@ -358,30 +178,17 @@ export const DashboardScreen: React.FC = () => {
         </View>
 
         {/* ─── Recent Tasks ─── */}
-        <View
-          style={{
-            paddingHorizontal: theme.spacing.base,
-            marginTop: theme.spacing.base,
-          }}>
-          <View style={styles.sectionHeader}>
-            <Text style={[styles.sectionTitle, {color: theme.colors.text}]}>
-              Recent Tasks
-            </Text>
+        <View style={styles.section}>
+          <View style={styles.recentTasksHeader}>
+            <RNText style={styles.sectionTitle}>Recent Tasks</RNText>
             <TouchableOpacity onPress={() => navigation.navigate('Tasks')}>
-              <Text
-                style={{
-                  color: theme.colors.primary,
-                  fontSize: 13,
-                  fontWeight: '600',
-                }}>
-                See All →
-              </Text>
+              <RNText style={styles.seeAllText}>See All →</RNText>
             </TouchableOpacity>
           </View>
 
-          <Card padding={0} style={{overflow: 'hidden'}}>
+          <Card padding={0} style={styles.recentTasksCard}>
             {isLoading ? (
-              <View style={{padding: theme.spacing.base}}>
+              <View style={styles.skeletonContainer}>
                 {[1, 2, 3].map(i => (
                   <TaskCardSkeleton key={i} />
                 ))}
@@ -400,34 +207,19 @@ export const DashboardScreen: React.FC = () => {
                 />
               ))
             ) : (
-              <View style={{padding: 32, alignItems: 'center'}}>
-                <Text style={{fontSize: 36, marginBottom: 8}}>📭</Text>
-                <Text
-                  style={{
-                    color: theme.colors.textSecondary,
-                    textAlign: 'center',
-                  }}>
+              <View style={styles.emptyTasks}>
+                <RNText style={styles.emptyIcon}>📭</RNText>
+                <RNText style={styles.emptyText}>
                   No tasks yet. Create your first one!
-                </Text>
+                </RNText>
               </View>
             )}
           </Card>
         </View>
 
         {/* ─── Quick Actions ─── */}
-        <View
-          style={{
-            paddingHorizontal: theme.spacing.base,
-            marginTop: theme.spacing.base,
-            marginBottom: 32,
-          }}>
-          <Text
-            style={[
-              styles.sectionTitle,
-              {color: theme.colors.text, marginBottom: 12},
-            ]}>
-            Quick Actions
-          </Text>
+        <View style={[styles.section, styles.marginBottomLarge]}>
+          <RNText style={styles.quickActionsTitle}>Quick Actions</RNText>
           <View style={styles.quickActions}>
             {[
               {
@@ -456,23 +248,9 @@ export const DashboardScreen: React.FC = () => {
                 key={action.label}
                 onPress={action.onPress}
                 activeOpacity={0.75}
-                style={[
-                  styles.quickActionBtn,
-                  {
-                    backgroundColor: theme.colors.surface,
-                    borderColor: theme.colors.border,
-                  },
-                ]}>
-                <Text style={{fontSize: 22}}>{action.icon}</Text>
-                <Text
-                  style={{
-                    color: theme.colors.textSecondary,
-                    fontSize: 11,
-                    fontWeight: '500',
-                    marginTop: 4,
-                  }}>
-                  {action.label}
-                </Text>
+                style={styles.quickActionBtn}>
+                <RNText style={styles.quickActionIcon}>{action.icon}</RNText>
+                <RNText style={styles.quickActionLabel}>{action.label}</RNText>
               </TouchableOpacity>
             ))}
           </View>
@@ -489,99 +267,146 @@ const getGreeting = (): string => {
   return 'evening';
 };
 
-const styles = StyleSheet.create({
-  safeArea: {flex: 1},
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingTop: 16,
-    paddingBottom: 20,
-  },
-  headerLeft: {gap: 2},
-  headerRight: {flexDirection: 'row', alignItems: 'center', gap: 10},
-  greeting: {fontSize: 13, fontWeight: '400'},
-  userName: {fontSize: 24, fontWeight: '800', letterSpacing: -0.5},
-  notifButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-  },
-  statsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-  },
-  statCard: {
-    width: (width - 48 - 12) / 2,
-    padding: 14,
-    borderRadius: 16,
-    gap: 6,
-    borderWidth: 1,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.06,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  statIconBg: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  statValue: {fontSize: 26, fontWeight: '800', letterSpacing: -1, marginTop: 4},
-  statLabel: {fontSize: 12, fontWeight: '500'},
-  cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  cardTitle: {fontSize: 15, fontWeight: '700'},
-  cardValue: {fontSize: 22, fontWeight: '800'},
-  progressTrack: {height: 8, borderRadius: 4, overflow: 'hidden'},
-  progressFill: {height: '100%', borderRadius: 4},
-  progressLegend: {flexDirection: 'row', marginTop: 10, gap: 16},
-  legendItem: {flexDirection: 'row', alignItems: 'center', gap: 6},
-  legendDot: {width: 8, height: 8, borderRadius: 4},
-  priorityBreakdown: {marginTop: 14, paddingTop: 14, borderTopWidth: 1, gap: 8},
-  priorityItem: {flexDirection: 'row', alignItems: 'center', gap: 8},
-  priorityDotSm: {width: 8, height: 8, borderRadius: 4},
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  sectionTitle: {fontSize: 17, fontWeight: '700'},
-  taskRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-    gap: 12,
-  },
-  priorityDot: {width: 8, height: 8, borderRadius: 4, flexShrink: 0},
-  taskRowContent: {flex: 1},
-  taskRowTitle: {fontSize: 14, fontWeight: '500'},
-  taskRowDeadline: {fontSize: 11, marginTop: 2},
-  quickActions: {flexDirection: 'row', gap: 10},
-  quickActionBtn: {
-    flex: 1,
-    paddingVertical: 14,
-    borderRadius: 14,
-    alignItems: 'center',
-    borderWidth: 1,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 1},
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
-  },
-});
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    safeArea: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+    },
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingTop: 16,
+      paddingBottom: 20,
+      paddingHorizontal: theme.spacing.base,
+    },
+    headerLeft: {gap: 2},
+    headerRight: {flexDirection: 'row', alignItems: 'center', gap: 10},
+    greeting: {
+      fontSize: 13,
+      fontWeight: '400',
+      color: theme.colors.textSecondary,
+    },
+    userName: {
+      fontSize: 24,
+      fontWeight: '800',
+      letterSpacing: -0.5,
+      color: theme.colors.text,
+    },
+    notifButton: {
+      width: 40,
+      height: 40,
+      borderRadius: 12,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderWidth: 1,
+      backgroundColor: theme.colors.surface,
+      borderColor: theme.colors.border,
+    },
+    notifIcon: {fontSize: 18},
+    statsGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 12,
+      paddingHorizontal: theme.spacing.base,
+    },
+    section: {
+      paddingHorizontal: theme.spacing.base,
+      marginTop: theme.spacing.base,
+    },
+    cardHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 10,
+    },
+    cardTitle: {
+      fontSize: 15,
+      fontWeight: '700',
+      color: theme.colors.text,
+    },
+    cardValue: {
+      fontSize: 22,
+      fontWeight: '800',
+      color: theme.colors.primary,
+    },
+    progressLegend: {flexDirection: 'row', marginTop: 10, gap: 16},
+    legendItem: {flexDirection: 'row', alignItems: 'center', gap: 6},
+    legendDot: {width: 8, height: 8, borderRadius: 4},
+    bgPrimary: {backgroundColor: theme.colors.primary},
+    bgSurfaceVariant: {backgroundColor: theme.colors.surfaceVariant},
+    legendText: {color: theme.colors.textSecondary, fontSize: 12},
+    priorityBreakdown: {
+      marginTop: 14,
+      paddingTop: 14,
+      borderTopWidth: 1,
+      gap: 8,
+      borderTopColor: theme.colors.divider,
+    },
+    priorityItem: {flexDirection: 'row', alignItems: 'center', gap: 8},
+    priorityDotSm: {width: 8, height: 8, borderRadius: 4},
+    priorityLabel: {
+      color: theme.colors.textSecondary,
+      fontSize: 12,
+      flex: 1,
+    },
+    priorityCount: {
+      color: theme.colors.text,
+      fontSize: 13,
+      fontWeight: '600',
+    },
+    recentTasksHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 12,
+    },
+    sectionTitle: {
+      fontSize: 17,
+      fontWeight: '700',
+      color: theme.colors.text,
+    },
+    seeAllText: {
+      color: theme.colors.primary,
+      fontSize: 13,
+      fontWeight: '600',
+    },
+    recentTasksCard: {overflow: 'hidden'},
+    skeletonContainer: {padding: theme.spacing.base},
+    emptyTasks: {padding: 32, alignItems: 'center'},
+    emptyIcon: {fontSize: 36, marginBottom: 8},
+    emptyText: {
+      color: theme.colors.textSecondary,
+      textAlign: 'center',
+    },
+    quickActionsTitle: {
+      fontSize: 17,
+      fontWeight: '700',
+      color: theme.colors.text,
+      marginBottom: 12,
+    },
+    quickActions: {flexDirection: 'row', gap: 10},
+    quickActionBtn: {
+      flex: 1,
+      paddingVertical: 14,
+      borderRadius: 14,
+      alignItems: 'center',
+      borderWidth: 1,
+      shadowColor: '#000',
+      shadowOffset: {width: 0, height: 1},
+      shadowOpacity: 0.05,
+      shadowRadius: 2,
+      elevation: 1,
+      backgroundColor: theme.colors.surface,
+      borderColor: theme.colors.border,
+    },
+    quickActionIcon: {fontSize: 22},
+    quickActionLabel: {
+      color: theme.colors.textSecondary,
+      fontSize: 11,
+      fontWeight: '500',
+      marginTop: 4,
+    },
+    marginBottomLarge: {marginBottom: 32},
+  });

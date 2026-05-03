@@ -58,7 +58,9 @@ export const clearAll = async (): Promise<void> => {
 /**
  * Get multiple items from AsyncStorage
  */
-export const getMultiple = async (keys: string[]): Promise<Record<string, unknown>> => {
+export const getMultiple = async (
+  keys: string[],
+): Promise<Record<string, unknown>> => {
   try {
     const values = await AsyncStorage.multiGet(keys);
     const result: Record<string, unknown> = {};
@@ -77,9 +79,13 @@ export const getMultiple = async (keys: string[]): Promise<Record<string, unknow
 /**
  * Save multiple items to AsyncStorage
  */
-export const setMultiple = async (items: Array<[string, unknown]>): Promise<void> => {
+export const setMultiple = async (
+  items: Array<[string, unknown]>,
+): Promise<void> => {
   try {
-    const pairs = items.map(([key, value]) => [key, JSON.stringify(value)] as [string, string]);
+    const pairs = items.map(
+      ([key, value]) => [key, JSON.stringify(value)] as [string, string],
+    );
     await AsyncStorage.multiSet(pairs);
   } catch (error) {
     console.error('Error setting multiple items:', error);
@@ -105,7 +111,8 @@ export const hasKey = async (key: string): Promise<boolean> => {
  */
 export const getAllKeys = async (): Promise<string[]> => {
   try {
-    return await AsyncStorage.getAllKeys();
+    const res = await AsyncStorage.getAllKeys();
+    return res ?? [];
   } catch (error) {
     console.error('Error getting all keys:', error);
     return [];

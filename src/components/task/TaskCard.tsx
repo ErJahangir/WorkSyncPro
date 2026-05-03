@@ -4,11 +4,12 @@
  */
 
 import React from 'react';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
-import {useTheme} from '@theme/ThemeProvider';
-import {Task, TaskPriority, TaskStatus} from '@/types/index';
-import {Avatar, Badge} from '@components/common/index';
-import {formatDeadline, isOverdue} from '@utils/dateUtils';
+import {View, TouchableOpacity, StyleSheet} from 'react-native';
+import {useTheme} from '@/theme';
+import {Task, TaskPriority, TaskStatus} from '@/types';
+import {Avatar, Badge} from '@/components';
+import {formatDeadline, isOverdue} from '@/utils';
+import {RNText} from '@/components/common';
 
 interface TaskCardProps {
   task: Task;
@@ -16,23 +17,35 @@ interface TaskCardProps {
   onLongPress?: () => void;
 }
 
-const PRIORITY_CONFIG: Record<TaskPriority, {icon: string; label: string; variant: any}> = {
+const PRIORITY_CONFIG: Record<
+  TaskPriority,
+  {icon: string; label: string; variant: any}
+> = {
   low: {icon: '🟢', label: 'Low', variant: 'success'},
   medium: {icon: '🟡', label: 'Medium', variant: 'warning'},
   high: {icon: '🔴', label: 'High', variant: 'error'},
 };
 
-const STATUS_CONFIG: Record<TaskStatus, {icon: string; label: string; variant: any}> = {
+const STATUS_CONFIG: Record<
+  TaskStatus,
+  {icon: string; label: string; variant: any}
+> = {
   todo: {icon: '○', label: 'To Do', variant: 'info'},
   in_progress: {icon: '◑', label: 'In Progress', variant: 'warning'},
   completed: {icon: '●', label: 'Done', variant: 'success'},
 };
 
-export const TaskCard: React.FC<TaskCardProps> = ({task, onPress, onLongPress}) => {
+export const TaskCard: React.FC<TaskCardProps> = ({
+  task,
+  onPress,
+  onLongPress,
+}) => {
   const {theme} = useTheme();
   const priority = PRIORITY_CONFIG[task.priority];
   const status = STATUS_CONFIG[task.status];
-  const overdue = task.deadline ? isOverdue(task.deadline) && task.status !== 'completed' : false;
+  const overdue = task.deadline
+    ? isOverdue(task.deadline) && task.status !== 'completed'
+    : false;
 
   const priorityColors: Record<TaskPriority, string> = {
     low: theme.colors.priorityLow,
@@ -49,7 +62,9 @@ export const TaskCard: React.FC<TaskCardProps> = ({task, onPress, onLongPress}) 
         styles.card,
         {
           backgroundColor: theme.colors.surface,
-          borderColor: overdue ? theme.colors.error + '40' : theme.colors.borderLight,
+          borderColor: overdue
+            ? theme.colors.error + '40'
+            : theme.colors.borderLight,
           shadowColor: theme.isDark ? '#000' : '#6366F1',
         },
       ]}>
@@ -65,29 +80,30 @@ export const TaskCard: React.FC<TaskCardProps> = ({task, onPress, onLongPress}) 
         {/* Top row */}
         <View style={styles.topRow}>
           <View style={styles.titleContainer}>
-            <Text
+            <RNText
               style={[
                 styles.title,
                 {
                   color: theme.colors.text,
-                  textDecorationLine: task.status === 'completed' ? 'line-through' : 'none',
+                  textDecorationLine:
+                    task.status === 'completed' ? 'line-through' : 'none',
                   opacity: task.status === 'completed' ? 0.6 : 1,
                 },
               ]}
               numberOfLines={2}>
               {task.title}
-            </Text>
+            </RNText>
           </View>
           <Badge label={status.label} variant={status.variant} size="sm" dot />
         </View>
 
         {/* Description */}
         {task.description ? (
-          <Text
+          <RNText
             style={[styles.description, {color: theme.colors.textSecondary}]}
             numberOfLines={2}>
             {task.description}
-          </Text>
+          </RNText>
         ) : null}
 
         {/* Tags */}
@@ -100,15 +116,20 @@ export const TaskCard: React.FC<TaskCardProps> = ({task, onPress, onLongPress}) 
                   styles.tag,
                   {backgroundColor: theme.colors.surfaceVariant},
                 ]}>
-                <Text style={{color: theme.colors.textSecondary, fontSize: 10, fontWeight: '500'}}>
+                <RNText
+                  style={{
+                    color: theme.colors.textSecondary,
+                    fontSize: 10,
+                    fontWeight: '500',
+                  }}>
                   #{tag}
-                </Text>
+                </RNText>
               </View>
             ))}
             {task.tags.length > 3 && (
-              <Text style={{color: theme.colors.textTertiary, fontSize: 10}}>
+              <RNText style={{color: theme.colors.textTertiary, fontSize: 10}}>
                 +{task.tags.length - 3}
-              </Text>
+              </RNText>
             )}
           </View>
         )}
@@ -130,9 +151,14 @@ export const TaskCard: React.FC<TaskCardProps> = ({task, onPress, onLongPress}) 
                   styles.moreAssignees,
                   {backgroundColor: theme.colors.surfaceVariant},
                 ]}>
-                <Text style={{color: theme.colors.textSecondary, fontSize: 9, fontWeight: '600'}}>
+                <RNText
+                  style={{
+                    color: theme.colors.textSecondary,
+                    fontSize: 9,
+                    fontWeight: '600',
+                  }}>
                   +{(task.assignees?.length || 0) - 3}
-                </Text>
+                </RNText>
               </View>
             )}
           </View>
@@ -141,18 +167,19 @@ export const TaskCard: React.FC<TaskCardProps> = ({task, onPress, onLongPress}) 
             {/* Comments */}
             {(task.comments_count || 0) > 0 && (
               <View style={styles.metaItem}>
-                <Text style={{fontSize: 11}}>💬</Text>
-                <Text style={[styles.metaText, {color: theme.colors.textTertiary}]}>
+                <RNText style={{fontSize: 11}}>💬</RNText>
+                <RNText
+                  style={[styles.metaText, {color: theme.colors.textTertiary}]}>
                   {task.comments_count}
-                </Text>
+                </RNText>
               </View>
             )}
 
             {/* Deadline */}
             {task.deadline && (
               <View style={styles.metaItem}>
-                <Text style={{fontSize: 11}}>📅</Text>
-                <Text
+                <RNText style={{fontSize: 11}}>📅</RNText>
+                <RNText
                   style={[
                     styles.metaText,
                     {
@@ -163,7 +190,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({task, onPress, onLongPress}) 
                     },
                   ]}>
                   {overdue ? 'Overdue' : formatDeadline(task.deadline)}
-                </Text>
+                </RNText>
               </View>
             )}
           </View>
@@ -197,7 +224,8 @@ const styles = StyleSheet.create({
   description: {fontSize: 13, lineHeight: 18},
   tagsRow: {flexDirection: 'row', flexWrap: 'wrap', gap: 4},
   tag: {
-    paddingHorizontal: 8, paddingVertical: 3,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
     borderRadius: 6,
   },
   bottomRow: {
@@ -209,8 +237,12 @@ const styles = StyleSheet.create({
   assignees: {flexDirection: 'row', alignItems: 'center'},
   assigneeAvatar: {borderRadius: 12, borderWidth: 1.5, borderColor: '#fff'},
   moreAssignees: {
-    width: 24, height: 24, borderRadius: 12,
-    alignItems: 'center', justifyContent: 'center', marginLeft: -8,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: -8,
   },
   metaRight: {flexDirection: 'row', alignItems: 'center', gap: 10},
   metaItem: {flexDirection: 'row', alignItems: 'center', gap: 3},

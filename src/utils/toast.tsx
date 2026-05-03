@@ -3,12 +3,13 @@
  * Simple toast message wrapper
  */
 
-import React from 'react';
-import {View, Text} from 'react-native';
 import Toast, {
   ToastConfig,
   ToastConfigParams,
 } from 'react-native-toast-message';
+import {View} from 'react-native';
+import React from 'react';
+import {RNText} from '@/components/common';
 
 type ToastType = 'success' | 'error' | 'info';
 
@@ -41,9 +42,9 @@ export const toastConfig: ToastConfig = {
         shadowRadius: 8,
         elevation: 5,
       }}>
-      <Text style={{color: '#fff', fontSize: 14, fontWeight: '600'}}>
+      <RNText style={{color: '#fff', fontSize: 14, fontWeight: '600'}}>
         ✓ {text1}
-      </Text>
+      </RNText>
     </View>
   ),
   error: ({text1}: ToastConfigParams<any>) => (
@@ -60,9 +61,9 @@ export const toastConfig: ToastConfig = {
         shadowRadius: 8,
         elevation: 5,
       }}>
-      <Text style={{color: '#fff', fontSize: 14, fontWeight: '600'}}>
+      <RNText style={{color: '#fff', fontSize: 14, fontWeight: '600'}}>
         ⚠️ {text1}
-      </Text>
+      </RNText>
     </View>
   ),
   info: ({text1}: ToastConfigParams<any>) => (
@@ -79,9 +80,9 @@ export const toastConfig: ToastConfig = {
         shadowRadius: 8,
         elevation: 5,
       }}>
-      <Text style={{color: '#fff', fontSize: 14, fontWeight: '600'}}>
+      <RNText style={{color: '#fff', fontSize: 14, fontWeight: '600'}}>
         ℹ️ {text1}
-      </Text>
+      </RNText>
     </View>
   ),
 };

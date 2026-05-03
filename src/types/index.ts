@@ -265,7 +265,7 @@ export interface TaskFormData {
   priority: TaskPriority;
   status: TaskStatus;
   deadline?: Date;
-  tags?: string;
+  tags?: string | string[];
 }
 
 export interface ProfileFormData {

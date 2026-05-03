@@ -1,14 +1,10 @@
-/**
- * WorkSync Pro - Auth Slice
- * Manages authentication state with Supabase
- */
-
 import {createSlice, createAsyncThunk, PayloadAction} from '@reduxjs/toolkit';
-import {AuthState, User} from '@/types/index';
-import {supabaseAuth, db} from '@services/supabase';
-import {showToast} from '@utils/toast';
-import {STORAGE_KEYS} from '@constants/config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import {AuthState, User} from '@/types';
+import {db, supabaseAuth} from '@/services';
+import {STORAGE_KEYS} from '@/constants';
+import {showToast} from '@/utils';
 
 const initialState: AuthState = {
   user: null,
@@ -26,7 +22,6 @@ export const initializeAuth = createAsyncThunk(
   'auth/initialize',
   async (_, {rejectWithValue}) => {
     try {
-      console.log('initializeAuth');
       const {session, error} = await supabaseAuth.getSession();
       if (error || !session) return {session: null, user: null};
 
@@ -34,10 +29,6 @@ export const initializeAuth = createAsyncThunk(
 
       // FALLBACK: If authentication is successful but profile is missing from DB
       if (!user || userError) {
-        console.log(
-          'Profile missing, creating fallback profile for:',
-          session.user.id,
-        );
         const {data: newUser, error: upsertError} = await db.upsertUser({
           id: session.user.id,
           name: session.user.user_metadata?.name || 'New User',
@@ -49,7 +40,6 @@ export const initializeAuth = createAsyncThunk(
           return {session, user: null};
         }
 
-        console.log('Fallback profile created successfully:', newUser);
         return {session, user: newUser};
       }
 
@@ -75,7 +65,6 @@ export const loginUser = createAsyncThunk(
     {rejectWithValue},
   ) => {
     try {
-      console.log('loginUser');
       const {data, error} = await supabaseAuth.signIn(email, password);
       if (error) return rejectWithValue(error.message);
 
@@ -91,9 +80,7 @@ export const loginWithGoogle = createAsyncThunk(
   'auth/loginWithGoogle',
   async (idToken: string, {rejectWithValue}) => {
     try {
-      console.log('loginWithGoogle');
       const {data, error} = await supabaseAuth.signInWithGoogle(idToken);
-      console.log(data, error, '====');
 
       if (error) return rejectWithValue(error.message);
 
@@ -112,7 +99,6 @@ export const registerUser = createAsyncThunk(
     {rejectWithValue},
   ) => {
     try {
-      console.log('registerUser');
       const {data, error} = await supabaseAuth.signUp(email, password, name);
 
       if (error) return rejectWithValue(error.message);
@@ -126,7 +112,6 @@ export const registerUser = createAsyncThunk(
 export const logoutUser = createAsyncThunk(
   'auth/logout',
   async (_, {rejectWithValue}) => {
-    console.log('logoutUser');
     try {
       const {error} = await supabaseAuth.signOut();
       if (error) return rejectWithValue(error.message);
@@ -142,11 +127,8 @@ export const updateUserProfile = createAsyncThunk(
     {userId, updates}: {userId: string; updates: Partial<User>},
     {rejectWithValue},
   ) => {
-    console.log('updateUserProfile');
-
     try {
       const {data, error} = await db.updateUser(userId, updates);
-      console.log('updateUserProfile', data, error);
       if (error) return rejectWithValue(error.message);
       return data;
     } catch {
@@ -158,8 +140,6 @@ export const updateUserProfile = createAsyncThunk(
 export const forgotPassword = createAsyncThunk(
   'auth/forgotPassword',
   async (email: string, {rejectWithValue}) => {
-    console.log('forgot');
-
     try {
       const {error} = await supabaseAuth.resetPassword(email);
       if (error) return rejectWithValue(error.message);
@@ -282,6 +262,10 @@ const authSlice = createSlice({
   },
 });
 
-export const {setUser, clearError, setInitialized, setOnboardingDone} =
-  authSlice.actions;
+export const {
+  setUser,
+  clearError: clearAuthError,
+  setInitialized,
+  setOnboardingDone,
+} = authSlice.actions;
 export default authSlice.reducer;

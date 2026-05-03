@@ -1,10 +1,6 @@
-/**
- * WorkSync Pro - Notifications Slice
- */
-
 import {createSlice, createAsyncThunk, PayloadAction} from '@reduxjs/toolkit';
-import {NotificationsState, Notification} from '@/types/index';
-import {db} from '@services/supabase';
+import {Notification, NotificationsState} from '@/types';
+import {db} from '@/services';
 
 const initialState: NotificationsState = {
   notifications: [],
@@ -80,28 +76,3 @@ const notificationsSlice = createSlice({
 export const {addNotification, markAllRead} = notificationsSlice.actions;
 export default notificationsSlice.reducer;
 
-// ─── UI Slice ─────────────────────────────────────────────
-
-import {createSlice as createUISlice} from '@reduxjs/toolkit';
-import {UIState} from '@/types/index';
-
-const uiInitialState: UIState = {
-  isNetworkAvailable: true,
-  isDarkMode: false,
-};
-
-const uiSlice = createUISlice({
-  name: 'ui',
-  initialState: uiInitialState,
-  reducers: {
-    setNetworkAvailable: (state, action: PayloadAction<boolean>) => {
-      state.isNetworkAvailable = action.payload;
-    },
-    setDarkMode: (state, action: PayloadAction<boolean>) => {
-      state.isDarkMode = action.payload;
-    },
-  },
-});
-
-export const {setNetworkAvailable, setDarkMode} = uiSlice.actions;
-export const uiReducer = uiSlice.reducer;

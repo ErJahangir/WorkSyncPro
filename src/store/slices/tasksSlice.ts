@@ -1,9 +1,9 @@
-/**
- * WorkSync Pro - Tasks Slice
- * Complete task management state with filtering, pagination, realtime
- */
-
-import {createSlice, createAsyncThunk, PayloadAction, createSelector} from '@reduxjs/toolkit';
+import {
+  createSlice,
+  createAsyncThunk,
+  PayloadAction,
+  createSelector,
+} from '@reduxjs/toolkit';
 import {
   Task,
   TasksState,
@@ -11,9 +11,9 @@ import {
   UpdateTaskInput,
   TaskFilter,
 } from '@/types';
-import {db} from '@services/supabase';
-import {showToast} from '@utils/toast';
-import {DEFAULT_PAGE_SIZE} from '@constants/config';
+import {DEFAULT_PAGE_SIZE} from '@/constants';
+import {db} from '@/services';
+import {showToast} from '@/utils';
 
 const initialState: TasksState = {
   tasks: [],
@@ -42,7 +42,6 @@ export const fetchTasks = createAsyncThunk(
     {getState, rejectWithValue},
   ) => {
     try {
-      console.log('fetchTasks');
       const state = getState() as {tasks: TasksState};
       const {filter, pagination} = state.tasks;
       const page = refresh ? 0 : pagination.page;
@@ -77,10 +76,8 @@ export const fetchTasks = createAsyncThunk(
 export const fetchTaskById = createAsyncThunk(
   'tasks/fetchById',
   async (taskId: string, {rejectWithValue}) => {
-    console.log('fetchTaskById');
     try {
       const {data, error} = await db.getTask(taskId);
-      console.log('fetchTaskById', data, error);
       if (error) return rejectWithValue(error.message);
       return data;
     } catch {
@@ -101,7 +98,6 @@ export const createTask = createAsyncThunk(
         created_by: userId,
         created_at: new Date().toISOString(),
       });
-      console.log('createTask', data, error);
       if (error) return rejectWithValue(error.message);
       showToast('success', 'Task created successfully');
       return data;
@@ -114,7 +110,6 @@ export const createTask = createAsyncThunk(
 export const updateTask = createAsyncThunk(
   'tasks/update',
   async (input: UpdateTaskInput, {rejectWithValue}) => {
-    console.log('updateTask');
     try {
       const {id, ...updates} = input;
       const {data, error} = await db.updateTask(id, {
@@ -133,7 +128,6 @@ export const updateTask = createAsyncThunk(
 export const deleteTask = createAsyncThunk(
   'tasks/delete',
   async (taskId: string, {rejectWithValue}) => {
-    console.log('deleteTask');
     try {
       const {error} = await db.deleteTask(taskId);
       if (error) return rejectWithValue(error.message);
@@ -151,7 +145,6 @@ export const updateTaskStatus = createAsyncThunk(
     {taskId, status}: {taskId: string; status: Task['status']},
     {rejectWithValue},
   ) => {
-    console.log('updateTaskStatus');
     try {
       const {data, error} = await db.updateTask(taskId, {
         status,
@@ -316,7 +309,7 @@ export const {
   addTaskRealtime,
   updateTaskRealtime,
   removeTaskRealtime,
-  clearError,
+  clearError: clearTasksError,
 } = tasksSlice.actions;
 
 export default tasksSlice.reducer;
@@ -335,12 +328,9 @@ export const selectTaskFilter = (state: {tasks: TasksState}) =>
 export const selectTasksPagination = (state: {tasks: TasksState}) =>
   state.tasks.pagination;
 
-export const selectTaskStats = createSelector(
-  [selectAllTasks],
-  tasks => ({
-    total: tasks.length,
-    completed: tasks.filter(t => t.status === 'completed').length,
-    inProgress: tasks.filter(t => t.status === 'in_progress').length,
-    todo: tasks.filter(t => t.status === 'todo').length,
-  }),
-);
+export const selectTaskStats = createSelector([selectAllTasks], tasks => ({
+  total: tasks.length,
+  completed: tasks.filter(t => t.status === 'completed').length,
+  inProgress: tasks.filter(t => t.status === 'in_progress').length,
+  todo: tasks.filter(t => t.status === 'todo').length,
+}));

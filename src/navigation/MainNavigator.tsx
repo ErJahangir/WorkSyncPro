@@ -4,32 +4,31 @@
  */
 
 import React from 'react';
-import {View, Text, StyleSheet, Platform} from 'react-native';
+import {View, StyleSheet, Platform} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {
-  MainTabParamList,
-  TaskStackParamList,
-  TeamStackParamList,
-} from '@/types/index';
-import {useTheme} from '@theme/ThemeProvider';
-import {useAppSelector} from '@hooks/useAppSelector';
-
-// Screens
-import {DashboardScreen} from '@screens/dashboard/DashboardScreen';
-import {TaskListScreen} from '@screens/tasks/TaskListScreen';
-import {TaskDetailScreen} from '@screens/tasks/TaskDetailScreen';
-import {CreateTaskScreen} from '@screens/tasks/CreateTaskScreen';
+  type MainTabParamList,
+  type TaskStackParamList,
+  type TeamStackParamList,
+} from '@/types';
+import {useTheme} from '@/theme';
 import {
+  AnalyticsScreen,
+  CreateTaskScreen,
+  DashboardScreen,
   EditTaskScreen,
+  InviteMemberScreen,
+  MemberProfileScreen,
+  ProfileScreen,
   TaskCommentsScreen,
-} from '@screens/tasks/EditTaskScreen';
-import {TeamScreen} from '@screens/team/TeamScreen';
-import {TeamDetailScreen} from '@screens/team/TeamDetailScreen';
-import {InviteMemberScreen} from '@screens/team/InviteMemberScreen';
-import {MemberProfileScreen} from '@screens/team/MemberProfileScreen';
-import {AnalyticsScreen} from '@screens/analytics/AnalyticsScreen';
-import {ProfileScreen} from '@screens/profile/ProfileScreen';
+  TaskDetailScreen,
+  TaskListScreen,
+  TeamDetailScreen,
+  TeamScreen,
+} from '@/screens';
+import {useAppSelector} from '@/hooks';
+import {RNText} from '@/components/common';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 const TaskStack = createNativeStackNavigator<TaskStackParamList>();
@@ -45,16 +44,16 @@ const TabIcon: React.FC<{
 }> = ({icon, label, focused, color, badge}) => (
   <View style={styles.tabItem}>
     <View style={styles.iconWrapper}>
-      <Text style={[styles.icon, {opacity: focused ? 1 : 0.6}]}>{icon}</Text>
+      <RNText style={[styles.icon, {opacity: focused ? 1 : 0.6}]}>{icon}</RNText>
       {badge && badge > 0 ? (
         <View style={styles.badge}>
-          <Text style={styles.badgeText}>{badge > 99 ? '99+' : badge}</Text>
+          <RNText style={styles.badgeText}>{badge > 99 ? '99+' : badge}</RNText>
         </View>
       ) : null}
     </View>
-    <Text style={[styles.label, {color, fontWeight: focused ? '600' : '400'}]}>
+    <RNText style={[styles.label, {color, fontWeight: focused ? '600' : '400'}]}>
       {label}
-    </Text>
+    </RNText>
   </View>
 );
 

@@ -1,8 +1,3 @@
-/**
- * WorkSync Pro - Theme Context Provider
- * Manages light/dark mode with persistence
- */
-
 import React, {
   createContext,
   useContext,
@@ -12,7 +7,8 @@ import React, {
 } from 'react';
 import {useColorScheme} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {lightTheme, darkTheme, Theme} from './index';
+
+import {darkTheme, lightTheme, Theme} from './themes';
 
 const THEME_KEY = '@worksync_theme';
 

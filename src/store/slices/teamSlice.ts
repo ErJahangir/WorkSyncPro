@@ -1,11 +1,7 @@
-/**
- * WorkSync Pro - Team Slice
- */
-
 import {createSlice, createAsyncThunk, PayloadAction} from '@reduxjs/toolkit';
 import {TeamState, Team, TeamMember} from '@/types/index';
-import {db} from '@services/supabase';
-import {showToast} from '@utils/toast';
+import {db} from '@/services';
+import {showToast} from '@/utils';
 
 const initialState: TeamState = {
   teams: [],
