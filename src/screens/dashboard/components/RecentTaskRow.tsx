@@ -1,5 +1,6 @@
 import React from 'react';
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import {useTranslation} from 'react-i18next';
 import {useTheme} from '@/theme';
 import type {Theme} from '@/theme';
 import {Badge} from '@/components';
@@ -16,6 +17,7 @@ export const RecentTaskRow: React.FC<RecentTaskRowProps> = ({
 }) => {
   const {theme} = useTheme();
   const styles = createStyles(theme);
+  const {t} = useTranslation();
 
   const priorityColors: Record<string, string> = {
     low: theme.colors.priorityLow,
@@ -30,9 +32,9 @@ export const RecentTaskRow: React.FC<RecentTaskRowProps> = ({
   };
 
   const statusLabel: Record<string, string> = {
-    todo: 'To Do',
-    in_progress: 'In Progress',
-    completed: 'Done',
+    todo: t('status.todo'),
+    in_progress: t('status.in_progress'),
+    completed: t('status.completed'),
   };
 
   return (

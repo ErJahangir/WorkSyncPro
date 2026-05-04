@@ -10,6 +10,7 @@ import {useForm, Controller} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import {useNavigation} from '@react-navigation/native';
 
+import {useTranslation} from 'react-i18next';
 import {useTheme} from '@/theme';
 import type {Theme} from '@/theme';
 import {SignupFormData} from '@/types';
@@ -34,6 +35,7 @@ export const SignupScreen: React.FC = () => {
   const styles = createStyles(theme);
   const navigation = useNavigation<any>();
   const dispatch = useAppDispatch();
+  const {t} = useTranslation();
   const {isLoading, error} = useAppSelector(s => s.auth);
 
   useEffect(() => {
@@ -75,8 +77,8 @@ export const SignupScreen: React.FC = () => {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
-          <RNText style={styles.title}>Create Account 🚀</RNText>
-          <RNText style={styles.subtitle}>Join your team on WorkSync Pro</RNText>
+          <RNText style={styles.title}>{t('auth.signup.title')} 🚀</RNText>
+          <RNText style={styles.subtitle}>{t('auth.signup.subtitle')}</RNText>
         </View>
 
         {error && (
@@ -90,9 +92,9 @@ export const SignupScreen: React.FC = () => {
           name="name"
           render={({field: {onChange, onBlur, value}}) => (
             <Input
-              label="Full Name"
+              label={t('auth.signup.fullNameLabel')}
               required
-              placeholder="John Doe"
+              placeholder={t('auth.signup.fullNamePlaceholder')}
               value={value}
               onChangeText={onChange}
               onBlur={onBlur}
@@ -107,9 +109,9 @@ export const SignupScreen: React.FC = () => {
           name="email"
           render={({field: {onChange, onBlur, value}}) => (
             <Input
-              label="Email Address"
+              label={t('auth.login.emailLabel')}
               required
-              placeholder="you@company.com"
+              placeholder={t('auth.login.emailPlaceholder')}
               keyboardType="email-address"
               autoCapitalize="none"
               value={value}
@@ -126,9 +128,9 @@ export const SignupScreen: React.FC = () => {
           name="password"
           render={({field: {onChange, onBlur, value}}) => (
             <Input
-              label="Password"
+              label={t('auth.login.passwordLabel')}
               required
-              placeholder="Min. 8 characters"
+              placeholder={t('auth.login.passwordPlaceholder')}
               value={value}
               onChangeText={onChange}
               onBlur={onBlur}
@@ -136,7 +138,6 @@ export const SignupScreen: React.FC = () => {
               showPasswordToggle
               secureTextEntry
               leftIcon={<RNText style={styles.inputIcon}>🔒</RNText>}
-              hint="Use letters, numbers and special characters"
             />
           )}
         />
@@ -146,9 +147,9 @@ export const SignupScreen: React.FC = () => {
           name="confirmPassword"
           render={({field: {onChange, onBlur, value}}) => (
             <Input
-              label="Confirm Password"
+              label={t('auth.signup.confirmPasswordLabel')}
               required
-              placeholder="Repeat your password"
+              placeholder={t('auth.signup.confirmPasswordPlaceholder')}
               value={value}
               onChangeText={onChange}
               onBlur={onBlur}
@@ -161,13 +162,13 @@ export const SignupScreen: React.FC = () => {
         />
 
         <RNText style={styles.termsText}>
-          By signing up, you agree to our{' '}
-          <RNText style={styles.highlightText}>Terms of Service</RNText> and{' '}
-          <RNText style={styles.highlightText}>Privacy Policy</RNText>
+          {t('auth.signup.termsText')}{' '}
+          <RNText style={styles.highlightText}>{t('auth.signup.termsLink')}</RNText> {t('auth.signup.and')}{' '}
+          <RNText style={styles.highlightText}>{t('auth.signup.privacyLink')}</RNText>
         </RNText>
 
         <Button
-          title="Create Account"
+          title={t('auth.signup.createAccountBtn')}
           onPress={handleSubmit(onSubmit)}
           loading={isLoading}
           fullWidth
@@ -178,8 +179,8 @@ export const SignupScreen: React.FC = () => {
           onPress={() => navigation.navigate('Login')}
           style={styles.signInButton}>
           <RNText style={styles.signInText}>
-            Already have an account?{' '}
-            <RNText style={styles.signInHighlight}>Sign In</RNText>
+            {t('auth.signup.haveAccount')}{' '}
+            <RNText style={styles.signInHighlight}>{t('auth.signup.signIn')}</RNText>
           </RNText>
         </TouchableOpacity>
       </ScrollView>

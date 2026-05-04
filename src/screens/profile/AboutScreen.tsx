@@ -6,6 +6,7 @@
 import React, {useMemo} from 'react';
 import {View, StyleSheet, ScrollView, Image, Linking} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {useTranslation} from 'react-i18next';
 import {useTheme} from '@/theme';
 import type {Theme} from '@/theme';
 import {Card, Divider, Button} from '@/components';
@@ -14,6 +15,7 @@ import {RNText} from '@/components/common';
 export const AboutScreen: React.FC = () => {
   const {theme} = useTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const {t} = useTranslation();
 
   const handleLink = (url: string) => {
     Linking.openURL(url).catch(() => {});
@@ -27,26 +29,27 @@ export const AboutScreen: React.FC = () => {
             <RNText style={styles.logoEmoji}>🚀</RNText>
           </View>
           <RNText style={styles.appName}>WorkSync Pro</RNText>
-          <RNText style={styles.version}>Version 1.0.0 (Build 102)</RNText>
+          <RNText style={styles.version}>
+            {t('profile.about.version', {version: '1.0.0', build: '102'})}
+          </RNText>
         </View>
 
         <Card style={styles.descriptionCard}>
           <RNText style={styles.descriptionText}>
-            WorkSync Pro is a high-performance team collaboration platform designed for modern professionals.
-            Our mission is to streamline workflows, enhance communication, and help teams achieve more together.
+            {t('profile.about.description')}
           </RNText>
         </Card>
 
         <View style={styles.section}>
-          <RNText style={styles.sectionTitle}>Company</RNText>
+          <RNText style={styles.sectionTitle}>{t('profile.about.company')}</RNText>
           <Card padding={0}>
             <View style={styles.infoRow}>
-              <RNText style={styles.infoLabel}>Developer</RNText>
-              <RNText style={styles.infoValue}>WorkSync Technologies</RNText>
+              <RNText style={styles.infoLabel}>{t('profile.about.developer')}</RNText>
+              <RNText style={styles.infoValue}>{t('profile.about.developerName')}</RNText>
             </View>
             <Divider />
             <View style={styles.infoRow}>
-              <RNText style={styles.infoLabel}>Website</RNText>
+              <RNText style={styles.infoLabel}>{t('profile.about.website')}</RNText>
               <RNText
                 style={[styles.infoValue, styles.link]}
                 onPress={() => handleLink('https://worksyncpro.com')}>
@@ -55,7 +58,7 @@ export const AboutScreen: React.FC = () => {
             </View>
             <Divider />
             <View style={styles.infoRow}>
-              <RNText style={styles.infoLabel}>Support</RNText>
+              <RNText style={styles.infoLabel}>{t('profile.about.support')}</RNText>
               <RNText
                 style={[styles.infoValue, styles.link]}
                 onPress={() => handleLink('mailto:support@worksyncpro.com')}>
@@ -66,7 +69,7 @@ export const AboutScreen: React.FC = () => {
         </View>
 
         <View style={styles.section}>
-          <RNText style={styles.sectionTitle}>Follow Us</RNText>
+          <RNText style={styles.sectionTitle}>{t('profile.about.followUs')}</RNText>
           <View style={styles.socialRow}>
             <Button
               title="Twitter"
@@ -94,7 +97,7 @@ export const AboutScreen: React.FC = () => {
 
         <View style={styles.footer}>
           <RNText style={styles.copyright}>
-            © 2026 WorkSync Technologies Inc. All rights reserved.
+            {t('profile.about.copyright')}
           </RNText>
         </View>
       </ScrollView>

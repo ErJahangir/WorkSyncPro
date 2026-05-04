@@ -1,137 +1,161 @@
 import React from 'react';
-import {ActivityIndicator, StyleSheet, TouchableOpacity, View, TextInput} from 'react-native';
+import {
+  ActivityIndicator,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  TextInput,
+} from 'react-native';
 import {useTheme} from '@/theme';
 import type {Theme} from '@/theme';
 import type {TaskStatus, Comment} from '@/types';
 import {Avatar} from '@/components';
 import {formatRelativeTime} from '@/utils/dateUtils';
 import {RNText} from '@/components/common';
+import {useTranslation} from 'react-i18next';
 
 interface TaskDetailHeaderProps {
   onEdit: () => void;
   onDelete: () => void;
 }
 
-export const TaskDetailHeader = React.memo<TaskDetailHeaderProps>(({
-  onEdit,
-  onDelete,
-}) => {
-  const {theme} = useTheme();
-  const styles = createStyles(theme);
+export const TaskDetailHeader = React.memo<TaskDetailHeaderProps>(
+  ({onEdit, onDelete}) => {
+    const {theme} = useTheme();
+    const styles = createStyles(theme);
+    const {t} = useTranslation();
 
-  return (
-    <View style={styles.headerActions}>
-      <TouchableOpacity onPress={onEdit} style={styles.editBtn}>
-        <RNText style={styles.editBtnText}>Edit</RNText>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={onDelete} style={styles.deleteBtn}>
-        <RNText style={styles.deleteBtnText}>Delete</RNText>
-      </TouchableOpacity>
-    </View>
-  );
-});
+    return (
+      <View style={styles.headerActions}>
+        <TouchableOpacity onPress={onEdit} style={styles.editBtn}>
+          <RNText style={styles.editBtnText}>{t('tasks.actions.edit')}</RNText>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={onDelete} style={styles.deleteBtn}>
+          <RNText style={styles.deleteBtnText}>
+            {t('tasks.actions.delete')}
+          </RNText>
+        </TouchableOpacity>
+      </View>
+    );
+  },
+);
 
 interface StatusSelectorProps {
   currentStatus: TaskStatus;
   onStatusChange: (status: TaskStatus) => void;
 }
 
-const STATUS_OPTIONS: Array<{
-  status: TaskStatus;
-  label: string;
-  icon: string;
-  color: string;
-}> = [
-  {status: 'todo', label: 'To Do', icon: '📋', color: '#0EA5E9'},
-  {status: 'in_progress', label: 'In Progress', icon: '⚡', color: '#F59E0B'},
-  {status: 'completed', label: 'Completed', icon: '✅', color: '#10B981'},
-];
+export const StatusSelector = React.memo<StatusSelectorProps>(
+  ({currentStatus, onStatusChange}) => {
+    const {theme} = useTheme();
+    const styles = createStyles(theme);
+    const {t} = useTranslation();
 
-export const StatusSelector = React.memo<StatusSelectorProps>(({
-  currentStatus,
-  onStatusChange,
-}) => {
-  const {theme} = useTheme();
-  const styles = createStyles(theme);
+    const statusOptions: Array<{
+      status: TaskStatus;
+      label: string;
+      icon: string;
+      color: string;
+    }> = [
+      {
+        status: 'todo',
+        label: t('status.todo'),
+        icon: '📋',
+        color: '#0EA5E9',
+      },
+      {
+        status: 'in_progress',
+        label: t('status.in_progress'),
+        icon: '⚡',
+        color: '#F59E0B',
+      },
+      {
+        status: 'completed',
+        label: t('status.completed'),
+        icon: '✅',
+        color: '#10B981',
+      },
+    ];
 
-  return (
-    <View style={styles.statusRow}>
-      {STATUS_OPTIONS.map(opt => {
-        const isActive = currentStatus === opt.status;
-        return (
-          <TouchableOpacity
-            key={opt.status}
-            onPress={() => onStatusChange(opt.status)}
-            activeOpacity={0.75}
-            style={[
-              styles.statusItem,
-              {
-                backgroundColor: isActive
-                  ? opt.color + '20'
-                  : theme.colors.surfaceVariant,
-                borderColor: opt.color,
-                borderWidth: isActive ? 1.5 : 0,
-              },
-            ]}>
-            <RNText style={styles.statusIcon}>{opt.icon}</RNText>
-            <RNText
+    return (
+      <View style={styles.statusRow}>
+        {statusOptions.map(opt => {
+          const isActive = currentStatus === opt.status;
+          return (
+            <TouchableOpacity
+              key={opt.status}
+              onPress={() => onStatusChange(opt.status)}
+              activeOpacity={0.75}
               style={[
-                styles.statusLabel,
-                {color: isActive ? opt.color : theme.colors.textSecondary},
+                styles.statusItem,
+                {
+                  backgroundColor: isActive
+                    ? opt.color + '20'
+                    : theme.colors.surfaceVariant,
+                  borderColor: opt.color,
+                  borderWidth: isActive ? 1.5 : 0,
+                },
               ]}>
-              {opt.label}
-            </RNText>
-          </TouchableOpacity>
-        );
-      })}
-    </View>
-  );
-});
+              <RNText style={styles.statusIcon}>{opt.icon}</RNText>
+              <RNText
+                style={[
+                  styles.statusLabel,
+                  {color: isActive ? opt.color : theme.colors.textSecondary},
+                ]}>
+                {opt.label}
+              </RNText>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+    );
+  },
+);
 
 interface CommentBubbleProps {
   comment: Comment;
   currentUserId?: string;
 }
 
-export const CommentBubble = React.memo<CommentBubbleProps>(({
-  comment,
-  currentUserId,
-}) => {
-  const {theme} = useTheme();
-  const styles = createStyles(theme);
-  const isMine = comment.user_id === currentUserId;
+export const CommentBubble = React.memo<CommentBubbleProps>(
+  ({comment, currentUserId}) => {
+    const {theme} = useTheme();
+    const styles = createStyles(theme);
+    const {t} = useTranslation();
+    const isMine = comment.user_id === currentUserId;
 
-  return (
-    <View style={styles.commentRow}>
-      <Avatar
-        name={comment.user?.name || '?'}
-        uri={comment.user?.avatar}
-        size={34}
-      />
-      <View style={styles.commentContent}>
-        <View
-          style={[
-            styles.bubble,
-            {
-              backgroundColor: isMine
-                ? theme.colors.primaryLight
-                : theme.colors.surfaceVariant,
-            },
-          ]}>
-          <View style={styles.bubbleHeader}>
-            <RNText style={styles.commentAuthor}>
-              {comment.user?.name || 'Unknown'}
-            </RNText>
-            <RNText style={styles.commentTime}>
-              {formatRelativeTime(comment.created_at)}
-            </RNText>
+    return (
+      <View style={styles.commentRow}>
+        <Avatar
+          name={comment.user?.name || '?'}
+          uri={comment.user?.avatar}
+          size={34}
+        />
+        <View style={styles.commentContent}>
+          <View
+            style={[
+              styles.bubble,
+              {
+                backgroundColor: isMine
+                  ? theme.colors.primaryLight
+                  : theme.colors.surfaceVariant,
+              },
+            ]}>
+            <View style={styles.bubbleHeader}>
+              <RNText style={styles.commentAuthor}>
+                {comment.user?.name || t('common.unknownUser')}
+              </RNText>
+              <RNText style={styles.commentTime}>
+                {formatRelativeTime(comment.created_at)}
+              </RNText>
+            </View>
+            <RNText style={styles.commentText}>{comment.message}</RNText>
           </View>
-          <RNText style={styles.commentText}>{comment.message}</RNText>
         </View>
       </View>
-    </View>
-  );
-});
+    );
+  },
+);
 
 interface CommentInputProps {
   onSend: (text: string) => Promise<void>;
@@ -139,56 +163,55 @@ interface CommentInputProps {
   user: any;
 }
 
-export const CommentInput = React.memo<CommentInputProps>(({
-  onSend,
-  sending,
-  user,
-}) => {
-  const [text, setText] = React.useState('');
-  const {theme} = useTheme();
-  const styles = createStyles(theme);
+export const CommentInput = React.memo<CommentInputProps>(
+  ({onSend, sending, user}) => {
+    const [text, setText] = React.useState('');
+    const {theme} = useTheme();
+    const styles = createStyles(theme);
+    const {t} = useTranslation();
 
-  const handleSend = async () => {
-    if (!text.trim() || sending) return;
-    const currentText = text.trim();
-    setText('');
-    await onSend(currentText);
-  };
+    const handleSend = async () => {
+      if (!text.trim() || sending) return;
+      const currentText = text.trim();
+      setText('');
+      await onSend(currentText);
+    };
 
-  return (
-    <View style={styles.inputContainer}>
-      <Avatar name={user?.name || 'U'} uri={user?.avatar} size={34} />
-      <View style={styles.inputWrapper}>
-        <TextInput
-          placeholder="Write a comment..."
-          placeholderTextColor={theme.colors.textTertiary}
-          value={text}
-          onChangeText={setText}
-          style={styles.textInput}
-          multiline
-          maxLength={500}
-        />
+    return (
+      <View style={styles.inputContainer}>
+        <Avatar name={user?.name || 'U'} uri={user?.avatar} size={34} />
+        <View style={styles.inputWrapper}>
+          <TextInput
+            placeholder={t('tasks.comments.placeholder')}
+            placeholderTextColor={theme.colors.textTertiary}
+            value={text}
+            onChangeText={setText}
+            style={styles.textInput}
+            multiline
+            maxLength={500}
+          />
+        </View>
+        <TouchableOpacity
+          onPress={handleSend}
+          disabled={!text.trim() || sending}
+          style={[
+            styles.sendBtn,
+            {
+              backgroundColor: text.trim()
+                ? theme.colors.primary
+                : theme.colors.surfaceVariant,
+            },
+          ]}>
+          {sending ? (
+            <ActivityIndicator size="small" color="#fff" />
+          ) : (
+            <RNText style={styles.sendIcon}>↑</RNText>
+          )}
+        </TouchableOpacity>
       </View>
-      <TouchableOpacity
-        onPress={handleSend}
-        disabled={!text.trim() || sending}
-        style={[
-          styles.sendBtn,
-          {
-            backgroundColor: text.trim()
-              ? theme.colors.primary
-              : theme.colors.surfaceVariant,
-          },
-        ]}>
-        {sending ? (
-          <ActivityIndicator size="small" color="#fff" />
-        ) : (
-          <RNText style={styles.sendIcon}>↑</RNText>
-        )}
-      </TouchableOpacity>
-    </View>
-  );
-});
+    );
+  },
+);
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({

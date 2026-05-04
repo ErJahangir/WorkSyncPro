@@ -26,16 +26,17 @@ import {
   TaskFilterModal,
   TaskCard,
 } from '@/components';
-import {} from '@/components';
 import {Task, TaskStatus} from '@/types';
 import {TaskListHeader, TaskSearchBar, TaskStatusTabs} from './components';
 import {RNText} from '@/components/common';
+import {useTranslation} from 'react-i18next';
 
 export const TaskListScreen: React.FC = () => {
   const {theme} = useTheme();
   const styles = createStyles(theme);
   const dispatch = useAppDispatch();
   const navigation = useNavigation<any>();
+  const {t} = useTranslation();
 
   const {user} = useAppSelector(s => s.auth);
   const tasks = useAppSelector(selectAllTasks);
@@ -105,7 +106,7 @@ export const TaskListScreen: React.FC = () => {
     if (!pagination.hasMore || tasks.length === 0) return null;
     return (
       <View style={styles.footer}>
-        <RNText style={styles.footerText}>Loading more...</RNText>
+        <RNText style={styles.footerText}>{t('tasks.loadingMore')}</RNText>
       </View>
     );
   };
@@ -166,14 +167,14 @@ export const TaskListScreen: React.FC = () => {
           ListEmptyComponent={
             <EmptyState
               icon="📋"
-              title="No tasks found"
+              title={t('tasks.noTasksTitle')}
               subtitle={
                 searchText
-                  ? `No results for "${searchText}"`
-                  : 'Create your first task to get started'
+                  ? t('tasks.noResultsFor', {query: searchText})
+                  : t('tasks.noTasksSubtitle')
               }
               action={{
-                label: '+ Create Task',
+                label: t('tasks.createTaskBtn'),
                 onPress: () => navigation.navigate('CreateTask'),
               }}
             />

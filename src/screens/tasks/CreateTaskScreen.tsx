@@ -12,6 +12,7 @@ import {
   Platform,
   ScrollView,
 } from 'react-native';
+import {useTranslation} from 'react-i18next';
 import {useNavigation} from '@react-navigation/native';
 
 import {TaskFormData, TaskPriority, TaskStatus} from '@/types';
@@ -26,6 +27,7 @@ export const CreateTaskScreen: React.FC = () => {
   const styles = createStyles(theme);
   const navigation = useNavigation<any>();
   const dispatch = useAppDispatch();
+  const {t} = useTranslation();
   const {user} = useAppSelector(s => s.auth);
   const {isLoading} = useAppSelector(s => s.tasks);
 
@@ -60,9 +62,13 @@ export const CreateTaskScreen: React.FC = () => {
           <TouchableOpacity
             onPress={() => navigation.goBack()}
             style={styles.closeBtn}>
-            <RNText style={styles.cancelText}>Cancel</RNText>
+            <RNText style={styles.cancelText}>
+              {t('tasks.createTask.cancel')}
+            </RNText>
           </TouchableOpacity>
-          <RNText style={styles.headerTitle}>New Task</RNText>
+          <RNText style={styles.headerTitle}>
+            {t('tasks.createTask.title')}
+          </RNText>
           <View style={styles.headerAction} />
         </View>
 
@@ -74,7 +80,7 @@ export const CreateTaskScreen: React.FC = () => {
           <TaskForm
             onSubmit={onSubmit}
             isLoading={isLoading}
-            submitButtonLabel="Create Task"
+            submitButtonLabel={t('tasks.createTask.submit')}
           />
         </ScrollView>
       </View>

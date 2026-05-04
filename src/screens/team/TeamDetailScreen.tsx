@@ -3,7 +3,7 @@
  * Displays detailed information about a team
  */
 
-import React from 'react';
+import {useTranslation} from 'react-i18next';
 import {StyleSheet, View} from 'react-native';
 import {useTheme} from '@/theme';
 import type {Theme} from '@/theme';
@@ -12,11 +12,12 @@ import {RNText} from '@/components/common';
 export const TeamDetailScreen: React.FC = () => {
   const {theme} = useTheme();
   const styles = createStyles(theme);
+  const {t} = useTranslation();
 
   return (
     <View style={styles.container}>
-      <RNText style={styles.title}>Team Details</RNText>
-      <RNText style={styles.subtitle}>Coming soon...</RNText>
+      <RNText style={styles.title}>{t('teamDetail.title')}</RNText>
+      <RNText style={styles.subtitle}>{t('teamDetail.comingSoon')}</RNText>
     </View>
   );
 };

@@ -37,6 +37,7 @@ import {
   PrivacyPolicyScreen,
   TermsOfServiceScreen,
 } from '@/screens';
+import {useTranslation} from 'react-i18next';
 import {useAppSelector, useRealtimeNotifications} from '@/hooks';
 import {RNText} from '@/components/common';
 
@@ -74,6 +75,7 @@ const TabIcon: React.FC<{
 // Task Stack Navigator
 const TaskStackNavigator: React.FC = () => {
   const {theme} = useTheme();
+  const {t} = useTranslation();
   return (
     <TaskStack.Navigator
       screenOptions={{
@@ -90,25 +92,25 @@ const TaskStackNavigator: React.FC = () => {
       <TaskStack.Screen
         name="TaskDetail"
         component={TaskDetailScreen}
-        options={{title: 'Task Details'}}
+        options={{title: t('navigation.taskDetails')}}
       />
       <TaskStack.Screen
         name="CreateTask"
         component={CreateTaskScreen}
         options={{
-          title: 'New Task',
+          title: t('navigation.newTask'),
           presentation: 'modal',
         }}
       />
       <TaskStack.Screen
         name="EditTask"
         component={EditTaskScreen}
-        options={{title: 'Edit Task', presentation: 'modal'}}
+        options={{title: t('navigation.editTask'), presentation: 'modal'}}
       />
       <TaskStack.Screen
         name="TaskComments"
         component={TaskCommentsScreen}
-        options={{title: 'Comments'}}
+        options={{title: t('navigation.comments')}}
       />
     </TaskStack.Navigator>
   );
@@ -117,6 +119,7 @@ const TaskStackNavigator: React.FC = () => {
 // Team Stack Navigator
 const TeamStackNavigator: React.FC = () => {
   const {theme} = useTheme();
+  const {t} = useTranslation();
   return (
     <TeamStack.Navigator
       screenOptions={{
@@ -133,27 +136,27 @@ const TeamStackNavigator: React.FC = () => {
       <TeamStack.Screen
         name="TeamDetail"
         component={TeamDetailScreen}
-        options={{title: 'Team'}}
+        options={{title: t('navigation.team')}}
       />
       <TeamStack.Screen
         name="CreateTeam"
         component={CreateTeamScreen}
-        options={{title: 'New Team', presentation: 'modal'}}
+        options={{title: t('navigation.newTeam'), presentation: 'modal'}}
       />
       <TeamStack.Screen
         name="InviteMember"
         component={InviteMemberScreen}
-        options={{title: 'Invite Member', presentation: 'modal'}}
+        options={{title: t('navigation.inviteMember'), presentation: 'modal'}}
       />
       <TeamStack.Screen
         name="Invites"
         component={InvitesScreen}
-        options={{title: 'Invitations'}}
+        options={{title: t('navigation.invitations')}}
       />
       <TeamStack.Screen
         name="MemberProfile"
         component={MemberProfileScreen}
-        options={{title: 'Member Profile'}}
+        options={{title: t('navigation.memberProfile')}}
       />
     </TeamStack.Navigator>
   );
@@ -162,6 +165,7 @@ const TeamStackNavigator: React.FC = () => {
 // Profile Stack Navigator
 const ProfileStackNavigator: React.FC = () => {
   const {theme} = useTheme();
+  const {t} = useTranslation();
   return (
     <ProfileStack.Navigator
       screenOptions={{
@@ -178,37 +182,37 @@ const ProfileStackNavigator: React.FC = () => {
       <ProfileStack.Screen
         name="Notifications"
         component={NotificationsScreen}
-        options={{title: 'Notifications'}}
+        options={{title: t('navigation.notifications')}}
       />
       <ProfileStack.Screen
         name="ChangePassword"
         component={ChangePasswordScreen}
-        options={{title: 'Change Password'}}
+        options={{title: t('navigation.changePassword')}}
       />
       <ProfileStack.Screen
         name="EmailPreferences"
         component={EmailPreferencesScreen}
-        options={{title: 'Email Preferences'}}
+        options={{title: t('navigation.emailPreferences')}}
       />
       <ProfileStack.Screen
         name="Language"
         component={LanguageScreen}
-        options={{title: 'Language'}}
+        options={{title: t('navigation.language')}}
       />
       <ProfileStack.Screen
         name="About"
         component={AboutScreen}
-        options={{title: 'About'}}
+        options={{title: t('navigation.about')}}
       />
       <ProfileStack.Screen
         name="PrivacyPolicy"
         component={PrivacyPolicyScreen}
-        options={{title: 'Privacy Policy'}}
+        options={{title: t('navigation.privacyPolicy')}}
       />
       <ProfileStack.Screen
         name="TermsOfService"
         component={TermsOfServiceScreen}
-        options={{title: 'Terms of Service'}}
+        options={{title: t('navigation.termsOfService')}}
       />
     </ProfileStack.Navigator>
   );
@@ -217,6 +221,7 @@ const ProfileStackNavigator: React.FC = () => {
 // Main Tab Navigator
 export const MainNavigator: React.FC = () => {
   const {theme} = useTheme();
+  const {t} = useTranslation();
   const {user} = useAppSelector(state => state.auth);
   const {unreadCount} = useAppSelector(state => state.notifications);
 
@@ -242,7 +247,12 @@ export const MainNavigator: React.FC = () => {
         component={DashboardScreen}
         options={{
           tabBarIcon: ({focused, color}) => (
-            <TabIcon icon="🏠" label="Home" focused={focused} color={color} />
+            <TabIcon
+              icon="🏠"
+              label={t('navigation.home')}
+              focused={focused}
+              color={color}
+            />
           ),
           tabBarActiveTintColor: theme.colors.tabBarActive,
           tabBarInactiveTintColor: theme.colors.tabBarInactive,
@@ -253,7 +263,12 @@ export const MainNavigator: React.FC = () => {
         component={TaskStackNavigator}
         options={{
           tabBarIcon: ({focused, color}) => (
-            <TabIcon icon="✅" label="Tasks" focused={focused} color={color} />
+            <TabIcon
+              icon="✅"
+              label={t('navigation.tasks')}
+              focused={focused}
+              color={color}
+            />
           ),
           tabBarActiveTintColor: theme.colors.tabBarActive,
           tabBarInactiveTintColor: theme.colors.tabBarInactive,
@@ -266,7 +281,7 @@ export const MainNavigator: React.FC = () => {
           tabBarIcon: ({focused, color}) => (
             <TabIcon
               icon="👥"
-              label="Team"
+              label={t('navigation.team')}
               focused={focused}
               color={color}
               badge={unreadCount}
@@ -281,7 +296,12 @@ export const MainNavigator: React.FC = () => {
         component={AnalyticsScreen}
         options={{
           tabBarIcon: ({focused, color}) => (
-            <TabIcon icon="📊" label="Stats" focused={focused} color={color} />
+            <TabIcon
+              icon="📊"
+              label={t('navigation.stats')}
+              focused={focused}
+              color={color}
+            />
           ),
           tabBarActiveTintColor: theme.colors.tabBarActive,
           tabBarInactiveTintColor: theme.colors.tabBarInactive,
@@ -294,7 +314,7 @@ export const MainNavigator: React.FC = () => {
           tabBarIcon: ({focused, color}) => (
             <TabIcon
               icon="👤"
-              label="Profile"
+              label={t('navigation.profile')}
               focused={focused}
               color={color}
             />

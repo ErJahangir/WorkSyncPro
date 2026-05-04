@@ -1,8 +1,7 @@
 import React from 'react';
 import {StyleSheet, TouchableOpacity} from 'react-native';
-import {useTheme} from '@/theme';
-import type {Theme} from '@/theme';
-import {RNText} from '@/components/common';
+import {type Theme, useTheme} from '@/theme';
+import {RNText} from '@/components';
 
 interface AccountMenuItemProps {
   icon: string;
@@ -11,25 +10,22 @@ interface AccountMenuItemProps {
   isLast?: boolean;
 }
 
-export const AccountMenuItem = React.memo<AccountMenuItemProps>(({
-  icon,
-  label,
-  onPress,
-  isLast,
-}) => {
-  const {theme} = useTheme();
-  const styles = React.useMemo(() => createStyles(theme), [theme]);
+export const AccountMenuItem = React.memo<AccountMenuItemProps>(
+  ({icon, label, onPress, isLast}) => {
+    const {theme} = useTheme();
+    const styles = React.useMemo(() => createStyles(theme), [theme]);
 
-  return (
-    <TouchableOpacity
-      onPress={onPress}
-      style={[styles.menuItem, !isLast && styles.menuItemBorder]}>
-      <RNText style={styles.menuIcon}>{icon}</RNText>
-      <RNText style={styles.menuLabel}>{label}</RNText>
-      <RNText style={styles.menuArrow}>›</RNText>
-    </TouchableOpacity>
-  );
-});
+    return (
+      <TouchableOpacity
+        onPress={onPress}
+        style={[styles.menuItem, !isLast && styles.menuItemBorder]}>
+        <RNText style={styles.menuIcon}>{icon}</RNText>
+        <RNText style={styles.menuLabel}>{label}</RNText>
+        <RNText style={styles.menuArrow}>›</RNText>
+      </TouchableOpacity>
+    );
+  },
+);
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({

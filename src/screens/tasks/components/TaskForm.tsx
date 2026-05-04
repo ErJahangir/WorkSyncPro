@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import {StyleSheet, TextInput, TouchableOpacity, View} from 'react-native';
 import {Controller, useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
@@ -10,21 +10,7 @@ import {Button, Input} from '@/components';
 import type {TaskFormData, TaskPriority, TaskStatus} from '@/types';
 import {RNText} from '@/components/common';
 import {RootState} from '@/store';
-
-const schema = yup.object().shape({
-  title: yup
-    .string()
-    .required('Task title is required')
-    .min(3, 'Too short')
-    .max(100, 'Too long'),
-  description: yup.string().ensure().max(500, 'Max 500 characters'),
-  priority: yup.string().oneOf(['low', 'medium', 'high']).required(),
-  status: yup.string().oneOf(['todo', 'in_progress', 'completed']).required(),
-  tags: yup.mixed<string | string[]>().optional(),
-  deadline: yup.date().optional(),
-  team_id: yup.string().optional().nullable(),
-  assigned_to: yup.string().optional().nullable(),
-});
+import {useTranslation} from 'react-i18next';
 
 interface TaskFormProps {
   initialValues?: Partial<TaskFormData>;
@@ -41,6 +27,32 @@ export const TaskForm: React.FC<TaskFormProps> = ({
 }) => {
   const {theme} = useTheme();
   const styles = createStyles(theme);
+  const {t} = useTranslation();
+
+  const schema = useMemo(
+    () =>
+      yup.object().shape({
+        title: yup
+          .string()
+          .required(t('tasks.taskForm.validation.titleRequired'))
+          .min(3, t('tasks.taskForm.validation.titleShort'))
+          .max(100, t('tasks.taskForm.validation.titleLong')),
+        description: yup
+          .string()
+          .ensure()
+          .max(500, t('tasks.taskForm.validation.descLong')),
+        priority: yup.string().oneOf(['low', 'medium', 'high']).required(),
+        status: yup
+          .string()
+          .oneOf(['todo', 'in_progress', 'completed'])
+          .required(),
+        tags: yup.mixed<string | string[]>().optional(),
+        deadline: yup.date().optional(),
+        team_id: yup.string().optional().nullable(),
+        assigned_to: yup.string().optional().nullable(),
+      }),
+    [t],
+  );
 
   const [tagInput, setTagInput] = useState('');
   const [tags, setTags] = useState<string[]>(
@@ -57,7 +69,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({
     setValue,
     watch,
     formState: {errors},
-  } = useForm<TaskFormData & {team_id?: string | null}>({
+  } = useForm<TaskFormData>({
     resolver: yupResolver(schema as any),
     defaultValues: {
       title: initialValues?.title || '',
@@ -80,9 +92,9 @@ export const TaskForm: React.FC<TaskFormProps> = ({
   const status = watch('status');
 
   const addTag = () => {
-    const t = tagInput.trim().toLowerCase().replace(/\s+/g, '-');
-    if (t && !tags.includes(t) && tags.length < 5) {
-      setTags(prev => [...prev, t]);
+    const tInput = tagInput.trim().toLowerCase().replace(/\s+/g, '-');
+    if (tInput && !tags.includes(tInput) && tags.length < 5) {
+      setTags(prev => [...prev, tInput]);
       setTagInput('');
     }
   };
@@ -102,9 +114,9 @@ export const TaskForm: React.FC<TaskFormProps> = ({
         name="title"
         render={({field: {onChange, onBlur, value}}) => (
           <Input
-            label="Task Title"
+            label={t('tasks.taskForm.titleLabel')}
             required
-            placeholder="What needs to be done?"
+            placeholder={t('tasks.taskForm.titlePlaceholder')}
             value={value}
             onChangeText={onChange}
             onBlur={onBlur}
@@ -119,12 +131,12 @@ export const TaskForm: React.FC<TaskFormProps> = ({
         name="description"
         render={({field: {onChange, onBlur, value}}) => (
           <View style={styles.section}>
-            <SectionLabel title="Description" />
+            <SectionLabel title={t('tasks.taskForm.descriptionLabel')} />
             <View style={styles.descriptionContainer}>
               <TextInput
                 multiline
                 numberOfLines={4}
-                placeholder="Add a detailed description..."
+                placeholder={t('tasks.taskForm.descriptionPlaceholder')}
                 placeholderTextColor={theme.colors.textTertiary}
                 value={value}
                 onChangeText={onChange}
@@ -144,7 +156,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({
       {/* Team Selection */}
       {teams.length > 0 && (
         <View style={styles.section}>
-          <SectionLabel title="Assign to Team" />
+          <SectionLabel title={t('tasks.taskForm.teamLabel')} />
           <OptionPicker
             selected={selectedTeamId || 'personal'}
             onSelect={val => {
@@ -155,7 +167,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({
             options={[
               {
                 value: 'personal',
-                label: 'Personal Task',
+                label: t('tasks.taskForm.personalTask'),
                 icon: '👤',
                 color: theme.colors.textSecondary,
               },
@@ -173,14 +185,16 @@ export const TaskForm: React.FC<TaskFormProps> = ({
       {/* Member Assignment (Only if a team is selected) */}
       {selectedTeamId && members.length > 0 && (
         <View style={styles.section}>
-          <SectionLabel title="Assignee" />
+          <SectionLabel title={t('tasks.taskForm.assigneeLabel')} />
           <OptionPicker
             selected={assignedToId || 'unassigned'}
-            onSelect={val => setValue('assigned_to', val === 'unassigned' ? null : val)}
+            onSelect={val =>
+              setValue('assigned_to', val === 'unassigned' ? null : val)
+            }
             options={[
               {
                 value: 'unassigned',
-                label: 'Unassigned',
+                label: t('tasks.taskForm.unassigned'),
                 icon: '👤',
                 color: theme.colors.textTertiary,
               },
@@ -188,7 +202,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({
                 .filter(m => m.team_id === selectedTeamId)
                 .map(m => ({
                   value: m.user_id,
-                  label: m.user?.name || 'Unknown',
+                  label: m.user?.name || t('common.unknownUser'),
                   icon: '👤',
                   color: theme.colors.primary,
                 })),
@@ -199,26 +213,26 @@ export const TaskForm: React.FC<TaskFormProps> = ({
 
       {/* Priority */}
       <View style={styles.section}>
-        <SectionLabel title="Priority" required />
+        <SectionLabel title={t('tasks.taskForm.priorityLabel')} required />
         <OptionPicker
           selected={priority}
           onSelect={val => setValue('priority', val as TaskPriority)}
           options={[
             {
               value: 'low',
-              label: 'Low',
+              label: t('tasks.taskForm.low'),
               icon: '🟢',
               color: theme.colors.priorityLow,
             },
             {
               value: 'medium',
-              label: 'Medium',
+              label: t('tasks.taskForm.medium'),
               icon: '🟡',
               color: theme.colors.priorityMedium,
             },
             {
               value: 'high',
-              label: 'High',
+              label: t('tasks.taskForm.high'),
               icon: '🔴',
               color: theme.colors.priorityHigh,
             },
@@ -228,26 +242,26 @@ export const TaskForm: React.FC<TaskFormProps> = ({
 
       {/* Status */}
       <View style={styles.section}>
-        <SectionLabel title="Status" required />
+        <SectionLabel title={t('tasks.taskForm.statusLabel')} required />
         <OptionPicker
           selected={status}
           onSelect={val => setValue('status', val as TaskStatus)}
           options={[
             {
               value: 'todo',
-              label: 'To Do',
+              label: t('status.todo'),
               icon: '📋',
               color: theme.colors.statusTodo,
             },
             {
               value: 'in_progress',
-              label: 'In Progress',
+              label: t('status.in_progress'),
               icon: '⚡',
               color: theme.colors.statusInProgress,
             },
             {
               value: 'completed',
-              label: 'Completed',
+              label: t('status.completed'),
               icon: '✅',
               color: theme.colors.statusCompleted,
             },
@@ -257,13 +271,13 @@ export const TaskForm: React.FC<TaskFormProps> = ({
 
       {/* Tags */}
       <View style={styles.section}>
-        <SectionLabel title="Tags" />
+        <SectionLabel title={t('tasks.taskForm.tagsLabel')} />
         <View style={styles.tagInputRow}>
           <View style={styles.tagInputContainer}>
             <TextInput
               value={tagInput}
               onChangeText={setTagInput}
-              placeholder="Add tag..."
+              placeholder={t('tasks.taskForm.tagsPlaceholder')}
               placeholderTextColor={theme.colors.textTertiary}
               onSubmitEditing={addTag}
               returnKeyType="done"
@@ -288,7 +302,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({
           </View>
         )}
         <RNText style={styles.tagHint}>
-          {tags.length}/5 tags · Tap a tag to remove
+          {t('tasks.taskForm.tagsHint', {count: tags.length})}
         </RNText>
       </View>
 

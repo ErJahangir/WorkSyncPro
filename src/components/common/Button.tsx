@@ -5,7 +5,7 @@
 
 import {useTheme} from '@/theme';
 import React from 'react';
-import {TouchableOpacity, ActivityIndicator, ViewStyle, TextStyle} from 'react-native';
+import {TouchableOpacity, ActivityIndicator, ViewStyle, TextStyle, StyleProp} from 'react-native';
 import RNText from './RNText';
 
 type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
@@ -21,8 +21,8 @@ interface ButtonProps {
   icon?: React.ReactNode;
   iconPosition?: 'left' | 'right';
   fullWidth?: boolean;
-  style?: ViewStyle;
-  textStyle?: TextStyle;
+  style?: StyleProp<ViewStyle>;
+  textStyle?: StyleProp<TextStyle>;
 }
 
 export const Button: React.FC<ButtonProps> = ({

@@ -16,6 +16,7 @@ import {useForm, Controller} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
+import {useTranslation} from 'react-i18next';
 import {useTheme} from '@/theme';
 import type {Theme} from '@/theme';
 import {useAppDispatch, useAppSelector} from '@/hooks';
@@ -33,6 +34,7 @@ export const ForgotPasswordScreen: React.FC = () => {
   const styles = createStyles(theme);
   const navigation = useNavigation<any>();
   const dispatch = useAppDispatch();
+  const {t} = useTranslation();
   const {isLoading} = useAppSelector(s => s.auth);
   const [sent, setSent] = useState(false);
 
@@ -70,9 +72,9 @@ export const ForgotPasswordScreen: React.FC = () => {
           <>
             <View style={styles.header}>
               <RNText style={styles.icon}>🔑</RNText>
-              <RNText style={styles.title}>Reset Password</RNText>
+              <RNText style={styles.title}>{t('auth.forgotPassword.title')}</RNText>
               <RNText style={styles.subtitle}>
-                Enter your email and we'll send you reset instructions
+                {t('auth.forgotPassword.subtitle')}
               </RNText>
             </View>
 
@@ -81,9 +83,9 @@ export const ForgotPasswordScreen: React.FC = () => {
               name="email"
               render={({field: {onChange, onBlur, value}}) => (
                 <Input
-                  label="Email Address"
+                  label={t('auth.login.emailLabel')}
                   required
-                  placeholder="you@company.com"
+                  placeholder={t('auth.login.emailPlaceholder')}
                   keyboardType="email-address"
                   autoCapitalize="none"
                   value={value}
@@ -96,7 +98,7 @@ export const ForgotPasswordScreen: React.FC = () => {
             />
 
             <Button
-              title="Send Reset Email"
+              title={t('auth.forgotPassword.sendEmail')}
               onPress={handleSubmit(onSubmit)}
               loading={isLoading}
               fullWidth
@@ -107,13 +109,13 @@ export const ForgotPasswordScreen: React.FC = () => {
         ) : (
           <View style={styles.successContainer}>
             <RNText style={styles.successIcon}>📧</RNText>
-            <RNText style={styles.successTitle}>Check your inbox</RNText>
+            <RNText style={styles.successTitle}>{t('auth.forgotPassword.successTitle')}</RNText>
             <RNText style={styles.successSubtitle}>
-              We sent password reset instructions to{'\n'}
+              {t('auth.forgotPassword.successSubtitle')} {'\n'}
               <RNText style={styles.highlightText}>{getValues('email')}</RNText>
             </RNText>
             <Button
-              title="Back to Sign In"
+              title={t('auth.forgotPassword.backToSignIn')}
               onPress={() => navigation.navigate('Login')}
               fullWidth
               size="lg"
@@ -134,26 +136,26 @@ export const EmailVerificationScreen: React.FC<{route: any}> = ({route}) => {
   const {theme} = useTheme();
   const styles = createStyles(theme);
   const navigation = useNavigation<any>();
+  const {t} = useTranslation();
   const {email} = route.params;
 
   return (
     <View style={styles.verifyContainer}>
       <RNText style={styles.verifyIcon}>✅</RNText>
-      <RNText style={styles.verifyTitle}>Verify your email</RNText>
+      <RNText style={styles.verifyTitle}>{t('auth.verifyEmail.title')}</RNText>
       <RNText style={styles.verifySubtitle}>
-        We sent a verification link to{'\n'}
+        {t('auth.verifyEmail.subtitle')} {'\n'}
         <RNText style={styles.highlightText}>{email}</RNText>
-        {'\n\n'}Please check your inbox and click the link to activate your
-        account.
+        {'\n\n'}{t('auth.verifyEmail.instruction')}
       </RNText>
       <Button
-        title="Go to Sign In"
+        title={t('auth.verifyEmail.goToSignIn')}
         onPress={() => navigation.navigate('Login')}
         fullWidth
         size="lg"
       />
       <Button
-        title="Resend Email"
+        title={t('auth.verifyEmail.resendEmail')}
         onPress={() => {}}
         variant="ghost"
         fullWidth

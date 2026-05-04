@@ -8,8 +8,7 @@ import Toast, {
   ToastConfigParams,
 } from 'react-native-toast-message';
 import {View} from 'react-native';
-import React from 'react';
-import {RNText} from '@/components/common';
+import {RNText} from '@/components';
 
 type ToastType = 'success' | 'error' | 'info';
 

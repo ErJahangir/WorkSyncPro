@@ -14,6 +14,7 @@ import {
 import DatePicker from 'react-native-date-picker';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
+import {useTranslation} from 'react-i18next';
 import {useTheme} from '@/theme';
 import type {Theme} from '@/theme';
 import {getFCMToken, storage} from '@/services';
@@ -33,6 +34,7 @@ export const ProfileScreen: React.FC = () => {
   const {theme, toggleTheme, isDark} = useTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const dispatch = useAppDispatch();
+  const {t} = useTranslation();
   const {user} = useAppSelector(s => s.auth);
 
   const [reminderEnabled, setReminderEnabled] = useState(false);
@@ -63,14 +65,14 @@ export const ProfileScreen: React.FC = () => {
         }
       } catch (err: any) {
         Alert.alert(
-          'Upload Failed',
+          t('profile.uploadFailed'),
           err.message || 'Could not update profile image',
         );
       } finally {
         setUploadingImage(false);
       }
     },
-    [user, dispatch],
+    [user, dispatch, t],
   );
 
   const handleCameraCapture = useCallback(async () => {
@@ -108,15 +110,15 @@ export const ProfileScreen: React.FC = () => {
   );
 
   const handleLogout = useCallback(() => {
-    Alert.alert('Sign Out', 'Are you sure you want to sign out?', [
-      {text: 'Cancel', style: 'cancel'},
+    Alert.alert(t('profile.logout'), t('profile.signOutConfirm'), [
+      {text: t('profile.cancel'), style: 'cancel'},
       {
-        text: 'Sign Out',
+        text: t('profile.signOutBtn'),
         style: 'destructive',
         onPress: () => dispatch(logoutUser()),
       },
     ]);
-  }, [dispatch]);
+  }, [dispatch, t]);
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
@@ -124,7 +126,11 @@ export const ProfileScreen: React.FC = () => {
         {/* Profile Header */}
         <View style={styles.profileHeader}>
           <View style={styles.avatarContainer}>
-            <Avatar name={user?.name || 'User'} uri={user?.avatar} size={90} />
+            <Avatar
+              name={user?.name || t('profile.defaultName')}
+              uri={user?.avatar}
+              size={90}
+            />
             <TouchableOpacity
               onPress={() => setImageSheetVisible(true)}
               disabled={uploadingImage}
@@ -133,7 +139,9 @@ export const ProfileScreen: React.FC = () => {
                 uploadingImage && styles.disabledBtn,
               ]}>
               <RNText style={styles.editAvatarText}>
-                {uploadingImage ? 'Uploading...' : 'Change Photo'}
+                {uploadingImage
+                  ? t('profile.uploading')
+                  : t('profile.changePhoto')}
               </RNText>
             </TouchableOpacity>
           </View>
@@ -146,24 +154,24 @@ export const ProfileScreen: React.FC = () => {
 
         {/* Settings */}
         <View style={styles.section}>
-          <RNText style={styles.sectionTitle}>Settings</RNText>
+          <RNText style={styles.sectionTitle}>{t('profile.settings')}</RNText>
 
           <Card>
             <SettingRow
               icon="🌙"
-              label="Dark Mode"
-              description="Toggle dark theme"
+              label={t('profile.darkMode')}
+              description={t('profile.darkModeDesc')}
               value={isDark}
               onValueChange={toggleTheme}
             />
             <Divider />
             <SettingRow
               icon="⏰"
-              label="Daily Task Reminder"
+              label={t('profile.dailyReminder')}
               description={
                 reminderEnabled
-                  ? `Scheduled for ${formatTime(reminderTime)}`
-                  : 'Get notified about pending tasks'
+                  ? t('profile.scheduledFor', {time: formatTime(reminderTime)})
+                  : t('profile.dailyReminderDesc')
               }
               value={reminderEnabled}
               onValueChange={handleReminderToggle}
@@ -191,43 +199,43 @@ export const ProfileScreen: React.FC = () => {
 
         {/* Account Section */}
         <View style={styles.section}>
-          <RNText style={styles.sectionTitle}>Account</RNText>
+          <RNText style={styles.sectionTitle}>{t('profile.account')}</RNText>
 
           <Card padding={0}>
             {[
               {
                 icon: '🔔',
-                label: 'Notifications',
+                label: t('profile.notificationsLabel'),
                 onPress: () => navigation.navigate('Notifications'),
               },
               {
                 icon: '🔒',
-                label: 'Change Password',
+                label: t('profile.changePasswordLabel'),
                 onPress: () => navigation.navigate('ChangePassword'),
               },
               {
                 icon: '📧',
-                label: 'Email Preferences',
+                label: t('profile.emailPreferencesLabel'),
                 onPress: () => navigation.navigate('EmailPreferences'),
               },
               {
                 icon: '🌐',
-                label: 'Language',
+                label: t('profile.languageLabel'),
                 onPress: () => navigation.navigate('Language'),
               },
               {
                 icon: 'ℹ️',
-                label: 'About WorkSync Pro',
+                label: t('profile.aboutLabel'),
                 onPress: () => navigation.navigate('About'),
               },
               {
                 icon: '📄',
-                label: 'Privacy Policy',
+                label: t('profile.privacyPolicyLabel'),
                 onPress: () => navigation.navigate('PrivacyPolicy'),
               },
               {
                 icon: '📜',
-                label: 'Terms of Service',
+                label: t('profile.termsOfServiceLabel'),
                 onPress: () => navigation.navigate('TermsOfService'),
               },
             ].map((item, i, arr) => (
@@ -245,7 +253,7 @@ export const ProfileScreen: React.FC = () => {
         {/* Logout */}
         <View style={styles.logoutSection}>
           <Button
-            title="Sign Out"
+            title={t('profile.logout')}
             onPress={handleLogout}
             variant="danger"
             fullWidth
@@ -258,15 +266,15 @@ export const ProfileScreen: React.FC = () => {
       <ActionSheet
         isVisible={imageSheetVisible}
         onClose={() => setImageSheetVisible(false)}
-        title="Profile Photo"
+        title={t('profile.profilePhoto')}
         options={[
           {
-            label: 'Take Photo',
+            label: t('profile.takePhoto'),
             icon: '📸',
             onPress: handleCameraCapture,
           },
           {
-            label: 'Choose from Gallery',
+            label: t('profile.chooseGallery'),
             icon: '🖼️',
             onPress: handleGalleryPick,
           },

@@ -12,6 +12,7 @@ import {
   selectAllTasks,
   selectTaskStats,
 } from '@/store/slices';
+import {useTranslation} from 'react-i18next';
 import {useTheme} from '@/theme';
 import type {Theme} from '@/theme';
 import {Card, LoadingScreen} from '@/components';
@@ -24,6 +25,7 @@ import {RNText} from '@/components/common';
 export const AnalyticsScreen: React.FC = () => {
   const {theme} = useTheme();
   const styles = createStyles(theme);
+  const {t} = useTranslation();
 
   const {user} = useAppSelector(s => s.auth);
   const dispatch = useAppDispatch();
@@ -70,28 +72,28 @@ export const AnalyticsScreen: React.FC = () => {
     });
 
     return days.map(day => ({
-      label: day,
+      label: t(`daysShort.${day}`),
       value: stats[day],
       color: theme.colors.primary,
     }));
-  }, [tasks, theme.colors.primary]);
+  }, [tasks, theme.colors.primary, t]);
 
   const maxWeekly = Math.max(...weeklyData.map(d => d.value), 1);
 
   // Priority breakdown
   const priorityData = [
     {
-      label: 'High',
+      label: t('priority.high'),
       value: tasks.filter(t => t.priority === 'high').length,
       color: theme.colors.priorityHigh,
     },
     {
-      label: 'Med',
+      label: t('priority.medium'),
       value: tasks.filter(t => t.priority === 'medium').length,
       color: theme.colors.priorityMedium,
     },
     {
-      label: 'Low',
+      label: t('priority.low'),
       value: tasks.filter(t => t.priority === 'low').length,
       color: theme.colors.priorityLow,
     },
@@ -139,15 +141,15 @@ export const AnalyticsScreen: React.FC = () => {
         {/* Header */}
         <View style={styles.header}>
           <View>
-            <RNText style={styles.title}>Analytics</RNText>
-            <RNText style={styles.subtitle}>Team performance insights</RNText>
+            <RNText style={styles.title}>{t('analytics.title')}</RNText>
+            <RNText style={styles.subtitle}>{t('analytics.subtitle')}</RNText>
           </View>
         </View>
 
         {/* Overall Completion */}
         <View style={styles.section}>
           <Card>
-            <RNText style={styles.cardTitle}>Overall Progress</RNText>
+            <RNText style={styles.cardTitle}>{t('analytics.overallProgress')}</RNText>
             <View style={styles.donutContainer}>
               <DonutChart
                 percentage={completionRate}
@@ -156,15 +158,15 @@ export const AnalyticsScreen: React.FC = () => {
               <View style={styles.statsRow}>
                 <View style={styles.statItem}>
                   <RNText style={styles.completedText}>{stats.completed}</RNText>
-                  <RNText style={styles.statLabel}>Completed</RNText>
+                  <RNText style={styles.statLabel}>{t('analytics.completed')}</RNText>
                 </View>
                 <View style={styles.statItem}>
                   <RNText style={styles.inProgressText}>{stats.inProgress}</RNText>
-                  <RNText style={styles.statLabel}>In Progress</RNText>
+                  <RNText style={styles.statLabel}>{t('analytics.inProgress')}</RNText>
                 </View>
                 <View style={styles.statItem}>
                   <RNText style={styles.todoText}>{stats.todo}</RNText>
-                  <RNText style={styles.statLabel}>To Do</RNText>
+                  <RNText style={styles.statLabel}>{t('analytics.todo')}</RNText>
                 </View>
               </View>
             </View>
@@ -175,7 +177,7 @@ export const AnalyticsScreen: React.FC = () => {
         <View style={styles.section}>
           <Card>
             <View style={styles.cardHeader}>
-              <RNText style={styles.cardTitle}>Tasks Completed</RNText>
+              <RNText style={styles.cardTitle}>{t('analytics.tasksCompleted')}</RNText>
               <View style={styles.tabContainer}>
                 {(['week', 'month'] as const).map(tab => (
                   <TouchableOpacity
@@ -200,7 +202,7 @@ export const AnalyticsScreen: React.FC = () => {
                               : theme.colors.textSecondary,
                         },
                       ]}>
-                      {tab}
+                      {t(`analytics.${tab}`)}
                     </RNText>
                   </TouchableOpacity>
                 ))}
@@ -214,7 +216,7 @@ export const AnalyticsScreen: React.FC = () => {
         <View style={styles.section}>
           <Card>
             <RNText style={[styles.cardTitle, styles.marginBottomBase]}>
-              Tasks by Priority
+              {t('analytics.tasksByPriority')}
             </RNText>
             <BarChart data={priorityData} maxValue={maxPriority} />
           </Card>
@@ -225,7 +227,7 @@ export const AnalyticsScreen: React.FC = () => {
           <View style={styles.section}>
             <Card>
               <RNText style={[styles.cardTitle, styles.marginBottomBase]}>
-                🏆 Top Performers
+                🏆 {t('analytics.topPerformers')}
               </RNText>
               {topPerformers.map((p, i) => (
                 <TopPerformerItem
@@ -244,8 +246,16 @@ export const AnalyticsScreen: React.FC = () => {
         <View style={[styles.section, styles.marginBottomLarge]}>
           <View style={styles.gridRow}>
             {[
-              {label: 'Avg. Completion Time', value: '2.3 days', icon: '⏱️'},
-              {label: 'Team Velocity', value: '24 tasks/week', icon: '🚀'},
+              {
+                label: t('analytics.avgCompletionTime'),
+                value: `2.3 ${t('analytics.days')}`,
+                icon: '⏱️',
+              },
+              {
+                label: t('analytics.teamVelocity'),
+                value: `24 ${t('analytics.tasksPerWeek')}`,
+                icon: '🚀',
+              },
             ].map((stat, i) => (
               <Card key={i} style={styles.flexOne}>
                 <RNText style={styles.gridIcon}>{stat.icon}</RNText>

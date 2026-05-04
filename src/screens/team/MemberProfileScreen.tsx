@@ -12,11 +12,13 @@ import {useAppSelector} from '@/hooks';
 import {Avatar, Badge, Card} from '@/components';
 import {ROLE_LABELS} from '@/constants';
 import {RNText} from '@/components/common';
+import {useTranslation} from 'react-i18next';
 
 export const MemberProfileScreen: React.FC = () => {
   const {theme} = useTheme();
   const styles = createStyles(theme);
   const route = useRoute<any>();
+  const {t} = useTranslation();
   const {members} = useAppSelector(s => s.team);
   const {tasks} = useAppSelector(s => s.tasks);
   const member = members.find(m => m.user_id === route.params?.userId);
@@ -29,11 +31,17 @@ export const MemberProfileScreen: React.FC = () => {
       : 0;
 
   const stats = [
-    {label: 'Tasks Assigned', value: memberTasks.length.toString()},
-    {label: 'Tasks Completed', value: completedTasks.length.toString()},
-    {label: 'Completion Rate', value: `${completionRate}%`},
     {
-      label: 'Member Since',
+      label: t('memberProfile.tasksAssigned'),
+      value: memberTasks.length.toString(),
+    },
+    {
+      label: t('memberProfile.tasksCompleted'),
+      value: completedTasks.length.toString(),
+    },
+    {label: t('memberProfile.completionRate'), value: `${completionRate}%`},
+    {
+      label: t('memberProfile.memberSince'),
       value: member ? new Date(member.joined_at).toLocaleDateString() : '—',
     },
   ];
@@ -49,7 +57,7 @@ export const MemberProfileScreen: React.FC = () => {
           size={80}
         />
         <RNText style={styles.heroName}>
-          {member?.user?.name || 'Team Member'}
+          {member?.user?.name || t('memberProfile.defaultName')}
         </RNText>
         <RNText style={styles.heroEmail}>{member?.user?.email || ''}</RNText>
         {member && (
@@ -62,7 +70,9 @@ export const MemberProfileScreen: React.FC = () => {
 
       <View style={styles.content}>
         <Card>
-          <RNText style={styles.sectionTitle}>Activity</RNText>
+          <RNText style={styles.sectionTitle}>
+            {t('memberProfile.activity')}
+          </RNText>
           {stats.map((item, index) => (
             <View
               key={item.label}

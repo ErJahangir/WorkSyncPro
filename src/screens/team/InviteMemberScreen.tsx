@@ -12,21 +12,22 @@ import {
   TextInput,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import {useTheme, type Theme} from '@/theme';
 import {useDispatch, useSelector} from 'react-redux';
-import {useTheme} from '@/theme';
-import type {Theme} from '@/theme';
 import {Button} from '@/components';
 import {RolePicker} from './components';
 import {RNText} from '@/components/common';
 import {RootState, AppDispatch} from '@/store';
 import {inviteMember} from '@/store/slices/teamSlice';
 import {showToast} from '@/utils';
+import {useTranslation} from 'react-i18next';
 
 export const InviteMemberScreen: React.FC = () => {
   const {theme} = useTheme();
   const styles = createStyles(theme);
   const navigation = useNavigation<any>();
   const dispatch = useDispatch<AppDispatch>();
+  const {t} = useTranslation();
   const user = useSelector((state: RootState) => state.auth.user);
   const selectedTeam = useSelector(
     (state: RootState) => state.team.selectedTeam,
@@ -38,11 +39,11 @@ export const InviteMemberScreen: React.FC = () => {
 
   const handleInvite = async () => {
     if (!email.trim()) {
-      showToast('error', 'Please enter an email address');
+      showToast('error', t('inviteMember.emailError'));
       return;
     }
     if (!selectedTeam) {
-      showToast('error', 'No team selected');
+      showToast('error', t('inviteMember.noTeamError'));
       return;
     }
     if (!user) return;
@@ -71,9 +72,9 @@ export const InviteMemberScreen: React.FC = () => {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <RNText style={styles.cancelText}>Cancel</RNText>
+          <RNText style={styles.cancelText}>{t('inviteMember.cancel')}</RNText>
         </TouchableOpacity>
-        <RNText style={styles.headerTitle}>Invite Member</RNText>
+        <RNText style={styles.headerTitle}>{t('inviteMember.title')}</RNText>
         <View style={styles.headerSpacer} />
       </View>
 
@@ -82,16 +83,17 @@ export const InviteMemberScreen: React.FC = () => {
         keyboardShouldPersistTaps="handled">
         <RNText style={styles.heroIcon}>📧</RNText>
         <RNText style={styles.description}>
-          Enter the email address of the person you'd like to invite to your
-          team.
+          {t('inviteMember.heroDescription')}
         </RNText>
 
-        <RNText style={styles.fieldLabel}>Email Address</RNText>
+        <RNText style={styles.fieldLabel}>
+          {t('inviteMember.emailLabel')}
+        </RNText>
         <View style={styles.inputWrapper}>
           <TextInput
             value={email}
             onChangeText={setEmail}
-            placeholder="colleague@company.com"
+            placeholder={t('inviteMember.emailPlaceholder')}
             placeholderTextColor={theme.colors.textTertiary}
             keyboardType="email-address"
             autoCapitalize="none"
@@ -99,11 +101,13 @@ export const InviteMemberScreen: React.FC = () => {
           />
         </View>
 
-        <RNText style={[styles.fieldLabel, styles.marginTop16]}>Role</RNText>
+        <RNText style={[styles.fieldLabel, styles.marginTop16]}>
+          {t('inviteMember.roleLabel')}
+        </RNText>
         <RolePicker selectedRole={role} onSelect={setRole} />
 
         <Button
-          title="Send Invitation"
+          title={t('inviteMember.submit')}
           onPress={handleInvite}
           loading={loading}
           fullWidth

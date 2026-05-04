@@ -1,14 +1,6 @@
 import {hp, wp} from '@/theme';
 import React, {useEffect, useRef} from 'react';
-import {
-  StyleSheet,
-  Animated,
-  Dimensions,
-  Image,
-  useColorScheme,
-} from 'react-native';
-
-const {width, height} = Dimensions.get('window');
+import {StyleSheet, Animated, useColorScheme} from 'react-native';
 
 interface SplashScreenProps {
   onAnimationEnd: () => void;

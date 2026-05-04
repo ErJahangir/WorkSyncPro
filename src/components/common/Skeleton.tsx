@@ -1,12 +1,12 @@
 import {useTheme} from '@/theme';
 import React from 'react';
-import {View, ViewStyle} from 'react-native';
+import {View, ViewStyle, StyleProp} from 'react-native';
 
 interface SkeletonProps {
   width?: number | string;
   height?: number;
   borderRadius?: number;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
 }
 
 export const Skeleton: React.FC<SkeletonProps> = ({

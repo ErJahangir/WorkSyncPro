@@ -1,12 +1,12 @@
 import React from 'react';
-import {Image, StyleSheet, View, ViewStyle} from 'react-native';
+import {Image, StyleSheet, View, ViewStyle, StyleProp} from 'react-native';
 import RNText from './RNText';
 
 interface AvatarProps {
   name: string;
   uri?: string;
   size?: number;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
   showOnlineIndicator?: boolean;
   isOnline?: boolean;
 }

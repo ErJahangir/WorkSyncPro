@@ -19,6 +19,7 @@ import {
   useRealtimeNotifications,
   useRealtimeTasks,
 } from '@/hooks';
+import {useTranslation} from 'react-i18next';
 import {useTheme} from '@/theme';
 import type {Theme} from '@/theme';
 import {
@@ -38,6 +39,7 @@ export const DashboardScreen: React.FC = () => {
   const styles = createStyles(theme);
   const dispatch = useAppDispatch();
   const navigation = useNavigation<any>();
+  const {t} = useTranslation();
   const {user} = useAppSelector(s => s.auth);
   const {isLoading, isRefreshing} = useAppSelector(s => s.tasks);
   const {members} = useAppSelector(s => s.team);
@@ -67,7 +69,7 @@ export const DashboardScreen: React.FC = () => {
 
   const recentTasks = tasks.slice(0, 5);
 
-  const firstName = user?.name?.split(' ')[0] || 'there';
+  const firstName = user?.name?.split(' ')[0] || t('dashboard.greeting.there');
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
@@ -83,11 +85,15 @@ export const DashboardScreen: React.FC = () => {
         {/* ─── Header ─── */}
         <View style={styles.header}>
           <View style={styles.headerLeft}>
-            <RNText style={styles.greeting}>Good {getGreeting()} 👋</RNText>
+            <RNText style={styles.greeting}>
+              {t(`dashboard.greeting.${getGreeting()}`)} 👋
+            </RNText>
             <RNText style={styles.userName}>{firstName}</RNText>
           </View>
           <View style={styles.headerRight}>
-            <TouchableOpacity style={styles.notifButton} onPress={() => {}}>
+            <TouchableOpacity
+              style={styles.notifButton}
+              onPress={() => navigation.navigate('Profile', {screen: 'Notifications'})}>
               <RNText style={styles.notifIcon}>🔔</RNText>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
@@ -99,29 +105,29 @@ export const DashboardScreen: React.FC = () => {
         {/* ─── Stats Grid ─── */}
         <View style={styles.statsGrid}>
           <StatCard
-            label="Total Tasks"
+            label={t('dashboard.stats.totalTasks')}
             value={stats.total}
             icon="📋"
             color={theme.colors.primary}
             bgColor={theme.colors.primaryLight}
-            trend={`${completionRate}% done`}
+            trend={t('dashboard.stats.doneTrend', {percentage: completionRate})}
           />
           <StatCard
-            label="In Progress"
+            label={t('dashboard.stats.inProgress')}
             value={stats.inProgress}
             icon="⏳"
             color={theme.colors.warning}
             bgColor={theme.colors.warningLight}
           />
           <StatCard
-            label="Completed"
+            label={t('dashboard.stats.completed')}
             value={stats.completed}
             icon="✅"
             color={theme.colors.success}
             bgColor={theme.colors.successLight}
           />
           <StatCard
-            label="Team Members"
+            label={t('dashboard.stats.teamMembers')}
             value={members.length || 0}
             icon="👥"
             color={theme.colors.info}
@@ -133,7 +139,7 @@ export const DashboardScreen: React.FC = () => {
         <View style={styles.section}>
           <Card>
             <View style={styles.cardHeader}>
-              <RNText style={styles.cardTitle}>Team Productivity</RNText>
+              <RNText style={styles.cardTitle}>{t('dashboard.productivity.title')}</RNText>
               <RNText style={styles.cardValue}>{completionRate}%</RNText>
             </View>
             <ProgressBar
@@ -144,13 +150,13 @@ export const DashboardScreen: React.FC = () => {
               <View style={styles.legendItem}>
                 <View style={[styles.legendDot, styles.bgPrimary]} />
                 <RNText style={styles.legendText}>
-                  Completed ({stats.completed})
+                  {t('dashboard.productivity.completed', {count: stats.completed})}
                 </RNText>
               </View>
               <View style={styles.legendItem}>
                 <View style={[styles.legendDot, styles.bgSurfaceVariant]} />
                 <RNText style={styles.legendText}>
-                  Remaining ({stats.todo + stats.inProgress})
+                  {t('dashboard.productivity.remaining', {count: stats.todo + stats.inProgress})}
                 </RNText>
               </View>
             </View>
@@ -159,17 +165,17 @@ export const DashboardScreen: React.FC = () => {
             <View style={styles.priorityBreakdown}>
               {[
                 {
-                  label: 'High Priority',
+                  label: t('dashboard.productivity.highPriority'),
                   count: tasks.filter(t => t.priority === 'high').length,
                   color: theme.colors.priorityHigh,
                 },
                 {
-                  label: 'Medium',
+                  label: t('dashboard.productivity.medium'),
                   count: tasks.filter(t => t.priority === 'medium').length,
                   color: theme.colors.priorityMedium,
                 },
                 {
-                  label: 'Low',
+                  label: t('dashboard.productivity.low'),
                   count: tasks.filter(t => t.priority === 'low').length,
                   color: theme.colors.priorityLow,
                 },
@@ -192,9 +198,9 @@ export const DashboardScreen: React.FC = () => {
         {/* ─── Recent Tasks ─── */}
         <View style={styles.section}>
           <View style={styles.recentTasksHeader}>
-            <RNText style={styles.sectionTitle}>Recent Tasks</RNText>
+            <RNText style={styles.sectionTitle}>{t('dashboard.recentTasks.title')}</RNText>
             <TouchableOpacity onPress={() => navigation.navigate('Tasks')}>
-              <RNText style={styles.seeAllText}>See All →</RNText>
+              <RNText style={styles.seeAllText}>{t('dashboard.recentTasks.seeAll')}</RNText>
             </TouchableOpacity>
           </View>
 
@@ -222,7 +228,7 @@ export const DashboardScreen: React.FC = () => {
               <View style={styles.emptyTasks}>
                 <RNText style={styles.emptyIcon}>📭</RNText>
                 <RNText style={styles.emptyText}>
-                  No tasks yet. Create your first one!
+                  {t('dashboard.recentTasks.empty')}
                 </RNText>
               </View>
             )}
@@ -231,28 +237,28 @@ export const DashboardScreen: React.FC = () => {
 
         {/* ─── Quick Actions ─── */}
         <View style={[styles.section, styles.marginBottomLarge]}>
-          <RNText style={styles.quickActionsTitle}>Quick Actions</RNText>
+          <RNText style={styles.quickActionsTitle}>{t('dashboard.quickActions.title')}</RNText>
           <View style={styles.quickActions}>
             {[
               {
                 icon: '➕',
-                label: 'New Task',
+                label: t('dashboard.quickActions.newTask'),
                 onPress: () =>
                   navigation.navigate('Tasks', {screen: 'CreateTask'}),
               },
               {
                 icon: '👥',
-                label: 'Team',
+                label: t('dashboard.quickActions.team'),
                 onPress: () => navigation.navigate('Team'),
               },
               {
                 icon: '📊',
-                label: 'Analytics',
+                label: t('dashboard.quickActions.analytics'),
                 onPress: () => navigation.navigate('Analytics'),
               },
               {
                 icon: '👤',
-                label: 'Profile',
+                label: t('dashboard.quickActions.profile'),
                 onPress: () => navigation.navigate('Profile'),
               },
             ].map(action => (

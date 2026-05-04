@@ -5,6 +5,7 @@
 import React, {useMemo} from 'react';
 import {StyleSheet, ScrollView, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {useTranslation} from 'react-i18next';
 import {useTheme} from '@/theme';
 import type {Theme} from '@/theme';
 import {RNText} from '@/components/common';
@@ -12,47 +13,40 @@ import {RNText} from '@/components/common';
 export const TermsOfServiceScreen: React.FC = () => {
   const {theme} = useTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const {t} = useTranslation();
 
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.header}>
-          <RNText style={styles.title}>Terms of Service</RNText>
-          <RNText style={styles.lastUpdated}>Last Updated: May 2026</RNText>
+          <RNText style={styles.title}>{t('profile.termsOfService.title')}</RNText>
+          <RNText style={styles.lastUpdated}>{t('profile.termsOfService.lastUpdated')}</RNText>
         </View>
 
         <View style={styles.content}>
-          <RNText style={styles.sectionTitle}>1. Acceptance of Terms</RNText>
+          <RNText style={styles.sectionTitle}>{t('profile.termsOfService.section1.title')}</RNText>
           <RNText style={styles.text}>
-            By accessing or using WorkSync Pro, you agree to be bound by these Terms of Service. If you do not agree to all
-            the terms and conditions of this agreement, then you may not access the website or use any services.
+            {t('profile.termsOfService.section1.text')}
           </RNText>
 
-          <RNText style={styles.sectionTitle}>2. Use License</RNText>
+          <RNText style={styles.sectionTitle}>{t('profile.termsOfService.section2.title')}</RNText>
           <RNText style={styles.text}>
-            Permission is granted to temporarily download one copy of the materials (information or software) on WorkSync Pro
-            for personal, non-commercial transitory viewing only.
+            {t('profile.termsOfService.section2.text')}
           </RNText>
 
-          <RNText style={styles.sectionTitle}>3. User Account</RNText>
+          <RNText style={styles.sectionTitle}>{t('profile.termsOfService.section3.title')}</RNText>
           <RNText style={styles.text}>
-            You are responsible for maintaining the confidentiality of your account and password and for restricting access
-            to your computer or mobile device. You agree to accept responsibility for all activities that occur under your
-            account or password.
+            {t('profile.termsOfService.section3.text')}
           </RNText>
 
-          <RNText style={styles.sectionTitle}>4. Limitations</RNText>
+          <RNText style={styles.sectionTitle}>{t('profile.termsOfService.section4.title')}</RNText>
           <RNText style={styles.text}>
-            In no event shall WorkSync Pro or its suppliers be liable for any damages (including, without limitation,
-            damages for loss of data or profit, or due to business interruption) arising out of the use or inability
-            to use the materials on WorkSync Pro.
+            {t('profile.termsOfService.section4.text')}
           </RNText>
 
-          <RNText style={styles.sectionTitle}>5. Governing Law</RNText>
+          <RNText style={styles.sectionTitle}>{t('profile.termsOfService.section5.title')}</RNText>
           <RNText style={styles.text}>
-            These terms and conditions are governed by and construed in accordance with the laws of the jurisdiction in
-            which WorkSync Technologies is based and you irrevocably submit to the exclusive jurisdiction of the courts
-            in that State or location.
+            {t('profile.termsOfService.section5.text')}
           </RNText>
         </View>
       </ScrollView>

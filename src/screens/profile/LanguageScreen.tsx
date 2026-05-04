@@ -3,43 +3,40 @@
  * Change application language
  */
 
-import React, {useState, useMemo} from 'react';
+import React, {useMemo} from 'react';
 import {View, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {useTranslation} from 'react-i18next';
 import {useTheme} from '@/theme';
 import type {Theme} from '@/theme';
-import {Card, Divider} from '@/components';
-import {RNText} from '@/components/common';
+import {Card, Divider, RNText} from '@/components';
 
 const LANGUAGES = [
-  {code: 'en', name: 'English', flag: '🇺🇸'},
-  {code: 'es', name: 'Español', flag: '🇪🇸'},
-  {code: 'fr', name: 'Français', flag: '🇫🇷'},
-  {code: 'de', name: 'Deutsch', flag: '🇩🇪'},
-  {code: 'it', name: 'Italiano', flag: '🇮🇹'},
-  {code: 'pt', name: 'Português', flag: '🇵🇹'},
-  {code: 'zh', name: '中文', flag: '🇨🇳'},
-  {code: 'ja', name: '日本語', flag: '🇯🇵'},
+  {code: 'en', name: 'language.english', flag: '🇺🇸'},
+  {code: 'es', name: 'language.spanish', flag: '🇪🇸'},
+  {code: 'fr', name: 'language.french', flag: '🇫🇷'},
+  {code: 'de', name: 'language.german', flag: '🇩🇪'},
+  {code: 'it', name: 'language.italian', flag: '🇮🇹'},
+  {code: 'pt', name: 'language.portuguese', flag: '🇵🇹'},
+  {code: 'zh', name: 'language.chinese', flag: '🇨🇳'},
+  {code: 'ja', name: 'language.japanese', flag: '🇯🇵'},
 ];
 
 export const LanguageScreen: React.FC = () => {
   const {theme} = useTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
-  const [selectedLanguage, setSelectedLanguage] = useState('en');
+  const {t, i18n} = useTranslation();
 
   const handleSelect = (code: string) => {
-    setSelectedLanguage(code);
-    // In a real app, this would trigger an i18n change
+    i18n.changeLanguage(code);
   };
 
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.header}>
-          <RNText style={styles.title}>Language</RNText>
-          <RNText style={styles.subtitle}>
-            Select your preferred language for the application.
-          </RNText>
+          <RNText style={styles.title}>{t('language.title')}</RNText>
+          <RNText style={styles.subtitle}>{t('language.subtitle')}</RNText>
         </View>
 
         <Card padding={0}>
@@ -51,9 +48,9 @@ export const LanguageScreen: React.FC = () => {
                 activeOpacity={0.6}>
                 <View style={styles.langLeft}>
                   <RNText style={styles.flag}>{lang.flag}</RNText>
-                  <RNText style={styles.langName}>{lang.name}</RNText>
+                  <RNText style={styles.langName}>{t(lang.name)}</RNText>
                 </View>
-                {selectedLanguage === lang.code && (
+                {i18n.language.startsWith(lang.code) && (
                   <RNText style={styles.checkIcon}>✓</RNText>
                 )}
               </TouchableOpacity>

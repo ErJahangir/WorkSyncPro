@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {StyleSheet, TextInput, TouchableOpacity, View} from 'react-native';
+import {useTranslation} from 'react-i18next';
 import {useTheme} from '@/theme';
 import type {Theme} from '@/theme';
 import {Card, Input, Button} from '@/components';
@@ -10,84 +11,90 @@ interface ProfileInfoCardProps {
   onSave: (name: string, bio: string) => Promise<void>;
 }
 
-export const ProfileInfoCard = React.memo<ProfileInfoCardProps>(({
-  user,
-  onSave,
-}) => {
-  const {theme} = useTheme();
-  const styles = React.useMemo(() => createStyles(theme), [theme]);
-  const [editMode, setEditMode] = useState(false);
-  const [name, setName] = useState(user?.name || '');
-  const [bio, setBio] = useState(user?.bio || '');
-  const [saving, setSaving] = useState(false);
+export const ProfileInfoCard = React.memo<ProfileInfoCardProps>(
+  ({user, onSave}) => {
+    const {theme} = useTheme();
+    const styles = React.useMemo(() => createStyles(theme), [theme]);
+    const {t} = useTranslation();
+    const [editMode, setEditMode] = useState(false);
+    const [name, setName] = useState(user?.name || '');
+    const [bio, setBio] = useState(user?.bio || '');
+    const [saving, setSaving] = useState(false);
 
-  const handleSave = async () => {
-    setSaving(true);
-    await onSave(name, bio);
-    setSaving(false);
-    setEditMode(false);
-  };
+    const handleSave = async () => {
+      setSaving(true);
+      await onSave(name, bio);
+      setSaving(false);
+      setEditMode(false);
+    };
 
-  if (editMode) {
-    return (
-      <Card>
-        <View style={styles.editForm}>
-          <Input
-            label="Full Name"
-            value={name}
-            onChangeText={setName}
-            placeholder="Your name"
-          />
-          <View>
-            <RNText style={styles.inputLabel}>Bio</RNText>
-            <View style={styles.bioInputContainer}>
-              <TextInput
-                value={bio}
-                onChangeText={setBio}
-                placeholder="Tell us about yourself..."
-                placeholderTextColor={theme.colors.textTertiary}
-                multiline
-                numberOfLines={3}
-                style={styles.bioInput}
+    if (editMode) {
+      return (
+        <Card>
+          <View style={styles.editForm}>
+            <Input
+              label={t('profile.editProfile.fullName')}
+              value={name}
+              onChangeText={setName}
+              placeholder={t('profile.editProfile.namePlaceholder')}
+            />
+            <View>
+              <RNText style={styles.inputLabel}>
+                {t('profile.editProfile.bio')}
+              </RNText>
+              <View style={styles.bioInputContainer}>
+                <TextInput
+                  value={bio}
+                  onChangeText={setBio}
+                  placeholder={t('profile.editProfile.bioPlaceholder')}
+                  placeholderTextColor={theme.colors.textTertiary}
+                  multiline
+                  numberOfLines={3}
+                  style={styles.bioInput}
+                />
+              </View>
+            </View>
+            <View style={styles.editActions}>
+              <Button
+                title={t('profile.editProfile.cancel')}
+                onPress={() => setEditMode(false)}
+                variant="outline"
+                style={styles.flexOne}
+              />
+              <Button
+                title={t('profile.editProfile.save')}
+                onPress={handleSave}
+                loading={saving}
+                style={styles.flexOne}
               />
             </View>
           </View>
-          <View style={styles.editActions}>
-            <Button
-              title="Cancel"
-              onPress={() => setEditMode(false)}
-              variant="outline"
-              style={styles.flexOne}
-            />
-            <Button
-              title="Save"
-              onPress={handleSave}
-              loading={saving}
-              style={styles.flexOne}
-            />
+        </Card>
+      );
+    }
+
+    return (
+      <Card>
+        <View style={styles.infoRow}>
+          <View style={styles.flexOne}>
+            <RNText style={styles.userName}>
+              {user?.name || t('profile.defaultName')}
+            </RNText>
+            <RNText style={styles.userEmail}>{user?.email || ''}</RNText>
+            {user?.bio && <RNText style={styles.userBio}>{user.bio}</RNText>}
           </View>
+          <TouchableOpacity
+            onPress={() => setEditMode(true)}
+            style={styles.editBtn}>
+            <RNText style={styles.editBtnText}>
+              {t('profile.editProfile.edit')}
+            </RNText>
+          </TouchableOpacity>
         </View>
       </Card>
     );
-  }
-
-  return (
-    <Card>
-      <View style={styles.infoRow}>
-        <View style={styles.flexOne}>
-          <RNText style={styles.userName}>{user?.name || 'User'}</RNText>
-          <RNText style={styles.userEmail}>{user?.email || ''}</RNText>
-          {user?.bio && <RNText style={styles.userBio}>{user.bio}</RNText>}
-        </View>
-        <TouchableOpacity
-          onPress={() => setEditMode(true)}
-          style={styles.editBtn}>
-          <RNText style={styles.editBtnText}>Edit</RNText>
-        </TouchableOpacity>
-      </View>
-    </Card>
-  );
-});
+  },
+);
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({

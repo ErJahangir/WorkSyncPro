@@ -11,6 +11,16 @@ import {
   isTomorrow,
   differenceInDays,
 } from 'date-fns';
+import {enUS, es} from 'date-fns/locale';
+import i18n from '@/language/i18n';
+
+/**
+ * Get the current date-fns locale based on i18n language
+ */
+const getLocale = () => {
+  const lang = i18n.language || 'en';
+  return lang.startsWith('es') ? es : enUS;
+};
 
 /**
  * Format a date as relative time (e.g., "2 hours ago", "yesterday")
@@ -18,9 +28,12 @@ import {
 export const formatRelativeTime = (dateString: string): string => {
   try {
     const date = new Date(dateString);
-    return formatDistanceToNow(date, {addSuffix: true});
+    return formatDistanceToNow(date, {
+      addSuffix: true,
+      locale: getLocale(),
+    });
   } catch {
-    return 'Unknown';
+    return i18n.t('dates.unknown');
   }
 };
 
@@ -32,20 +45,20 @@ export const formatDeadline = (dateString: string): string => {
     const date = new Date(dateString);
 
     if (isToday(date)) {
-      return 'Today';
+      return i18n.t('dates.today');
     }
     if (isTomorrow(date)) {
-      return 'Tomorrow';
+      return i18n.t('dates.tomorrow');
     }
 
     const daysUntil = differenceInDays(date, new Date());
     if (daysUntil > 0 && daysUntil <= 7) {
-      return `In ${daysUntil} day${daysUntil > 1 ? 's' : ''}`;
+      return i18n.t('dates.inDays', {count: daysUntil});
     }
 
-    return format(date, 'MMM d, yyyy');
+    return format(date, 'MMM d, yyyy', {locale: getLocale()});
   } catch {
-    return 'Unknown';
+    return i18n.t('dates.unknown');
   }
 };
 
@@ -65,9 +78,9 @@ export const isOverdue = (dateString: string): boolean => {
  */
 export const formatDate = (dateString: string): string => {
   try {
-    return format(new Date(dateString), 'MMM d, yyyy');
+    return format(new Date(dateString), 'MMM d, yyyy', {locale: getLocale()});
   } catch {
-    return 'Invalid date';
+    return i18n.t('dates.invalidDate');
   }
 };
 
@@ -76,9 +89,12 @@ export const formatDate = (dateString: string): string => {
  */
 export const formatDateTime = (dateString: string): string => {
   try {
-    return format(new Date(dateString), "MMM d, yyyy 'at' h:mm a");
+    const date = new Date(dateString);
+    const datePart = format(date, 'MMM d, yyyy', {locale: getLocale()});
+    const timePart = format(date, 'h:mm a', {locale: getLocale()});
+    return `${datePart} ${i18n.t('dates.at')} ${timePart}`;
   } catch {
-    return 'Invalid date';
+    return i18n.t('dates.invalidDate');
   }
 };
 
@@ -98,7 +114,7 @@ export const getDaysRemaining = (dateString: string): number => {
  */
 export const formatTime = (date: Date): string => {
   try {
-    return format(date, 'hh:mm a');
+    return format(date, 'hh:mm a', {locale: getLocale()});
   } catch {
     return '--:--';
   }

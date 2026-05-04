@@ -6,6 +6,7 @@
 import React, {useState, useMemo} from 'react';
 import {View, StyleSheet, ScrollView} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {useTranslation} from 'react-i18next';
 import {useTheme} from '@/theme';
 import type {Theme} from '@/theme';
 import {Card, Divider, RNText} from '@/components';
@@ -14,6 +15,7 @@ import {SettingRow} from './components';
 export const EmailPreferencesScreen: React.FC = () => {
   const {theme} = useTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const {t} = useTranslation();
 
   const [prefs, setPrefs] = useState({
     taskAssigned: true,
@@ -32,34 +34,34 @@ export const EmailPreferencesScreen: React.FC = () => {
     <SafeAreaView style={styles.container} edges={['bottom']}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.header}>
-          <RNText style={styles.title}>Email Preferences</RNText>
+          <RNText style={styles.title}>{t('profile.emailPreferences.title')}</RNText>
           <RNText style={styles.subtitle}>
-            Choose which notifications you'd like to receive via email.
+            {t('profile.emailPreferences.subtitle')}
           </RNText>
         </View>
 
         <View style={styles.section}>
-          <RNText style={styles.sectionTitle}>Task Activity</RNText>
+          <RNText style={styles.sectionTitle}>{t('profile.emailPreferences.taskActivity')}</RNText>
           <Card>
             <SettingRow
-              label="Task Assigned"
-              description="When someone assigns a task to you"
+              label={t('profile.emailPreferences.taskAssigned')}
+              description={t('profile.emailPreferences.taskAssignedDesc')}
               value={prefs.taskAssigned}
               onValueChange={() => togglePref('taskAssigned')}
               icon="📥"
             />
             <Divider />
             <SettingRow
-              label="Task Completed"
-              description="When a task you created is completed"
+              label={t('profile.emailPreferences.taskCompleted')}
+              description={t('profile.emailPreferences.taskCompletedDesc')}
               value={prefs.taskCompleted}
               onValueChange={() => togglePref('taskCompleted')}
               icon="✅"
             />
             <Divider />
             <SettingRow
-              label="Mentions"
-              description="When someone mentions you in a comment"
+              label={t('profile.emailPreferences.mentions')}
+              description={t('profile.emailPreferences.mentionsDesc')}
               value={prefs.mentions}
               onValueChange={() => togglePref('mentions')}
               icon="💬"
@@ -68,11 +70,11 @@ export const EmailPreferencesScreen: React.FC = () => {
         </View>
 
         <View style={styles.section}>
-          <RNText style={styles.sectionTitle}>Team & Network</RNText>
+          <RNText style={styles.sectionTitle}>{t('profile.emailPreferences.teamNetwork')}</RNText>
           <Card>
             <SettingRow
-              label="Team Invitations"
-              description="When you are invited to join a team"
+              label={t('profile.emailPreferences.teamInvites')}
+              description={t('profile.emailPreferences.teamInvitesDesc')}
               value={prefs.teamInvites}
               onValueChange={() => togglePref('teamInvites')}
               icon="👥"
@@ -81,19 +83,19 @@ export const EmailPreferencesScreen: React.FC = () => {
         </View>
 
         <View style={styles.section}>
-          <RNText style={styles.sectionTitle}>Updates & Reports</RNText>
+          <RNText style={styles.sectionTitle}>{t('profile.emailPreferences.updatesReports')}</RNText>
           <Card>
             <SettingRow
-              label="Weekly Productivity Report"
-              description="A summary of your weekly achievements"
+              label={t('profile.emailPreferences.weeklySummary')}
+              description={t('profile.emailPreferences.weeklySummaryDesc')}
               value={prefs.weeklySummary}
               onValueChange={() => togglePref('weeklySummary')}
               icon="📊"
             />
             <Divider />
             <SettingRow
-              label="Product Updates"
-              description="News about WorkSync Pro features"
+              label={t('profile.emailPreferences.productUpdates')}
+              description={t('profile.emailPreferences.productUpdatesDesc')}
               value={prefs.productUpdates}
               onValueChange={() => togglePref('productUpdates')}
               icon="🚀"

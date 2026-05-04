@@ -13,6 +13,7 @@ import {
   RefreshControl,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {useTranslation} from 'react-i18next';
 import {useTheme} from '@/theme';
 import type {Theme} from '@/theme';
 import {useAppDispatch, useAppSelector} from '@/hooks';
@@ -26,6 +27,7 @@ export const NotificationsScreen: React.FC = () => {
   const {theme} = useTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const dispatch = useAppDispatch();
+  const {t} = useTranslation();
   const {user} = useAppSelector(state => state.auth);
   const {notifications, unreadCount, isLoading} = useAppSelector(
     state => state.notifications,
@@ -75,9 +77,9 @@ export const NotificationsScreen: React.FC = () => {
   const renderEmpty = () => (
     <View style={styles.emptyContainer}>
       <RNText style={styles.emptyText}>🔔</RNText>
-      <RNText style={styles.emptyTitle}>No Notifications</RNText>
+      <RNText style={styles.emptyTitle}>{t('notifications.noNotifications')}</RNText>
       <RNText style={styles.emptySubtitle}>
-        You're all caught up! New notifications will appear here.
+        {t('notifications.emptySubtitle')}
       </RNText>
     </View>
   );
@@ -85,10 +87,10 @@ export const NotificationsScreen: React.FC = () => {
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
       <View style={styles.header}>
-        <RNText style={styles.headerTitle}>Notifications</RNText>
+        <RNText style={styles.headerTitle}>{t('notifications.title')}</RNText>
         {unreadCount > 0 && (
           <TouchableOpacity onPress={handleMarkAllRead}>
-            <RNText style={styles.markAllRead}>Mark all as read</RNText>
+            <RNText style={styles.markAllRead}>{t('notifications.markAllAsRead')}</RNText>
           </TouchableOpacity>
         )}
       </View>

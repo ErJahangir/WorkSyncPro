@@ -7,6 +7,7 @@ import React, {useRef, useState} from 'react';
 import {View, FlatList, TouchableOpacity, StyleSheet, Dimensions, Animated, ViewToken} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import {useTranslation} from 'react-i18next';
 import {useTheme} from '@/theme';
 import type {Theme} from '@/theme';
 import {useAppDispatch} from '@/hooks';
@@ -21,6 +22,7 @@ export const OnboardingScreen: React.FC = () => {
   const {theme} = useTheme();
   const styles = createStyles(theme);
   const dispatch = useAppDispatch();
+  const {t} = useTranslation();
   const [activeIndex, setActiveIndex] = useState(0);
   const flatListRef = useRef<FlatList>(null);
   const scrollX = useRef(new Animated.Value(0)).current;
@@ -48,19 +50,29 @@ export const OnboardingScreen: React.FC = () => {
     },
   ).current;
 
+  // Localized slides that combine constant IDs/icons with translated text
+  const slides = ONBOARDING_SLIDES.map((slide, index) => {
+    const translation = (t('auth.onboarding.slides', {returnObjects: true}) as any)[index];
+    return {
+      ...slide,
+      title: translation.title,
+      subtitle: translation.subtitle,
+    };
+  });
+
   return (
     <View style={styles.container}>
       {/* Skip button */}
-      {activeIndex < ONBOARDING_SLIDES.length - 1 && (
+      {activeIndex < slides.length - 1 && (
         <TouchableOpacity onPress={handleSkip} style={styles.skipButton}>
-          <RNText style={styles.skipText}>Skip</RNText>
+          <RNText style={styles.skipText}>{t('auth.onboarding.skip')}</RNText>
         </TouchableOpacity>
       )}
 
       {/* Slides */}
       <Animated.FlatList
         ref={flatListRef}
-        data={ONBOARDING_SLIDES}
+        data={slides}
         keyExtractor={item => item.id}
         horizontal
         pagingEnabled
@@ -92,7 +104,7 @@ export const OnboardingScreen: React.FC = () => {
 
       {/* Pagination dots */}
       <View style={styles.pagination}>
-        {ONBOARDING_SLIDES.map((_, i) => {
+        {slides.map((_, i) => {
           const dotWidth = scrollX.interpolate({
             inputRange: [(i - 1) * width, i * width, (i + 1) * width],
             outputRange: [8, 24, 8],
@@ -122,19 +134,19 @@ export const OnboardingScreen: React.FC = () => {
       <View style={styles.bottomContainer}>
         <Button
           title={
-            activeIndex === ONBOARDING_SLIDES.length - 1
-              ? 'Get Started 🚀'
-              : 'Next'
+            activeIndex === slides.length - 1
+              ? t('auth.onboarding.getStarted')
+              : t('auth.onboarding.next')
           }
           onPress={handleNext}
           fullWidth
           size="lg"
         />
-        {activeIndex === ONBOARDING_SLIDES.length - 1 && (
+        {activeIndex === slides.length - 1 && (
           <TouchableOpacity onPress={handleDone} style={styles.signInButton}>
             <RNText style={styles.signInText}>
-              Already have an account?{' '}
-              <RNText style={styles.signInHighlight}>Sign In</RNText>
+              {t('auth.signup.haveAccount')}
+              <RNText style={styles.signInHighlight}>{t('auth.signup.signIn')}</RNText>
             </RNText>
           </TouchableOpacity>
         )}

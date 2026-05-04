@@ -15,12 +15,14 @@ import {RNText} from '@/components/common';
 import {RootState, AppDispatch} from '@/store';
 import {createTeam} from '@/store/slices/teamSlice';
 import {showToast} from '@/utils';
+import {useTranslation} from 'react-i18next';
 
 export const CreateTeamScreen: React.FC = () => {
   const {theme} = useTheme();
   const styles = createStyles(theme);
   const navigation = useNavigation<any>();
   const dispatch = useDispatch<AppDispatch>();
+  const {t} = useTranslation();
   const user = useSelector((state: RootState) => state.auth.user);
 
   const [name, setName] = useState('');
@@ -29,7 +31,7 @@ export const CreateTeamScreen: React.FC = () => {
 
   const handleCreate = async () => {
     if (!name.trim()) {
-      showToast('error', 'Please enter a team name');
+      showToast('error', t('createTeam.nameError'));
       return;
     }
     if (!user) return;
@@ -57,9 +59,9 @@ export const CreateTeamScreen: React.FC = () => {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <RNText style={styles.cancelText}>Cancel</RNText>
+          <RNText style={styles.cancelText}>{t('createTeam.cancel')}</RNText>
         </TouchableOpacity>
-        <RNText style={styles.headerTitle}>Create New Team</RNText>
+        <RNText style={styles.headerTitle}>{t('createTeam.title')}</RNText>
         <View style={styles.headerSpacer} />
       </View>
 
@@ -68,27 +70,28 @@ export const CreateTeamScreen: React.FC = () => {
         keyboardShouldPersistTaps="handled">
         <RNText style={styles.heroIcon}>🏗️</RNText>
         <RNText style={styles.description}>
-          Teams help you organize tasks and collaborate with your colleagues in
-          one shared workspace.
+          {t('createTeam.heroDescription')}
         </RNText>
 
-        <RNText style={styles.fieldLabel}>Team Name</RNText>
+        <RNText style={styles.fieldLabel}>{t('createTeam.nameLabel')}</RNText>
         <View style={styles.inputWrapper}>
           <TextInput
             value={name}
             onChangeText={setName}
-            placeholder="e.g. Design Team, Project Phoenix"
+            placeholder={t('createTeam.namePlaceholder')}
             placeholderTextColor={theme.colors.textTertiary}
             style={styles.input}
           />
         </View>
 
-        <RNText style={styles.fieldLabel}>Description (Optional)</RNText>
+        <RNText style={styles.fieldLabel}>
+          {t('createTeam.descriptionLabel')}
+        </RNText>
         <View style={styles.inputWrapper}>
           <TextInput
             value={description}
             onChangeText={setDescription}
-            placeholder="What is this team about?"
+            placeholder={t('createTeam.descriptionPlaceholder')}
             placeholderTextColor={theme.colors.textTertiary}
             multiline
             numberOfLines={4}
@@ -97,7 +100,7 @@ export const CreateTeamScreen: React.FC = () => {
         </View>
 
         <Button
-          title="Create Team"
+          title={t('createTeam.submit')}
           onPress={handleCreate}
           loading={loading}
           style={styles.submitButton}

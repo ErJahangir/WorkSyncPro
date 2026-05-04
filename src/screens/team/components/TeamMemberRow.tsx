@@ -1,9 +1,8 @@
-import React from 'react';
+import {useTranslation} from 'react-i18next';
 import {StyleSheet, View} from 'react-native';
 import {useTheme} from '@/theme';
 import type {Theme} from '@/theme';
 import {Card, Avatar, Badge} from '@/components';
-import {ROLE_LABELS} from '@/constants';
 import {RNText} from '@/components/common';
 
 interface TeamMemberRowProps {
@@ -17,6 +16,7 @@ export const TeamMemberRow: React.FC<TeamMemberRowProps> = ({
 }) => {
   const {theme} = useTheme();
   const styles = createStyles(theme);
+  const {t} = useTranslation();
 
   return (
     <Card style={styles.card} onPress={onPress}>
@@ -30,12 +30,12 @@ export const TeamMemberRow: React.FC<TeamMemberRowProps> = ({
         />
         <View style={styles.memberInfo}>
           <RNText style={styles.memberName}>
-            {member.user?.name || 'Unknown'}
+            {member.user?.name || t('memberProfile.defaultName')}
           </RNText>
           <RNText style={styles.memberEmail}>{member.user?.email || ''}</RNText>
         </View>
         <Badge
-          label={ROLE_LABELS[member.role] || member.role}
+          label={t(`roles.${member.role}`)}
           variant={
             member.role === 'admin'
               ? 'error'

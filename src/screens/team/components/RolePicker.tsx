@@ -1,8 +1,7 @@
-import React from 'react';
+import {useTranslation} from 'react-i18next';
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {useTheme} from '@/theme';
 import type {Theme} from '@/theme';
-import {ROLE_LABELS} from '@/constants';
 import {RNText} from '@/components/common';
 
 interface RolePickerProps {
@@ -16,6 +15,7 @@ export const RolePicker: React.FC<RolePickerProps> = ({
 }) => {
   const {theme} = useTheme();
   const styles = createStyles(theme);
+  const {t} = useTranslation();
 
   const roles = [
     {key: 'user', icon: '👤'},
@@ -53,7 +53,7 @@ export const RolePicker: React.FC<RolePickerProps> = ({
                     : theme.colors.textSecondary,
                 },
               ]}>
-              {ROLE_LABELS[r.key]}
+              {t(`roles.${r.key}`)}
             </RNText>
           </TouchableOpacity>
         );

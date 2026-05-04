@@ -279,6 +279,8 @@ export interface TaskFormData {
   status: TaskStatus;
   deadline?: Date;
   tags?: string | string[];
+  team_id?: string | null;
+  assigned_to?: string | null;
 }
 
 export interface ProfileFormData {

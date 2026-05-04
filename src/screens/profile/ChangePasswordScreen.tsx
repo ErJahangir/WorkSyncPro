@@ -13,6 +13,7 @@ import {
   Platform,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {useTranslation} from 'react-i18next';
 import {useTheme} from '@/theme';
 import type {Theme} from '@/theme';
 import {supabaseAuth} from '@/services';
@@ -24,6 +25,7 @@ export const ChangePasswordScreen: React.FC = () => {
   const {theme} = useTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const navigation = useNavigation();
+  const {t} = useTranslation();
 
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -33,10 +35,10 @@ export const ChangePasswordScreen: React.FC = () => {
   const validate = () => {
     const newErrors: {password?: string; confirm?: string} = {};
     if (password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
+      newErrors.password = t('profile.changePassword.minLength');
     }
     if (password !== confirmPassword) {
-      newErrors.confirm = 'Passwords do not match';
+      newErrors.confirm = t('profile.changePassword.mismatch');
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -50,11 +52,11 @@ export const ChangePasswordScreen: React.FC = () => {
       const {error} = await supabaseAuth.updatePassword(password);
       if (error) throw error;
 
-      Alert.alert('Success', 'Your password has been updated successfully', [
+      Alert.alert(t('profile.changePassword.successTitle'), t('profile.changePassword.successMessage'), [
         {text: 'OK', onPress: () => navigation.goBack()},
       ]);
     } catch (err: any) {
-      Alert.alert('Error', err.message || 'Failed to update password');
+      Alert.alert(t('profile.changePassword.errorTitle'), err.message || 'Failed to update password');
     } finally {
       setLoading(false);
     }
@@ -69,16 +71,16 @@ export const ChangePasswordScreen: React.FC = () => {
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled">
           <View style={styles.header}>
-            <RNText style={styles.title}>Update Password</RNText>
+            <RNText style={styles.title}>{t('profile.changePassword.title')}</RNText>
             <RNText style={styles.subtitle}>
-              Ensure your account stays secure by using a strong password.
+              {t('profile.changePassword.subtitle')}
             </RNText>
           </View>
 
           <Card style={styles.formCard}>
             <Input
-              label="New Password"
-              placeholder="Min 6 characters"
+              label={t('profile.changePassword.newPassword')}
+              placeholder={t('profile.changePassword.passwordPlaceholder')}
               secureTextEntry
               showPasswordToggle
               value={password}
@@ -88,8 +90,8 @@ export const ChangePasswordScreen: React.FC = () => {
             />
             <View style={{height: 16}} />
             <Input
-              label="Confirm New Password"
-              placeholder="Repeat password"
+              label={t('profile.changePassword.confirmPassword')}
+              placeholder={t('profile.changePassword.confirmPlaceholder')}
               secureTextEntry
               showPasswordToggle
               value={confirmPassword}
@@ -101,7 +103,7 @@ export const ChangePasswordScreen: React.FC = () => {
 
           <View style={styles.buttonContainer}>
             <Button
-              title={loading ? 'Updating...' : 'Update Password'}
+              title={loading ? t('profile.changePassword.updating') : t('profile.changePassword.updateBtn')}
               onPress={handleUpdate}
               loading={loading}
               disabled={loading || !password || !confirmPassword}

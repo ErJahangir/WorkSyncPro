@@ -1,8 +1,8 @@
 import {useTheme} from '@/theme';
 import React from 'react';
-import {View, ViewStyle} from 'react-native';
+import {View, ViewStyle, StyleProp} from 'react-native';
 
-export const Divider: React.FC<{style?: ViewStyle}> = ({style}) => {
+export const Divider: React.FC<{style?: StyleProp<ViewStyle>}> = ({style}) => {
   const {theme} = useTheme();
   return (
     <View

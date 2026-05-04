@@ -1,4 +1,4 @@
-import React from 'react';
+import {useTranslation} from 'react-i18next';
 import {StyleSheet, TextInput, TouchableOpacity, View} from 'react-native';
 import {useTheme} from '@/theme';
 import type {Theme} from '@/theme';
@@ -16,12 +16,13 @@ export const TaskListHeader: React.FC<TaskListHeaderProps> = ({
 }) => {
   const {theme} = useTheme();
   const styles = createStyles(theme);
+  const {t} = useTranslation();
 
   return (
     <View style={styles.header}>
       <View>
-        <RNText style={styles.title}>My Tasks</RNText>
-        <RNText style={styles.subtitle}>{total} tasks total</RNText>
+        <RNText style={styles.title}>{t('tasks.taskList.headerTitle')}</RNText>
+        <RNText style={styles.subtitle}>{t('tasks.taskList.totalTasks', {count: total})}</RNText>
       </View>
       <TouchableOpacity onPress={onAddPress} style={styles.addButton}>
         <RNText style={styles.addButtonText}>+</RNText>
@@ -45,6 +46,7 @@ export const TaskSearchBar: React.FC<TaskSearchBarProps> = ({
 }) => {
   const {theme} = useTheme();
   const styles = createStyles(theme);
+  const {t} = useTranslation();
 
   return (
     <View style={styles.searchRow}>
@@ -52,7 +54,7 @@ export const TaskSearchBar: React.FC<TaskSearchBarProps> = ({
         <RNText style={styles.searchIcon}>🔍</RNText>
         <TextInput
           style={styles.searchInput}
-          placeholder="Search tasks..."
+          placeholder={t('tasks.taskList.searchPlaceholder')}
           placeholderTextColor={theme.colors.textTertiary}
           value={value}
           onChangeText={onChangeText}
@@ -94,12 +96,13 @@ export const TaskStatusTabs: React.FC<TaskStatusTabsProps> = ({
 }) => {
   const {theme} = useTheme();
   const styles = createStyles(theme);
+  const {t} = useTranslation();
 
   const statusTabs: Array<{key: TaskStatus | 'all'; label: string}> = [
-    {key: 'all', label: 'All'},
-    {key: 'todo', label: 'To Do'},
-    {key: 'in_progress', label: 'In Progress'},
-    {key: 'completed', label: 'Done'},
+    {key: 'all', label: t('tasks.all')},
+    {key: 'todo', label: t('tasks.todo')},
+    {key: 'in_progress', label: t('tasks.in_progress')},
+    {key: 'completed', label: t('tasks.completed')},
   ];
 
   return (

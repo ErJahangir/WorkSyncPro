@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   ViewStyle,
+  StyleProp,
 } from 'react-native';
 import {useTheme} from '@/theme';
 import RNText from './RNText';
@@ -22,7 +23,7 @@ interface InputProps extends TextInputProps {
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   onRightIconPress?: () => void;
-  containerStyle?: ViewStyle;
+  containerStyle?: StyleProp<ViewStyle>;
   required?: boolean;
   showPasswordToggle?: boolean;
 }

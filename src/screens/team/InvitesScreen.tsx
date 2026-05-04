@@ -6,6 +6,7 @@ import {
   ScrollView,
   RefreshControl,
 } from 'react-native';
+import {useTranslation} from 'react-i18next';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {useTheme} from '@/theme';
@@ -21,6 +22,7 @@ export const InvitesScreen: React.FC = () => {
   const styles = createStyles(theme);
   const navigation = useNavigation<any>();
   const dispatch = useDispatch<AppDispatch>();
+  const {t} = useTranslation();
   const user = useSelector((state: RootState) => state.auth.user);
 
   const [invites, setInvites] = useState<any[]>([]);
@@ -58,7 +60,7 @@ export const InvitesScreen: React.FC = () => {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <RNText style={styles.backButton}>←</RNText>
         </TouchableOpacity>
-        <RNText style={styles.headerTitle}>Team Invitations</RNText>
+        <RNText style={styles.headerTitle}>{t('invites.title')}</RNText>
         <View style={{width: 40}} />
       </View>
 
@@ -70,27 +72,27 @@ export const InvitesScreen: React.FC = () => {
         {invites.length === 0 && !loading ? (
           <EmptyState
             icon="✉️"
-            title="No invitations"
-            subtitle="You'll see team invites here when they arrive."
+            title={t('invites.noInvitesTitle')}
+            subtitle={t('invites.noInvitesSubtitle')}
           />
         ) : (
           invites.map(invite => (
             <View key={invite.id} style={styles.inviteCard}>
               <View style={styles.inviteInfo}>
                 <RNText style={styles.teamName}>{invite.team?.name}</RNText>
-                <RNText style={styles.inviteRole}>Role: {invite.role}</RNText>
+                <RNText style={styles.inviteRole}>{t('invites.role', {role: invite.role})}</RNText>
               </View>
               <View style={styles.actions}>
                 <TouchableOpacity
                   style={[styles.actionButton, styles.acceptButton]}
                   onPress={() => handleAccept(invite.id)}>
-                  <RNText style={styles.buttonText}>Accept</RNText>
+                  <RNText style={styles.buttonText}>{t('invites.accept')}</RNText>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.actionButton, styles.rejectButton]}>
                   <RNText
                     style={[styles.buttonText, {color: theme.colors.error}]}>
-                    Decline
+                    {t('invites.decline')}
                   </RNText>
                 </TouchableOpacity>
               </View>

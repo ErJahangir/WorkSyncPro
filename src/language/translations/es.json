@@ -1,0 +1,491 @@
+{
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "back": "Atrás",
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "unknownUser": "Desconocido"
+  },
+  "profile": {
+    "title": "Perfil",
+    "account": "Cuenta",
+    "notifications": "Notificaciones",
+    "changePassword": {
+      "title": "Actualizar Contraseña",
+      "subtitle": "Asegúrate de que tu cuenta esté segura usando una contraseña fuerte.",
+      "newPassword": "Nueva Contraseña",
+      "confirmPassword": "Confirmar Nueva Contraseña",
+      "passwordPlaceholder": "Mínimo 6 caracteres",
+      "confirmPlaceholder": "Repite la contraseña",
+      "updateBtn": "Actualizar Contraseña",
+      "updating": "Actualizando...",
+      "successTitle": "Éxito",
+      "successMessage": "Tu contraseña ha sido actualizada con éxito",
+      "errorTitle": "Error",
+      "minLength": "La contraseña debe tener al menos 6 caracteres",
+      "mismatch": "Las contraseñas no coinciden"
+    },
+    "emailPreferences": {
+      "title": "Preferencias de Correo",
+      "subtitle": "Elige qué notificaciones te gustaría recibir por correo electrónico.",
+      "taskActivity": "Actividad de Tareas",
+      "taskAssigned": "Tarea Asignada",
+      "taskAssignedDesc": "Cuando alguien te asigna una tarea",
+      "taskCompleted": "Tarea Completada",
+      "taskCompletedDesc": "Cuando se completa una tarea que creaste",
+      "mentions": "Menciones",
+      "mentionsDesc": "Cuando alguien te menciona en un comentario",
+      "teamNetwork": "Equipo y Red",
+      "teamInvites": "Invitaciones de Equipo",
+      "teamInvitesDesc": "Cuando te invitan a unirte a un equipo",
+      "updatesReports": "Actualizaciones e Informes",
+      "weeklySummary": "Informe Semanal de Productividad",
+      "weeklySummaryDesc": "Un resumen de tus logros semanales",
+      "productUpdates": "Actualizaciones del Producto",
+      "productUpdatesDesc": "Noticias sobre las funciones de WorkSync Pro"
+    },
+    "language": "Idioma",
+    "about": {
+      "title": "Acerca de WorkSync Pro",
+      "version": "Versión {{version}} (Build {{build}})",
+      "description": "WorkSync Pro es una plataforma de colaboración en equipo de alto rendimiento diseñada para profesionales modernos. Nuestra misión es optimizar los flujos de trabajo, mejorar la comunicación y ayudar a los equipos a lograr más juntos.",
+      "company": "Empresa",
+      "developer": "Desarrollador",
+      "developerName": "WorkSync Technologies",
+      "website": "Sitio Web",
+      "support": "Soporte",
+      "followUs": "Síguenos",
+      "copyright": "© 2026 WorkSync Technologies Inc. Todos los derechos reservados."
+    },
+    "privacyPolicy": {
+      "title": "Política de Privacidad",
+      "lastUpdated": "Última actualización: Mayo 2026",
+      "section1": {
+        "title": "1. Información que recopilamos",
+        "text": "Recopilamos la información que nos proporcionas directamente, como cuando creas o modificas tu cuenta, solicitas atención al cliente o te comunicas con nosotros. Esta información puede incluir tu nombre, dirección de correo electrónico, número de teléfono y foto de perfil."
+      },
+      "section2": {
+        "title": "2. Cómo utilizamos la información",
+        "text": "Utilizamos la información que recopilamos para proporcionar, mantener y mejorar nuestros servicios, para desarrollar otros nuevos y para proteger a WorkSync Pro y a nuestros usuarios."
+      },
+      "section3": {
+        "title": "3. Intercambio de información",
+        "text": "No compartimos tu información personal con empresas, organizaciones ni personas ajenas a WorkSync Pro, excepto en los siguientes casos: con tu consentimiento, para procesamiento externo o por motivos legales."
+      },
+      "section4": {
+        "title": "4. Seguridad de los datos",
+        "text": "Utilizamos medidas de seguridad administrativas, técnicas y físicas para ayudar a proteger tu información personal. Si bien hemos tomado medidas razonables para asegurar la información personal que nos proporcionas, ten en cuenta que a pesar de nuestros esfuerzos, ninguna medida de seguridad es perfecta o impenetrable."
+      },
+      "section5": {
+        "title": "5. Tus derechos",
+        "text": "Tienes derecho a acceder, actualizar o eliminar la información personal que tenemos sobre ti. Siempre que sea posible, puedes acceder, actualizar o solicitar la eliminación de tu información personal directamente en la sección de configuración de tu cuenta."
+      }
+    },
+    "termsOfService": {
+      "title": "Términos de Servicio",
+      "lastUpdated": "Última actualización: Mayo 2026",
+      "section1": {
+        "title": "1. Aceptación de los términos",
+        "text": "Al acceder o utilizar WorkSync Pro, aceptas estar sujeto a estos Términos de Servicio. Si no estás de acuerdo con todos los términos y condiciones de este acuerdo, no podrás acceder al sitio web ni utilizar ningún servicio."
+      },
+      "section2": {
+        "title": "2. Licencia de uso",
+        "text": "Se concede permiso para descargar temporalmente una copia de los materiales (información o software) en WorkSync Pro solo para visualización transitoria personal y no comercial."
+      },
+      "section3": {
+        "title": "3. Cuenta de usuario",
+        "text": "Eres responsable de mantener la confidencialidad de tu cuenta y contraseña y de restringir el acceso a tu computadora o dispositivo móvil. Aceptas la responsabilidad de todas las actividades que ocurran bajo tu cuenta o contraseña."
+      },
+      "section4": {
+        "title": "4. Limitaciones",
+        "text": "En ningún caso WorkSync Pro o sus proveedores serán responsables de ningún daño (incluidos, entre otros, daños por pérdida de datos o ganancias, o debido a la interrupción del negocio) que surja del uso o la imposibilidad de usar los materiales en WorkSync Pro."
+      },
+      "section5": {
+        "title": "5. Ley aplicable",
+        "text": "Estos términos y condiciones se rigen y se interpretan de acuerdo con las leyes de la jurisdicción en la que se encuentra WorkSync Technologies y te sometes irrevocablemente a la jurisdicción exclusiva de los tribunales en ese Estado o ubicación."
+      }
+    },
+    "logout": "Cerrar Sesión",
+    "settings": "Ajustes",
+    "darkMode": "Modo Oscuro",
+    "darkModeDesc": "Alternar tema oscuro",
+    "dailyReminder": "Recordatorio Diario de Tareas",
+    "scheduledFor": "Programado para las {{time}}",
+    "dailyReminderDesc": "Recibe notificaciones sobre tareas pendientes",
+    "profilePhoto": "Foto de Perfil",
+    "takePhoto": "Tomar Foto",
+    "chooseGallery": "Elegir de la Galería",
+    "uploading": "Subiendo...",
+    "changePhoto": "Cambiar Foto",
+    "uploadFailed": "Error al Subir",
+    "signOutConfirm": "¿Estás seguro de que quieres cerrar sesión?",
+    "cancel": "Cancelar",
+    "signOutBtn": "Cerrar Sesión",
+    "editProfile": {
+      "fullName": "Nombre Completo",
+      "namePlaceholder": "Tu nombre",
+      "bio": "Biografía",
+      "bioPlaceholder": "Cuéntanos sobre ti...",
+      "edit": "Editar",
+      "save": "Guardar",
+      "cancel": "Cancelar"
+    },
+    "defaultName": "Usuario",
+    "notificationsLabel": "Notificaciones",
+    "changePasswordLabel": "Cambiar Contraseña",
+    "emailPreferencesLabel": "Preferencias de Email",
+    "languageLabel": "Idioma",
+    "aboutLabel": "Acerca de",
+    "privacyPolicyLabel": "Política de Privacidad",
+    "termsOfServiceLabel": "Términos de Servicio"
+  },
+  "language": {
+    "title": "Idioma",
+    "subtitle": "Seleccione su idioma preferido para la aplicación.",
+    "english": "Inglés",
+    "spanish": "Español",
+    "french": "Francés",
+    "german": "Alemán",
+    "italian": "Italiano",
+    "portuguese": "Portugués",
+    "chinese": "Chino",
+    "japanese": "Japonés"
+  },
+  "notifications": {
+    "title": "Notificaciones",
+    "markAllAsRead": "Marcar todo como leído",
+    "noNotifications": "No hay notificaciones",
+    "emptySubtitle": "¡Estás al día! Las nuevas notificaciones aparecerán aquí."
+  },
+  "analytics": {
+    "title": "Analítica",
+    "subtitle": "Información sobre el rendimiento del equipo",
+    "overallProgress": "Progreso General",
+    "completed": "Completado",
+    "inProgress": "En Progreso",
+    "todo": "Por Hacer",
+    "tasksCompleted": "Tareas Completadas",
+    "tasksByPriority": "Tareas por Prioridad",
+    "topPerformers": "Mejores Colaboradores",
+    "week": "semana",
+    "month": "mes",
+    "avgCompletionTime": "Tiempo Promedio de Finalización",
+    "teamVelocity": "Velocidad del Equipo",
+    "days": "días",
+    "tasksPerWeek": "tareas/semana",
+    "tasksCompletedCount": "{{count}} tareas completadas"
+  },
+  "daysShort": {
+    "Sun": "Dom",
+    "Mon": "Lun",
+    "Tue": "Mar",
+    "Wed": "Mié",
+    "Thu": "Jue",
+    "Fri": "Vie",
+    "Sat": "Sáb"
+  },
+  "priority": {
+    "high": "Alta",
+    "medium": "Media",
+    "low": "Baja"
+  },
+  "dashboard": {
+    "greeting": {
+      "morning": "Buenos días",
+      "afternoon": "Buenas tardes",
+      "evening": "Buenas noches",
+      "there": "hola"
+    },
+    "stats": {
+      "totalTasks": "Total de Tareas",
+      "inProgress": "En Progreso",
+      "completed": "Completado",
+      "teamMembers": "Miembros del Equipo",
+      "doneTrend": "{{percentage}}% completado"
+    },
+    "productivity": {
+      "title": "Productividad del Equipo",
+      "completed": "Completadas ({{count}})",
+      "remaining": "Restantes ({{count}})",
+      "highPriority": "Prioridad Alta",
+      "medium": "Media",
+      "low": "Baja"
+    },
+    "recentTasks": {
+      "title": "Tareas Recientes",
+      "seeAll": "Ver Todo →",
+      "empty": "Aún no hay tareas. ¡Crea la primera!"
+    },
+    "quickActions": {
+      "title": "Acciones Rápidas",
+      "newTask": "Nueva Tarea",
+      "team": "Equipo",
+      "analytics": "Analítica",
+      "profile": "Perfil"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Bienvenido de nuevo",
+      "subtitle": "Inicia sesión en tu cuenta de WorkSync Pro",
+      "emailLabel": "Correo Electrónico",
+      "emailPlaceholder": "tu@empresa.com",
+      "passwordLabel": "Contraseña",
+      "passwordPlaceholder": "Ingresa tu contraseña",
+      "forgotPassword": "¿Olvidaste tu contraseña?",
+      "signIn": "Iniciar Sesión",
+      "or": "o",
+      "googleSignIn": "Continuar con Google",
+      "noAccount": "¿No tienes una cuenta? ",
+      "createAccount": "Crear Cuenta"
+    },
+    "signup": {
+      "title": "Crear Cuenta",
+      "subtitle": "Únete a WorkSync Pro hoy mismo",
+      "fullNameLabel": "Nombre Completo",
+      "fullNamePlaceholder": "Juan Pérez",
+      "confirmPasswordLabel": "Confirmar Contraseña",
+      "confirmPasswordPlaceholder": "Repite tu contraseña",
+      "termsText": "Al registrarte, aceptas nuestros",
+      "termsLink": "Términos de Servicio",
+      "and": "y",
+      "privacyLink": "Política de Privacidad",
+      "createAccountBtn": "Crear Cuenta",
+      "haveAccount": "¿Ya tienes una cuenta? ",
+      "signIn": "Iniciar Sesión"
+    },
+    "forgotPassword": {
+      "title": "Restablecer Contraseña",
+      "subtitle": "Ingresa tu correo y te enviaremos instrucciones para restablecerla",
+      "sendEmail": "Enviar Correo",
+      "successTitle": "Revisa tu bandeja de entrada",
+      "successSubtitle": "Enviamos instrucciones para restablecer la contraseña a",
+      "backToSignIn": "Volver a Iniciar Sesión"
+    },
+    "verifyEmail": {
+      "title": "Verifica tu correo",
+      "subtitle": "Enviamos un enlace de verificación a",
+      "instruction": "Por favor revisa tu bandeja de entrada y haz clic en el enlace para activar tu cuenta.",
+      "goToSignIn": "Ir a Iniciar Sesión",
+      "resendEmail": "Reenviar Correo"
+    },
+    "onboarding": {
+      "skip": "Saltar",
+      "next": "Siguiente",
+      "getStarted": "Empezar 🚀",
+      "slides": [
+        {
+          "title": "Gestiona Tareas\nEficientemente",
+          "subtitle": "Crea, asigna y sigue tareas en tiempo real con todo tu equipo."
+        },
+        {
+          "title": "Colabora sin\nProblemas",
+          "subtitle": "Chatea con tus compañeros, deja comentarios y mantente sincronizado en todas partes."
+        },
+        {
+          "title": "Sigue tu\nProductividad",
+          "subtitle": "Obtén información sobre el rendimiento del equipo con hermosos tableros de analíticas."
+        }
+      ]
+    },
+    "validation": {
+      "invalidEmail": "Dirección de email inválida",
+      "emailRequired": "El email es obligatorio",
+      "passwordMin": "La contraseña debe tener al menos {{count}} caracteres",
+      "passwordUpper": "La contraseña debe contener al menos una letra mayúscula",
+      "passwordLower": "La contraseña debe contener al menos una letra minúscula",
+      "passwordNumber": "La contraseña debe contener al menos un número",
+      "passwordRequired": "La contraseña es obligatoria",
+      "passwordStrong": "La contraseña es segura",
+      "nameShort": "El nombre es muy corto",
+      "nameRequired": "El nombre completo es obligatorio",
+      "invalidUrl": "Formato de URL inválido"
+    }
+  },
+  "dates": {
+    "today": "Hoy",
+    "tomorrow": "Mañana",
+    "inDays": "En {{count}} día",
+    "inDays_plural": "En {{count}} días",
+    "invalidDate": "Fecha inválida",
+    "unknown": "Desconocido",
+    "at": "a las"
+  },
+  "status": {
+    "todo": "Por hacer",
+    "in_progress": "En progreso",
+    "completed": "Hecho"
+  },
+  "tasks": {
+    "title": "Tareas",
+    "searchPlaceholder": "Buscar tareas...",
+    "loadingMore": "Cargando más...",
+    "noTasksTitle": "No se encontraron tareas",
+    "noTasksSubtitle": "Crea tu primera tarea para empezar",
+    "noResultsFor": "No hay resultados para \"{{query}}\"",
+    "createTaskBtn": "+ Crear Tarea",
+    "taskList": {
+      "headerTitle": "Mis Tareas",
+      "totalTasks": "{{count}} tareas en total",
+      "searchPlaceholder": "Buscar tareas..."
+    },
+    "all": "Todos",
+    "todo": "Por hacer",
+    "in_progress": "En progreso",
+    "completed": "Hecho",
+    "filterTitle": "Filtros",
+    "apply": "Aplicar",
+    "clear": "Limpiar",
+    "sortBy": "Ordenar por",
+    "priority": "Prioridad",
+    "status": "Estado",
+    "assignedTo": "Asignado a",
+    "taskDetail": {
+      "deleteTitle": "Eliminar Tarea",
+      "deleteConfirm": "¿Estás seguro de que quieres eliminar permanentemente esta tarea?",
+      "deleteBtn": "Eliminar",
+      "cancelBtn": "Cancelar",
+      "priority": "Prioridad {{priority}}",
+      "changeStatus": "Cambiar Estado",
+      "deadline": "Fecha límite",
+      "overdue": "Atrasada",
+      "createdBy": "Creado por",
+      "tags": "Etiquetas",
+      "assignees": "Asignados ({{count}})",
+      "discussion": "Discusión ({{count}})",
+      "noComments": "Sin comentarios aún. ¡Inicia la discusión!",
+      "statusUpdate": "Estado → {{status}}"
+    },
+    "createTask": {
+      "title": "Nueva Tarea",
+      "cancel": "Cancelar",
+      "submit": "Crear Tarea"
+    },
+    "editTask": {
+      "title": "Editar Tarea",
+      "cancel": "Cancelar",
+      "submit": "Actualizar Tarea",
+      "saveChanges": "Guardar Cambios"
+    },
+    "comments": {
+      "placeholder": "Escribe un comentario...",
+      "send": "Enviar"
+    },
+    "actions": {
+      "edit": "Editar",
+      "delete": "Eliminar"
+    }
+  },
+  "commentsPlaceholder": {
+    "title": "Comentarios",
+    "subtitle": "El hilo de discusión completo estará disponible pronto.",
+    "hint": "Consulta el Detalle de la Tarea para la discusión actual."
+  },
+  "taskForm": {
+    "titleLabel": "Título de la Tarea",
+    "titlePlaceholder": "¿Qué hay que hacer?",
+    "descriptionLabel": "Descripción",
+    "descriptionPlaceholder": "Añade una descripción detallada...",
+    "teamLabel": "Asignar al Equipo",
+    "personalTask": "Tarea Personal",
+    "assigneeLabel": "Asignado a",
+    "unassigned": "Sin asignar",
+    "priorityLabel": "Prioridad",
+    "statusLabel": "Estado",
+    "tagsLabel": "Etiquetas",
+    "tagsPlaceholder": "Añadir etiqueta...",
+    "tagsHint": "{{count}}/5 etiquetas · Toca una para eliminar",
+    "validation": {
+      "titleRequired": "El título es obligatorio",
+      "titleShort": "Demasiado corto",
+      "titleLong": "Demasiado largo",
+      "descLong": "Máximo 500 caracteres"
+    },
+    "low": "Baja",
+    "medium": "Media",
+    "high": "Alta"
+  },
+  "team": {
+    "title": "Equipo",
+    "membersCount": "{{count}} miembros",
+    "invite": "+ Invitar",
+    "yourTeams": "Tus Equipos",
+    "members": "Miembros",
+    "noMembersTitle": "No hay miembros",
+    "noMembersSubtitle": "Invita a tus compañeros para empezar",
+    "createTeam": "Crear Equipo",
+    "inviteMember": "Invitar Miembro",
+    "invites": "Invitaciones"
+  },
+  "createTeam": {
+    "title": "Crear Nuevo Equipo",
+    "cancel": "Cancelar",
+    "heroDescription": "Los equipos te ayudan a organizar tareas y colaborar con tus colegas en un espacio compartido.",
+    "nameLabel": "Nombre del Equipo",
+    "namePlaceholder": "ej. Equipo de Diseño, Proyecto Fénix",
+    "descriptionLabel": "Descripción (Opcional)",
+    "descriptionPlaceholder": "¿De qué trata este equipo?",
+    "submit": "Crear Equipo",
+    "nameError": "Por favor ingresa un nombre para el equipo"
+  },
+  "inviteMember": {
+    "title": "Invitar Miembro",
+    "cancel": "Cancelar",
+    "heroDescription": "Ingresa el correo electrónico de la persona que deseas invitar a tu equipo.",
+    "emailLabel": "Correo Electrónico",
+    "emailPlaceholder": "colega@empresa.com",
+    "roleLabel": "Rol",
+    "submit": "Enviar Invitación",
+    "emailError": "Por favor ingresa un correo electrónico",
+    "noTeamError": "No hay equipo seleccionado"
+  },
+  "invites": {
+    "title": "Invitaciones de Equipo",
+    "noInvitesTitle": "No hay invitaciones",
+    "noInvitesSubtitle": "Verás las invitaciones del equipo aquí cuando lleguen.",
+    "role": "Rol: {{role}}",
+    "accept": "Aceptar",
+    "decline": "Rechazar"
+  },
+  "memberProfile": {
+    "activity": "Actividad",
+    "tasksAssigned": "Tareas Asignadas",
+    "tasksCompleted": "Tareas Completadas",
+    "completionRate": "Tasa de Finalización",
+    "memberSince": "Miembro Desde",
+    "defaultName": "Miembro del Equipo"
+  },
+  "teamDetail": {
+    "title": "Detalles del Equipo",
+    "comingSoon": "Próximamente..."
+  },
+  "roles": {
+    "user": "Miembro",
+    "manager": "Gerente",
+    "admin": "Admin"
+  },
+  "navigation": {
+    "home": "Inicio",
+    "tasks": "Tareas",
+    "team": "Equipo",
+    "stats": "Estadísticas",
+    "profile": "Perfil",
+    "taskDetails": "Detalles de Tarea",
+    "newTask": "Nueva Tarea",
+    "editTask": "Editar Tarea",
+    "comments": "Comentarios",
+    "newTeam": "Nuevo Equipo",
+    "inviteMember": "Invitar Miembro",
+    "invitations": "Invitaciones",
+    "memberProfile": "Perfil de Miembro",
+    "notifications": "Notificaciones",
+    "changePassword": "Cambiar Contraseña",
+    "emailPreferences": "Preferencias de Email",
+    "language": "Idioma",
+    "about": "Acerca de",
+    "privacyPolicy": "Política de Privacidad",
+    "termsOfService": "Términos de Servicio"
+  }
+}

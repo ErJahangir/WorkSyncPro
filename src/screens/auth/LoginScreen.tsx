@@ -18,14 +18,13 @@ import {useForm, Controller} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import {emailSchema, passwordSchema} from '@/utils';
 import {useNavigation} from '@react-navigation/native';
+import {useTranslation} from 'react-i18next';
 
-import {useTheme} from '@/theme';
-import type {Theme} from '@/theme';
 import {useAppDispatch, useAppSelector, useGoogleLogin} from '@/hooks';
-import {clearAuthError, loginUser, loginWithGoogle} from '@/store/slices';
+import {clearAuthError, loginUser} from '@/store/slices';
+import {Button, Input, RNText} from '@/components';
+import {useTheme, type Theme} from '@/theme';
 import {LoginFormData} from '@/types';
-import {Button, Input} from '@/components';
-import {RNText} from '@/components/common';
 
 const schema = yup.object({
   email: emailSchema,
@@ -37,6 +36,7 @@ export const LoginScreen: React.FC = () => {
   const styles = createStyles(theme);
   const navigation = useNavigation<any>();
   const dispatch = useAppDispatch();
+  const {t} = useTranslation();
   const {isLoading, error} = useAppSelector(state => state.auth);
 
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
@@ -93,10 +93,8 @@ export const LoginScreen: React.FC = () => {
           <View style={styles.logoIcon}>
             <RNText style={styles.logoEmoji}>⚡</RNText>
           </View>
-          <RNText style={styles.title}>Welcome back</RNText>
-          <RNText style={styles.subtitle}>
-            Sign in to your WorkSync Pro account
-          </RNText>
+          <RNText style={styles.title}>{t('auth.login.title')}</RNText>
+          <RNText style={styles.subtitle}>{t('auth.login.subtitle')}</RNText>
         </Animated.View>
 
         {/* Form */}
@@ -117,9 +115,9 @@ export const LoginScreen: React.FC = () => {
             name="email"
             render={({field: {onChange, onBlur, value}}) => (
               <Input
-                label="Email Address"
+                label={t('auth.login.emailLabel')}
                 required
-                placeholder="you@company.com"
+                placeholder={t('auth.login.emailPlaceholder')}
                 keyboardType="email-address"
                 autoCapitalize="none"
                 autoComplete="email"
@@ -137,9 +135,9 @@ export const LoginScreen: React.FC = () => {
             name="password"
             render={({field: {onChange, onBlur, value}}) => (
               <Input
-                label="Password"
+                label={t('auth.login.passwordLabel')}
                 required
-                placeholder="Enter your password"
+                placeholder={t('auth.login.passwordPlaceholder')}
                 value={value}
                 onChangeText={onChange}
                 onBlur={onBlur}
@@ -155,11 +153,13 @@ export const LoginScreen: React.FC = () => {
           <TouchableOpacity
             onPress={() => navigation.navigate('ForgotPassword')}
             style={styles.forgotButton}>
-            <RNText style={styles.forgotButtonText}>Forgot Password?</RNText>
+            <RNText style={styles.forgotButtonText}>
+              {t('auth.login.forgotPassword')}
+            </RNText>
           </TouchableOpacity>
 
           <Button
-            title="Sign In"
+            title={t('auth.login.signIn')}
             onPress={handleSubmit(onSubmit)}
             loading={isLoading}
             fullWidth
@@ -170,12 +170,12 @@ export const LoginScreen: React.FC = () => {
           {/* Divider */}
           <View style={styles.dividerContainer}>
             <View style={styles.divider} />
-            <RNText style={styles.dividerText}>or</RNText>
+            <RNText style={styles.dividerText}>{t('auth.login.or')}</RNText>
             <View style={styles.divider} />
           </View>
 
           <Button
-            title="Continue with Google"
+            title={t('auth.login.googleSignIn')}
             onPress={signInWithGoogle}
             variant="outline"
             fullWidth
@@ -190,8 +190,10 @@ export const LoginScreen: React.FC = () => {
             onPress={() => navigation.navigate('Signup')}
             style={styles.signupLink}>
             <RNText style={styles.signupText}>
-              Don't have an account?{' '}
-              <RNText style={styles.signupHighlight}>Create Account</RNText>
+              {t('auth.login.noAccount')}
+              <RNText style={styles.signupHighlight}>
+                {t('auth.login.createAccount')}
+              </RNText>
             </RNText>
           </TouchableOpacity>
         </Animated.View>

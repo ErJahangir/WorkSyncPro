@@ -1,6 +1,7 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import {Avatar} from '@/components';
+import {useTranslation} from 'react-i18next';
 import {useTheme} from '@/theme';
 import type {Theme} from '@/theme';
 import {RNText} from '@/components/common';
@@ -23,6 +24,7 @@ export const TopPerformerItem: React.FC<TopPerformerItemProps> = ({
 }) => {
   const {theme} = useTheme();
   const styles = createStyles(theme);
+  const {t} = useTranslation();
 
   const getRankBg = () => {
     switch (rank) {
@@ -50,7 +52,9 @@ export const TopPerformerItem: React.FC<TopPerformerItemProps> = ({
       <Avatar name={user?.name || '?'} uri={user?.avatar} size={36} />
       <View style={styles.userInfo}>
         <RNText style={styles.userName}>{user?.name || 'Unknown'}</RNText>
-        <RNText style={styles.taskCount}>{completed} tasks completed</RNText>
+        <RNText style={styles.taskCount}>
+          {t('analytics.tasksCompletedCount', {count: completed})}
+        </RNText>
       </View>
       <View style={styles.countBadge}>
         <RNText style={styles.countText}>{completed}</RNText>

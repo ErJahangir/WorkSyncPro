@@ -5,6 +5,7 @@
 
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
+import {useTranslation} from 'react-i18next';
 import {useTheme} from '@/theme';
 import type {Theme} from '@/theme';
 import {RNText} from '@/components/common';
@@ -12,13 +13,14 @@ import {RNText} from '@/components/common';
 export const TaskCommentsScreen: React.FC = () => {
   const {theme} = useTheme();
   const styles = createStyles(theme);
+  const {t} = useTranslation();
 
   return (
     <View style={styles.container}>
-      <RNText style={styles.title}>Comments</RNText>
-      <RNText style={styles.subtitle}>Full discussion thread coming soon.</RNText>
+      <RNText style={styles.title}>{t('tasks.commentsPlaceholder.title')}</RNText>
+      <RNText style={styles.subtitle}>{t('tasks.commentsPlaceholder.subtitle')}</RNText>
       <RNText style={styles.hint}>
-        Check Task Detail for the current discussion.
+        {t('tasks.commentsPlaceholder.hint')}
       </RNText>
     </View>
   );

@@ -20,12 +20,14 @@ import {fetchTeams, fetchTeamMembers, setSelectedTeam} from '@/store/slices';
 import {EmptyState} from '@/components';
 import {TeamMemberRow} from './components';
 import {RNText} from '@/components/common';
+import {useTranslation} from 'react-i18next';
 
 export const TeamScreen: React.FC = () => {
   const {theme} = useTheme();
   const styles = createStyles(theme);
   const navigation = useNavigation<any>();
   const dispatch = useAppDispatch();
+  const {t} = useTranslation();
   const {user} = useAppSelector(s => s.auth);
   const {teams, members, selectedTeam, isLoading} = useAppSelector(s => s.team);
 
@@ -71,8 +73,10 @@ export const TeamScreen: React.FC = () => {
         {/* Header */}
         <View style={styles.header}>
           <View>
-            <RNText style={styles.title}>Team</RNText>
-            <RNText style={styles.subtitle}>{members.length} members</RNText>
+            <RNText style={styles.title}>{t('team.title')}</RNText>
+            <RNText style={styles.subtitle}>
+              {t('team.membersCount', {count: members.length})}
+            </RNText>
           </View>
           <View style={styles.headerActions}>
             <TouchableOpacity
@@ -92,14 +96,14 @@ export const TeamScreen: React.FC = () => {
                 })
               }
               style={styles.addButton}>
-              <RNText style={styles.addButtonText}>+ Invite</RNText>
+              <RNText style={styles.addButtonText}>{t('team.invite')}</RNText>
             </TouchableOpacity>
           </View>
         </View>
 
         {/* Teams List */}
         <View style={styles.section}>
-          <RNText style={styles.sectionTitle}>Your Teams</RNText>
+          <RNText style={styles.sectionTitle}>{t('team.yourTeams')}</RNText>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -134,12 +138,12 @@ export const TeamScreen: React.FC = () => {
 
         {/* Members */}
         <View style={styles.membersContainer}>
-          <RNText style={styles.sectionTitle}>Members</RNText>
+          <RNText style={styles.sectionTitle}>{t('team.members')}</RNText>
           {members.length === 0 && !isLoading ? (
             <EmptyState
               icon="👥"
-              title="No team members"
-              subtitle="Invite your teammates to get started"
+              title={t('team.noMembersTitle')}
+              subtitle={t('team.noMembersSubtitle')}
             />
           ) : (
             members.map(member => (

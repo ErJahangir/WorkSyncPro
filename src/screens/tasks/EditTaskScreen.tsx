@@ -4,10 +4,18 @@
  */
 
 import React from 'react';
-import {View, ScrollView, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform} from 'react-native';
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
+import {useTranslation} from 'react-i18next';
 import {useNavigation, useRoute} from '@react-navigation/native';
-import {useTheme} from '@/theme';
-import type {Theme} from '@/theme';
+
+import {useTheme, type Theme} from '@/theme';
 import {useAppDispatch, useAppSelector} from '@/hooks';
 import {updateTask} from '@/store/slices';
 import {TaskForm} from './components';
@@ -20,6 +28,7 @@ export const EditTaskScreen: React.FC = () => {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
   const dispatch = useAppDispatch();
+  const {t} = useTranslation();
   const {isLoading} = useAppSelector(s => s.tasks);
   const task: Task = route.params.task;
 
@@ -49,9 +58,13 @@ export const EditTaskScreen: React.FC = () => {
           <TouchableOpacity
             onPress={() => navigation.goBack()}
             style={styles.closeBtn}>
-            <RNText style={styles.cancelText}>Cancel</RNText>
+            <RNText style={styles.cancelText}>
+              {t('tasks.editTask.cancel')}
+            </RNText>
           </TouchableOpacity>
-          <RNText style={styles.headerTitle}>Edit Task</RNText>
+          <RNText style={styles.headerTitle}>
+            {t('tasks.editTask.title')}
+          </RNText>
           <View style={styles.headerAction} />
         </View>
 
@@ -67,7 +80,7 @@ export const EditTaskScreen: React.FC = () => {
             }}
             onSubmit={onSubmit}
             isLoading={isLoading}
-            submitButtonLabel="Save Changes"
+            submitButtonLabel={t('tasks.editTask.saveChanges')}
           />
         </ScrollView>
       </View>

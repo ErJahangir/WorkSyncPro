@@ -29,6 +29,7 @@ import {
   StatusSelector,
   TaskDetailHeader,
 } from './components';
+import {useTranslation} from 'react-i18next';
 
 export const TaskDetailScreen: React.FC = () => {
   const {theme} = useTheme();
@@ -37,6 +38,7 @@ export const TaskDetailScreen: React.FC = () => {
   const route = useRoute<any>();
   const dispatch = useAppDispatch();
   const {taskId} = route.params;
+  const {t} = useTranslation();
 
   const task = useAppSelector(s => s.tasks.selectedTask);
   const user = useAppSelector(s => s.auth.user);
@@ -72,19 +74,22 @@ export const TaskDetailScreen: React.FC = () => {
     async (status: TaskStatus) => {
       if (!task) return;
       await dispatch(updateTaskStatus({taskId: task.id, status}));
-      showToast('success', `Status → ${status.replace('_', ' ')}`);
+      showToast(
+        'success',
+        t('tasks.taskDetail.statusUpdate', {status: t(`status.${status}`)}),
+      );
     },
-    [task, dispatch],
+    [task, dispatch, t],
   );
 
   const handleDelete = useCallback(() => {
     Alert.alert(
-      'Delete Task',
-      'Are you sure you want to permanently delete this task?',
+      t('tasks.taskDetail.deleteTitle'),
+      t('tasks.taskDetail.deleteConfirm'),
       [
-        {text: 'Cancel', style: 'cancel'},
+        {text: t('tasks.taskDetail.cancelBtn'), style: 'cancel'},
         {
-          text: 'Delete',
+          text: t('tasks.taskDetail.deleteBtn'),
           style: 'destructive',
           onPress: async () => {
             await dispatch(deleteTask(taskId));
@@ -93,7 +98,7 @@ export const TaskDetailScreen: React.FC = () => {
         },
       ],
     );
-  }, [taskId, dispatch, navigation]);
+  }, [taskId, dispatch, navigation, t]);
 
   const handleEdit = useCallback(
     () => navigation.navigate('EditTask', {task}),
@@ -183,7 +188,7 @@ export const TaskDetailScreen: React.FC = () => {
                   styles.priorityText,
                   {color: priorityColors[task.priority]},
                 ]}>
-                {task.priority} priority
+                {t('tasks.taskDetail.priority', {priority: task.priority})}
               </RNText>
             </View>
           </View>
@@ -197,7 +202,9 @@ export const TaskDetailScreen: React.FC = () => {
 
         {/* Status Selector */}
         <Card style={styles.cardMargin}>
-          <RNText style={styles.sectionLabel}>Change Status</RNText>
+          <RNText style={styles.sectionLabel}>
+            {t('tasks.taskDetail.changeStatus')}
+          </RNText>
           <StatusSelector
             currentStatus={task.status}
             onStatusChange={handleStatusChange}
@@ -209,7 +216,9 @@ export const TaskDetailScreen: React.FC = () => {
           <View style={styles.metaContainer}>
             {task.deadline && (
               <View style={styles.metaRow}>
-                <RNText style={styles.metaLabel}>Deadline</RNText>
+                <RNText style={styles.metaLabel}>
+                  {t('tasks.taskDetail.deadline')}
+                </RNText>
                 <RNText
                   style={[
                     styles.deadlineText,
@@ -217,13 +226,15 @@ export const TaskDetailScreen: React.FC = () => {
                   ]}>
                   {overdue ? '⚠️ ' : '📅 '}
                   {formatDeadline(task.deadline)}
-                  {overdue && ' · Overdue'}
+                  {overdue && ` · ${t('tasks.taskDetail.overdue')}`}
                 </RNText>
               </View>
             )}
             {task.creator && (
               <View style={styles.metaRow}>
-                <RNText style={styles.metaLabel}>Created by</RNText>
+                <RNText style={styles.metaLabel}>
+                  {t('tasks.taskDetail.createdBy')}
+                </RNText>
                 <View style={styles.creatorInfo}>
                   <Avatar
                     name={task.creator.name}
@@ -238,7 +249,9 @@ export const TaskDetailScreen: React.FC = () => {
             )}
             {task.tags && task.tags.length > 0 && (
               <View style={styles.metaRow}>
-                <RNText style={styles.metaLabel}>Tags</RNText>
+                <RNText style={styles.metaLabel}>
+                  {t('tasks.taskDetail.tags')}
+                </RNText>
                 <View style={styles.tagsContainer}>
                   {task.tags.map(tag => (
                     <View key={tag} style={styles.tag}>
@@ -255,7 +268,7 @@ export const TaskDetailScreen: React.FC = () => {
         {task.assignees && task.assignees.length > 0 && (
           <Card style={styles.cardMargin}>
             <RNText style={styles.assigneesTitle}>
-              Assignees ({task.assignees.length})
+              {t('tasks.taskDetail.assignees', {count: task.assignees.length})}
             </RNText>
             {task.assignees.map(member => (
               <View key={member.id} style={styles.memberRow}>
@@ -272,7 +285,7 @@ export const TaskDetailScreen: React.FC = () => {
         {/* Comments Section */}
         <View style={styles.commentsSection}>
           <RNText style={styles.discussionTitle}>
-            💬 Discussion ({comments.length})
+            💬 {t('tasks.taskDetail.discussion', {count: comments.length})}
           </RNText>
 
           {loadingComments ? (
@@ -284,7 +297,7 @@ export const TaskDetailScreen: React.FC = () => {
             <View style={styles.noComments}>
               <RNText style={styles.noCommentsIcon}>💭</RNText>
               <RNText style={styles.noCommentsText}>
-                No comments yet. Start the discussion!
+                {t('tasks.taskDetail.noComments')}
               </RNText>
             </View>
           ) : (
