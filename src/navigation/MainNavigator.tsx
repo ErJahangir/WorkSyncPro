@@ -83,6 +83,7 @@ const TaskStackNavigator: React.FC = () => {
         headerTintColor: theme.colors.text,
         headerTitleStyle: {fontWeight: '600', fontSize: 17},
         headerShadowVisible: false,
+        animation: Platform.OS === 'android' ? 'slide_from_bottom' : 'default',
       }}>
       <TaskStack.Screen
         name="TaskList"

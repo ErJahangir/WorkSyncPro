@@ -15,9 +15,27 @@ interface FCMTokenEntry {
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-const FIREBASE_SERVICE_ACCOUNT: ServiceAccount = JSON.parse(
-  Deno.env.get('FIREBASE_SERVICE_ACCOUNT')!,
-);
+const getServiceAccount = (): ServiceAccount => {
+  const raw = Deno.env.get('FIREBASE_SERVICE_ACCOUNT');
+  if (!raw) {
+    throw new Error('FIREBASE_SERVICE_ACCOUNT environment variable is not set');
+  }
+
+  try {
+    return JSON.parse(raw);
+  } catch (err) {
+    if (raw.startsWith('$(') || raw.startsWith('`')) {
+      throw new Error(
+        'FIREBASE_SERVICE_ACCOUNT appears to contain a literal shell command instead of JSON. ' +
+          'Ensure you set the secret using the actual file content, e.g., ' +
+          'supabase secrets set FIREBASE_SERVICE_ACCOUNT="$(cat your-file.json)"',
+      );
+    }
+    throw new Error(`Failed to parse FIREBASE_SERVICE_ACCOUNT: ${err.message}`);
+  }
+};
+
+const FIREBASE_SERVICE_ACCOUNT = getServiceAccount();
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 

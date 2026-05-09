@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "802352731530",
+    "project_id": "worksyncpro-68dca",
+    "storage_bucket": "worksyncpro-68dca.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:802352731530:android:13c87c35b7bbe6e46ba473",
+        "android_client_info": {
+          "package_name": "com.worksyncpro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "802352731530-tcaudpakn0747u8lun61vsiilncjuudh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.worksyncpro",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "802352731530-d6v2qo4jhk5nne9dv32r1lg2ak33feta.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB4derJ_xtpLQmhkWKtURmmI5FULVfmAq4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "802352731530-d6v2qo4jhk5nne9dv32r1lg2ak33feta.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "802352731530-33kch9qgcjee8r08a6ifo9fhu5g1c707.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.worksyncpro"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

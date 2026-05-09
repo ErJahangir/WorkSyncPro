@@ -74,9 +74,9 @@ yarn-error.log
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
-
+worksyncpro-68dca-firebase-adminsdk-fbsvc-c859ad01af.json
 # Google Services
-**/google-services.json
-**/GoogleService-Info.plist
+# **/google-services.json
+# **/GoogleService-Info.plist
 
 
